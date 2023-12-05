@@ -26,6 +26,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       anchor="left"
       open={isOpen}
       onClose={onClose}
+      BackdropProps={{ invisible: true }}
       sx={{ "& .MuiDrawer-paper": { width: 240 } }}
     >
       <List>
