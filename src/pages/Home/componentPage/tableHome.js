@@ -75,7 +75,7 @@ const MyTable = () => {
 
   return (
     <TableContainer component={Paper}>
-      <h3>ตารางแสดงรายละเอียดอุปกรณ์ที่มีการยืมล่าสุด</h3>
+      <h3 style={{textAlign:"center"}}>ตารางแสดงรายละเอียดอุปกรณ์ที่มีการยืมล่าสุด</h3>
       <Table>
         <TableHead>
           <TableRow>

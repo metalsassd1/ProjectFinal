@@ -66,6 +66,7 @@ const App = () => {
           transition: "margin 0.3s",
         }}
       >
+        <h1>หน้าหลัก</h1>
         <div>
           <div className="grid-container">
             <div className="box1">
