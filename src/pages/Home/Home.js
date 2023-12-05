@@ -3,6 +3,10 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/navigatorbar";
 import Navbar from "../../components/navbar";
 import MyTable from "./componentPage/tableHome";
+import RectangleBox from "./componentPage/chart";
+import RectangleBox1 from "./componentPage/chart2";
+import RectangleBox2 from "./componentPage/chart3";
+import RectangleBox3 from "./componentPage/chart4";
 
 import "./Monitoring.css";
 
@@ -33,9 +37,11 @@ const App = () => {
   };
 
   return (
-    <div style={{
-      background: "#f0f0f0"
-    }}>
+    <div
+      style={{
+        background: "#f0f0f0",
+      }}
+    >
       <div
         className="header"
         style={{
@@ -51,18 +57,22 @@ const App = () => {
           onClose={() => setIsSidebarOpen(false)}
         />
       </div>
-      {/* Your main content goes here */}
+      <RectangleBox />
+      <RectangleBox1 />
+      <RectangleBox2 />
+      <RectangleBox3 />
+
       <div
         className="content-container"
         style={{
           marginLeft: isSidebarOpen ? 300 : 100,
-          marginRight:isSidebarOpen ? 50:100,
+          marginRight: isSidebarOpen ? 50 : 100,
           transition: "margin 0.3s",
         }}
       >
         <h1>หน้าหลัก</h1>
         <h2>Advanced Monitoring Page</h2>
-        <MyTable/>
+        <MyTable />
       </div>
     </div>
   );
