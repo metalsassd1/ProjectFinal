@@ -20,7 +20,7 @@ const RectangleBox3 = () => {
   return (
     <div
       style={{
-        width: "200px",
+        width: "450px",
         height: "100px",
         backgroundColor: "lightblue",
         border: "2px solid darkblue",
