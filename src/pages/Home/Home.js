@@ -3,10 +3,10 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/navigatorbar";
 import Navbar from "../../components/navbar";
 import MyTable from "./componentPage/tableHome";
-import RectangleBox from "./componentPage/UserCount";
-import RectangleBox1 from "./componentPage/UesrLentTotal";
-import RectangleBox2 from "./componentPage/totalLend";
-import RectangleBox3 from "./componentPage/equipmentCount";
+import RectangleBox from "./componentPage/chart/UserCount";
+import RectangleBox1 from "./componentPage/chart/UesrLentTotal";
+import RectangleBox2 from "./componentPage/chart/totalLend";
+import RectangleBox3 from "./componentPage/chart/equipmentCount";
 
 import "./Monitoring.css";
 
