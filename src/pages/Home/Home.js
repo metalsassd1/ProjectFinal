@@ -57,7 +57,7 @@ const App = () => {
           onClose={() => setIsSidebarOpen(false)}
         />
       </div>
-<br/>
+      <br />
       <div
         className="content-container"
         style={{
@@ -66,13 +66,23 @@ const App = () => {
           transition: "margin 0.3s",
         }}
       >
-        <div className="grid-container">
-          <RectangleBox />
-          <RectangleBox1 />
-          <RectangleBox2 />
-          <RectangleBox3 />
+        <div>
+          <div className="grid-container">
+            <div className="box1">
+              <RectangleBox3 />
+            </div>
+            <div className="box1">
+              <RectangleBox2 />
+            </div>
+            <div className="box1">
+              <RectangleBox1 />
+            </div>
+            <div className="box1">
+              <RectangleBox />
+            </div>
+          </div>
         </div>
-        <br/>
+        <br />
         <div className="tableHome">
           <MyTable />
         </div>
