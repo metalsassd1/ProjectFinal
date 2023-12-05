@@ -1,17 +1,31 @@
 // Navbar.js
 import React from "react";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Avatar,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { styled } from "@mui/system";
 
-const Navbar = ({ onLogout }) => {
+const WhiteAppBar = styled(AppBar)({
+  backgroundColor: "#fff",
+  boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)", // Adjust the shadow as needed
+  height: 40, // Adjust the height as needed
+});
+
+const Navbar = ({ isOpen, onLogout, onToggleSidebar }) => {
   return (
-    <AppBar position="static" sx={{ background: 'linear-gradient(to right, #4CAF50, transparent)' }}>
+    <WhiteAppBar position="sticky" elevation={1}>
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 'bold', color: '#fff' }}>
-          PIM CAN TAKE
-        </Typography>
-        <Button color="inherit" onClick={onLogout}>Logout</Button>
+        <IconButton sx={{ zIndex: 999, ml: 2, mt: -3 }}>
+          <MenuIcon onClick={onToggleSidebar} />
+        </IconButton>
       </Toolbar>
-    </AppBar>
+    </WhiteAppBar>
   );
 };
 
