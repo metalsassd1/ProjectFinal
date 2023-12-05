@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/navigatorbar";
 import Navbar from "../../components/navbar";
-import EquipmentCountCard from "./componentPage/EquipmentCountCard "; // Adjust the path accordingly
+
 
 import "./Monitoring.css";
 
@@ -59,9 +59,6 @@ const App = () => {
       >
         <h1>หน้าหลัก</h1>
         <h2>Advanced Monitoring Page</h2>
-
-        {/* Include the EquipmentCountCard component here */}
-        <EquipmentCountCard />
       </div>
     </div>
   );
