@@ -1,0 +1,17 @@
+/* Monitoring.css */
+.container {
+  display: flex;
+}
+
+.content {
+  flex-grow: 1;
+  transition: margin-left 0.5s;
+}
+
+.sidebar-open {
+  margin-left: 250px; /* Adjust the width of your Sidebar */
+}
+
+.sidebar-closed {
+  margin-left: 0;
+}
