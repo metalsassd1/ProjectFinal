@@ -5,26 +5,15 @@ const RectangleBox3 = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
+    // Fetch data from the API
     axios
-      .get("http://localhost:4000/api/home/equipmentTotal")
+      .get("http://localhost:4000/api/home/equipmentCount")
       .then((response) => {
         console.log("Data from API:", response.data);
         setData(response.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          console.error("Response data:", error.response.data);
-          console.error("Response status:", error.response.status);
-          console.error("Response headers:", error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error("No response received. Request:", error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error("Error setting up the request:", error.message);
-        }
       });
   }, []);
 
@@ -42,7 +31,7 @@ const RectangleBox3 = () => {
     >
       {/* Check if data exists before displaying */}
       {data ? (
-        <p>{`equipmentTotal: ${data.equipmentTotal}`}</p>
+        <p>{`Combined Count: ${data.combinedCount}`}</p>
       ) : (
         <p>Loading data...</p>
       )}
