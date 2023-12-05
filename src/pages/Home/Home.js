@@ -33,7 +33,9 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div style={{
+      background: "#f0f0f0"
+    }}>
       <div
         className="header"
         style={{
