@@ -57,22 +57,25 @@ const App = () => {
           onClose={() => setIsSidebarOpen(false)}
         />
       </div>
-      <RectangleBox />
-      <RectangleBox1 />
-      <RectangleBox2 />
-      <RectangleBox3 />
-
+<br/>
       <div
         className="content-container"
         style={{
-          marginLeft: isSidebarOpen ? 300 : 100,
-          marginRight: isSidebarOpen ? 50 : 100,
+          marginLeft: isSidebarOpen ? 300 : 30,
+          marginRight: isSidebarOpen ? 50 : 30,
           transition: "margin 0.3s",
         }}
       >
-        <h1>หน้าหลัก</h1>
-        <h2>Advanced Monitoring Page</h2>
-        <MyTable />
+        <div className="grid-container">
+          <RectangleBox />
+          <RectangleBox1 />
+          <RectangleBox2 />
+          <RectangleBox3 />
+        </div>
+        <br/>
+        <div className="tableHome">
+          <MyTable />
+        </div>
       </div>
     </div>
   );

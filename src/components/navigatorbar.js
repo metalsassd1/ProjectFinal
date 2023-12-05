@@ -1,11 +1,6 @@
 // Sidebar.js
 import React from "react";
-import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
+import { Drawer, List, ListItem, ListItemText } from "@mui/material";
 
 const Sidebar = ({ isOpen, onClose }) => {
   return (
@@ -17,7 +12,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       BackdropProps={{ invisible: true }}
       sx={{ "& .MuiDrawer-paper": { width: 240 } }}
     >
-      <List style={{ background: "#EBECEB"}}>
+      <List style={{ background: "#EBECEB" }}>
         <ListItem
           style={{
             borderBottom: "1px #ccc",
