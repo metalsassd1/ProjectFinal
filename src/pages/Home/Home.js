@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/navigatorbar";
 import Navbar from "../../components/navbar";
-
+import MyTable from "./componentPage/tableHome";
 
 import "./Monitoring.css";
 
@@ -53,12 +53,13 @@ const App = () => {
       <div
         className="content-container"
         style={{
-          marginLeft: isSidebarOpen ? 240 : 0,
+          marginLeft: isSidebarOpen ? 300 : 150,
           transition: "margin 0.3s",
         }}
       >
         <h1>หน้าหลัก</h1>
         <h2>Advanced Monitoring Page</h2>
+        <MyTable/>
       </div>
     </div>
   );
