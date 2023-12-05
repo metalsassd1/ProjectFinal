@@ -3,9 +3,9 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/navigatorbar";
 import Navbar from "../../components/navbar";
 import MyTable from "./componentPage/tableHome";
-import RectangleBox from "./componentPage/chart";
-import RectangleBox1 from "./componentPage/chart2";
-import RectangleBox2 from "./componentPage/chart3";
+import RectangleBox from "./componentPage/UserCount";
+import RectangleBox1 from "./componentPage/UesrLentTotal";
+import RectangleBox2 from "./componentPage/totalLend";
 import RectangleBox3 from "./componentPage/chart4";
 
 import "./Monitoring.css";
