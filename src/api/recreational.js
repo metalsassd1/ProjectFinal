@@ -4,7 +4,7 @@ const db = require("../database/db");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  const query = "SELECT * FROM user";
+  const query = "SELECT * FROM recreational";
 
   db.query(query, (error, results) => {
     if (error) {
