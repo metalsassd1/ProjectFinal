@@ -2,29 +2,31 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/navigatorbar";
 import Navbar from "../../components/navbar";
-import Chart from "./componentPage/chart";
-import UserActivityLogs from "./componentPage/userActivity";
-import { fetchDataFromAPI } from "../../api/home";
+import EquipmentCountCard from "./componentPage/EquipmentCountCard "; // Adjust the path accordingly
+
 import "./Monitoring.css";
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [data, setData] = useState(null);
-  const [userActivityLogs, setUserActivityLogs] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
+      // Fetch data or perform other actions if needed
       try {
-        const result = await fetchDataFromAPI(); 
-        setData(result);
+        // const result = await fetchDataFromAPI();
+        // setData(result);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+
+    // Fetch data on mount
     fetchData();
-    const intervalId = setInterval(fetchData);
-    return () => clearInterval(intervalId);
-  }, []); 
+
+    // Set up an interval for fetching data
+    const intervalId = setInterval(fetchData, 60000); // Assuming a 1-minute interval
+    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+  }, []);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -57,12 +59,9 @@ const App = () => {
       >
         <h1>หน้าหลัก</h1>
         <h2>Advanced Monitoring Page</h2>
-        {data && <Chart data={data} className="Chart-container" />}
 
-        <UserActivityLogs
-          userActivityLogs={userActivityLogs}
-          className="UserActivityLogs-container"
-        />
+        {/* Include the EquipmentCountCard component here */}
+        <EquipmentCountCard />
       </div>
     </div>
   );
