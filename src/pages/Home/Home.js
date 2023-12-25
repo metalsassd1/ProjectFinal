@@ -61,8 +61,8 @@ const App = () => {
       <div
         className="content-container"
         style={{
-          marginLeft: isSidebarOpen ? 300 : 30,
-          marginRight: isSidebarOpen ? 50 : 30,
+          marginLeft: isSidebarOpen ? 300 : 100,
+          marginRight: isSidebarOpen ? 70 : 100,
           transition: "margin 0.3s",
         }}
       >
