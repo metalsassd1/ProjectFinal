@@ -1,8 +1,15 @@
 // Sidebar.js
 import React from "react";
 import { Drawer, List, ListItem, ListItemText } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+
+  const handleRedirect = (path) => {
+    navigate(path);
+    onClose();
+  };
   return (
     <Drawer
       variant="temporary"
@@ -27,7 +34,7 @@ const Sidebar = ({ isOpen, onClose }) => {
           PIM CAN TAKE
         </ListItem>
 
-        <ListItem button>
+        <ListItem button onClick={() => handleRedirect("/")}>
           <ListItemText primary="หน้าหลัก" />
         </ListItem>
         <ListItem button>
@@ -36,10 +43,10 @@ const Sidebar = ({ isOpen, onClose }) => {
         <ListItem button>
           <ListItemText primary="จัดการข้อมูลอุปกรณ์นันทนาการ" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => handleRedirect("/1")}>
           <ListItemText primary="จัดการข้อมูลการยืม" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => handleRedirect("/2")}>
           <ListItemText primary="จัดการผู้ใช้" />
         </ListItem>
         <ListItem button>
