@@ -29,19 +29,6 @@ const MyTable = () => {
     fetchData();
   }, []); // ในที่นี้ใส่ [] เพื่อให้ useEffect ทำงานเพียงครั้งเดียวเมื่อ component ถูก mount
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "พร้อมใช้":
-        return "green";
-      case "ถูกยืม":
-        return "orange";
-      case "หายไป":
-        return "red";
-      default:
-        return "gray";
-    }
-  };
-
   const handleEdit = (id) => {};
   const handleDelete = (id) => {};
 
@@ -136,13 +123,20 @@ const MyTable = () => {
           <TableRow>
             <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
-            <TableCell>จำนวน</TableCell>
+            <TableCell>คลัง</TableCell>
             <TableCell>ประเภท</TableCell>
-            <TableCell>ผู้ยืม</TableCell>
-            <TableCell>วันที่ยืม</TableCell>
-            <TableCell>วันที่คืน</TableCell>
-            <TableCell>สถานะ</TableCell>
-            <TableCell></TableCell>
+            <TableCell>วันที่นำเข้า</TableCell>
+            <TableCell>อัพเดตล่าสุด</TableCell>
+            <TableCell>หมายเหตุ</TableCell>
+            <TableCell>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleEdit(row.id)}
+              >
+                เพิ่มข้อมูล
+              </Button>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -155,19 +149,6 @@ const MyTable = () => {
               <TableCell>{row.borrower_name}</TableCell>
               <TableCell>{row.loan_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
-              <TableCell>
-                <div
-                  style={{
-                    backgroundColor: getStatusColor(row.status),
-                    width: "20px",
-                    height: "20px",
-                    borderRadius: "50%",
-                    display: "inline-block",
-                    marginRight: "5px",
-                  }}
-                />
-                {row.status}
-              </TableCell>
               <TableCell style={{ backgroundColor: "" }}>
                 <Button
                   variant="contained"

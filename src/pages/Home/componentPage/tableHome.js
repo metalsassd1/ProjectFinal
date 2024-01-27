@@ -27,7 +27,89 @@ const MyTable = () => {
 
     fetchData();
   }, []); // ในที่นี้ใส่ [] เพื่อให้ useEffect ทำงานเพียงครั้งเดียวเมื่อ component ถูก mount
-
+// test mock
+const row = [
+  {
+    id: 1,
+    equipment_name: "ฟุตบอล",
+    quantity: 25,
+    equipment_equipment_type: "New York",
+    status: "พร้อมใช้งาน",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 2,
+    equipment_name: "ฟุตบอล",
+    quantity: 30,
+    equipment_equipment_type: "Los Angeles",
+    status: "ถูกยืม",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 3,
+    equipment_name: "ฟุตบอล",
+    quantity: 22,
+    equipment_equipment_type: "Chicago",
+    status: "",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 4,
+    equipment_name: "ฟุตบอล",
+    quantity: 30,
+    equipment_equipment_type: "Los Angeles",
+    status: "ถูกยืม",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 5,
+    equipment_name: "ฟุตบอล",
+    quantity: 22,
+    equipment_equipment_type: "Chicago",
+    status: "หายไป",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 6,
+    equipment_name: "ฟุตบอล",
+    quantity: 30,
+    equipment_equipment_type: "Los Angeles",
+    status: "พร้อมใช้งาน",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 7,
+    equipment_name: "ฟุตบอล",
+    quantity: 22,
+    equipment_equipment_type: "Chicago",
+    status: "ถูกยืม",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 8,
+    equipment_name: "ฟุตบอล",
+    quantity: 22,
+    equipment_equipment_type: "Chicago",
+    status: "",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+];
   return (
     <TableContainer component={Paper}>
       <h2 style={{ textAlign: "center" }}>
@@ -47,7 +129,7 @@ const MyTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {row.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
