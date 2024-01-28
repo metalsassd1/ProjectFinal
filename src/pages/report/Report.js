@@ -1,12 +1,23 @@
 import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
+import TableReport from "./componentPage/tableReport";
+import Barchart from "./componentPage/barChart";
+import Piechart from "./componentPage/pieChart";
 
 function ReportPage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const chartContainerStyle = {
+    display: 'flex',
+    justifyContent: 'space-between', // this applies the space-between layout
+    alignItems: 'center', // this centers the charts vertically
+    padding: '20px', // add padding as necessary
+    margin: '20px 0', // add margin as necessary
   };
 
   return (
@@ -37,6 +48,13 @@ function ReportPage(params) {
         }}
       >
         <h1>รายงายสรุปผล</h1>
+        <div className="chart-container" style={chartContainerStyle}>
+          <Barchart />
+          <Piechart />
+        </div>
+        <div className="tableHome">
+          <TableReport />
+        </div>
       </div>
     </div>
   );

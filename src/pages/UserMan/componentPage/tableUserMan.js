@@ -10,10 +10,14 @@ import {
   Paper,
   Button,
 } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 const MyTable = () => {
   const [rows, setRows] = useState([]);
+  const navigate = useNavigate();
 
+  const handleRedirect = (path) => {
+    navigate(path);
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,6 +36,7 @@ const MyTable = () => {
   const handleEdit = (id) => {};
   const handleDelete = (id) => {};
 
+  
   // test mock
   const row = [
     {
@@ -132,7 +137,7 @@ const MyTable = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => handleEdit(row.id)}
+                onClick={() => handleRedirect("/4/add")}
               >
                 เพิ่มข้อมูล
               </Button>
