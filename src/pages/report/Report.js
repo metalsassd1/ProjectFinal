@@ -1,19 +1,12 @@
 import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
-import SearchBar from "../../components/SeachBar";
-import TableManage from "./componentPage/tableManage";
 
-function Manage(params) {
+function ReportPage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleSearch = (searchTerm) => {
-    // Handle the search term, e.g., filter data based on the search term
-    console.log("Search term in Manage component:", searchTerm);
   };
 
   return (
@@ -43,14 +36,10 @@ function Manage(params) {
           transition: "margin 0.3s",
         }}
       >
-        <h1>จัดการข้อมูลการยืม</h1>
-        {/* Use the SearchBar component */}
-        <SearchBar onSearch={handleSearch} />
-        <br />
-        <TableManage isOpen={isSidebarOpen} />
+        <h1>รายงายสรุปผล</h1>
       </div>
     </div>
   );
 }
 
-export default Manage;
+export default ReportPage;

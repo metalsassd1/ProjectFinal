@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import SearchBar from "../../components/SeachBar";
-import TableEquip from "./componentPage/tableEquip";
+import TableEnter from "./componentPage/tableEnter";
 
 function Manage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -19,7 +19,7 @@ function Manage(params) {
   return (
     <div className="m" style={{ background: "#f0f0f0" }}>
       <div
-        className="HEAD"
+        className="header"
         style={{
           marginLeft: isSidebarOpen ? 200 : 0,
           transition: "margin 0.3s",
@@ -39,11 +39,11 @@ function Manage(params) {
             transition: "margin 0.3s",
           }}
         >
-          <h1>จัดการข้อมูลอุปกรณ์กีฬา</h1>
+          <h1>จัดการข้อมูลอุปกรณ์นันทนาการ</h1>
           {/* Use the SearchBar component */}
           <SearchBar onSearch={handleSearch} />
           <br/>
-          <TableEquip isOpen={isSidebarOpen}/>
+          <TableEnter isOpen={isSidebarOpen}/>
         </div>
       </div>
     </div>

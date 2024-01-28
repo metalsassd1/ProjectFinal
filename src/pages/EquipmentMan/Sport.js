@@ -19,7 +19,7 @@ function Manage(params) {
   return (
     <div className="m" style={{ background: "#f0f0f0" }}>
       <div
-        className="HEAD"
+        className="header"
         style={{
           marginLeft: isSidebarOpen ? 200 : 0,
           transition: "margin 0.3s",
@@ -28,23 +28,26 @@ function Manage(params) {
         <div className="Navbar">
           <Navbar onToggleSidebar={handleToggleSidebar} />
         </div>
-        <div className="Side-bar">
-          <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        </div>
-        <div
-          className="contrainer-main"
-          style={{
-            marginLeft: isSidebarOpen ? 100 : 70,
-            marginRight: isSidebarOpen ? 70 : 70,
-            transition: "margin 0.3s",
-          }}
-        >
-          <h1>จัดการข้อมูลอุปกรณ์กีฬา</h1>
-          {/* Use the SearchBar component */}
-          <SearchBar onSearch={handleSearch} />
-          <br/>
-          <TableEquip isOpen={isSidebarOpen}/>
-        </div>
+      </div>
+      <div className="Side-bar">
+        <Sidebar
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+        />
+      </div>
+      <div
+        className="contrainer-main"
+        style={{
+          marginLeft: isSidebarOpen ? 300 : 100,
+          marginRight: isSidebarOpen ? 70 : 100,
+          transition: "margin 0.3s",
+        }}
+      >
+        <h1>จัดการข้อมูลอุปกรณ์กีฬา</h1>
+        {/* Use the SearchBar component */}
+        <SearchBar onSearch={handleSearch} />
+        <br />
+        <TableEquip isOpen={isSidebarOpen} />
       </div>
     </div>
   );

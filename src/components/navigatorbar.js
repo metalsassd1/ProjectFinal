@@ -37,16 +37,16 @@ const Sidebar = ({ isOpen, onClose }) => {
         <ListItem button onClick={() => handleRedirect("/")}>
           <ListItemText primary="หน้าหลัก" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => handleRedirect("/2")}>
           <ListItemText primary="จัดการข้อมูลอุปกรณ์กีฬา" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => handleRedirect("/3")}>
           <ListItemText primary="จัดการข้อมูลอุปกรณ์นันทนาการ" />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/1")}>
           <ListItemText primary="จัดการข้อมูลการยืม" />
         </ListItem>
-        <ListItem button onClick={() => handleRedirect("/2")}>
+        <ListItem >
           <ListItemText primary="จัดการผู้ใช้" />
         </ListItem>
         <ListItem button>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import SearchBar from "../../components/SeachBar";
-import TableManage from "./componentPage/tableManage";
+import TableUser from "./componentPage/tableUserMan";
 
 function Manage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -43,11 +43,11 @@ function Manage(params) {
           transition: "margin 0.3s",
         }}
       >
-        <h1>จัดการข้อมูลการยืม</h1>
+        <h1>จัดการข้อมูลผู้ใช้</h1>
         {/* Use the SearchBar component */}
         <SearchBar onSearch={handleSearch} />
         <br />
-        <TableManage isOpen={isSidebarOpen} />
+        <TableUser isOpen={isSidebarOpen} />
       </div>
     </div>
   );
