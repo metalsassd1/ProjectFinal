@@ -18,140 +18,57 @@ const MyTable = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/home/management"
+          "http://localhost:4000/api/report/table"
         );
-        setRows(response.data); // setRows เพื่ออัพเดท state rows
+        setRows(response.data); // setRows to update the state
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
     fetchData();
-  }, []); // ในที่นี้ใส่ [] เพื่อให้ useEffect ทำงานเพียงครั้งเดียวเมื่อ component ถูก mount
+  }, []); // useEffect with [] to fetch data only once when the component mounts
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "พร้อมใช้":
+      case "Available":
         return "green";
-      case "ถูกยืม":
+      case "Borrowed":
         return "orange";
-      case "หายไป":
-        return "red";
       default:
         return "gray";
     }
   };
 
-  const handleEdit = (id) => {};
-  const handleDelete = (id) => {};
+  const handleEdit = (id) => {
+    // Implement edit functionality using id
+  };
 
-  // test mock
-  const row = [
-    {
-      id: 1,
-      equipment_name: "ฟุตบอล",
-      quantity: 25,
-      equipment_equipment_type: "New York",
-      status: "พร้อมใช้",
-      borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-      loan_date: "10/12/23",
-      return_date: "1/10/27",
-    },
-    {
-      id: 2,
-      equipment_name: "ฟุตบอล",
-      quantity: 30,
-      equipment_equipment_type: "Los Angeles",
-      status: "ถูกยืม",
-      borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-      loan_date: "10/12/23",
-      return_date: "1/10/27",
-    },
-    {
-      id: 3,
-      equipment_name: "ฟุตบอล",
-      quantity: 22,
-      equipment_equipment_type: "Chicago",
-      status: "",
-      borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-      loan_date: "10/12/23",
-      return_date: "1/10/27",
-    },
-    {
-      id: 4,
-      equipment_name: "ฟุตบอล",
-      quantity: 30,
-      equipment_equipment_type: "Los Angeles",
-      status: "ถูกยืม",
-      borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-      loan_date: "10/12/23",
-      return_date: "1/10/27",
-    },
-    {
-      id: 5,
-      equipment_name: "ฟุตบอล",
-      quantity: 22,
-      equipment_equipment_type: "Chicago",
-      status: "หายไป",
-      borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-      loan_date: "10/12/23",
-      return_date: "1/10/27",
-    },
-    {
-      id: 6,
-      equipment_name: "ฟุตบอล",
-      quantity: 30,
-      equipment_equipment_type: "Los Angeles",
-      status: "พร้อมใช้",
-      borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-      loan_date: "10/12/23",
-      return_date: "1/10/27",
-    },
-    {
-      id: 7,
-      equipment_name: "ฟุตบอล",
-      quantity: 22,
-      equipment_equipment_type: "Chicago",
-      status: "ถูกยืม",
-      borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-      loan_date: "10/12/23",
-      return_date: "1/10/27",
-    },
-    {
-      id: 8,
-      equipment_name: "ฟุตบอล",
-      quantity: 22,
-      equipment_equipment_type: "Chicago",
-      status: "",
-      borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-      loan_date: "10/12/23",
-      return_date: "1/10/27",
-    },
-  ];
+  const handleDelete = (id) => {
+    // Implement delete functionality using id
+  };
 
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>ชื่ออุปกรณ์</TableCell>
-            <TableCell>จำนวน</TableCell>
-            <TableCell>ประเภท</TableCell>
-            <TableCell>ผู้ยืม</TableCell>
-            <TableCell>วันที่ยืม</TableCell>
-            <TableCell>วันที่คืน</TableCell>
-            <TableCell>สถานะ</TableCell>
+            <TableCell>Equipment Name</TableCell>
+            <TableCell>Quantity</TableCell>
+            <TableCell>Equipment Type</TableCell>
+            <TableCell>Borrower</TableCell>
+            <TableCell>Loan Date</TableCell>
+            <TableCell>Return Date</TableCell>
+            <TableCell>Status</TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {row.map((row) => (
+          {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
               <TableCell>{row.quantity}</TableCell>
-              <TableCell>{row.equipment_equipment_type}</TableCell>
+              <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
               <TableCell>{row.loan_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
@@ -168,13 +85,13 @@ const MyTable = () => {
                 />
                 {row.status}
               </TableCell>
-              <TableCell style={{ backgroundColor: "" }}>
+              <TableCell>
                 <Button
                   variant="contained"
                   color="primary"
                   onClick={() => handleEdit(row.id)}
                 >
-                  แก้ไข
+                  Edit
                 </Button>
                 <Button
                   variant="contained"
@@ -182,7 +99,7 @@ const MyTable = () => {
                   style={{ marginLeft: 10 }}
                   onClick={() => handleDelete(row.id)}
                 >
-                  ลบ
+                  Delete
                 </Button>
               </TableCell>
             </TableRow>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import SearchBar from "../../components/SeachBar";
-import TableEquip from "./componentPage/tableEquip";
+import TableEquip from "./componentPage/tableSport";
 
 function Manage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

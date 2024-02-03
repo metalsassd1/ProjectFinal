@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import SearchBar from "../../components/SeachBar";
-import TableEnter from "./componentPage/tableEnter";
+import TableEnter from "./componentPage/recreationalTable";
 
 function Manage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,7 +29,10 @@ function Manage(params) {
           <Navbar onToggleSidebar={handleToggleSidebar} />
         </div>
         <div className="Side-bar">
-          <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+          <Sidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+          />
         </div>
         <div
           className="contrainer-main"
@@ -42,8 +45,8 @@ function Manage(params) {
           <h1>จัดการข้อมูลอุปกรณ์นันทนาการ</h1>
           {/* Use the SearchBar component */}
           <SearchBar onSearch={handleSearch} />
-          <br/>
-          <TableEnter isOpen={isSidebarOpen}/>
+          <br />
+          <TableEnter isOpen={isSidebarOpen} />
         </div>
       </div>
     </div>

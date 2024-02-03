@@ -24,7 +24,7 @@ const MyTable = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/user/table"
+          "http://localhost:4000/api/recreational/table"
         );
         setRows(response.data);
       } catch (error) {
@@ -35,12 +35,12 @@ const MyTable = () => {
     fetchData();
   }, []);
 
-  const handleEdit = (userId) => {
-    // Implement edit functionality using userId
+  const handleEdit = (id) => {
+    // Implement edit functionality using id
   };
 
-  const handleDelete = (userId) => {
-    // Implement delete functionality using userId
+  const handleDelete = (id) => {
+    // Implement delete functionality using id
   };
 
   return (
@@ -48,47 +48,45 @@ const MyTable = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell>Username</TableCell>
-            <TableCell>Password</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Registration Date</TableCell>
-            <TableCell>Last Login Date</TableCell>
+            <TableCell>ชื่ออุปกรณ์</TableCell>
+            <TableCell>จำนวน</TableCell>
+            <TableCell>ประเภท</TableCell>
+            <TableCell>วันที่นำเข้า</TableCell>
+            <TableCell>หมายเหตุ</TableCell>
             <TableCell>
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => handleRedirect("/4/add")}
+                onClick={() => handleRedirect("/3/add")}
               >
-                Add User
+                เพิ่มข้อมูล
               </Button>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.user_id}>
-              <TableCell>{row.name || "N/A"}</TableCell>
-              <TableCell>{row.username}</TableCell>
-              <TableCell>{row.password}</TableCell>
-              <TableCell>{row.email}</TableCell>
-              <TableCell>{row.registration_date}</TableCell>
-              <TableCell>{row.last_login_date}</TableCell>
+            <TableRow key={row.recreational_id}>
+              <TableCell>{row.name}</TableCell>
+              <TableCell>{row.quantity}</TableCell>
+              <TableCell>{row.category}</TableCell>
+              <TableCell>{row.import_date}</TableCell>
+              <TableCell>{row.note}</TableCell>
               <TableCell>
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleEdit(row.user_id)}
+                  onClick={() => handleEdit(row.recreational_id)}
                 >
-                  Edit
+                  แก้ไข
                 </Button>
                 <Button
                   variant="contained"
                   color="secondary"
                   style={{ marginLeft: 10 }}
-                  onClick={() => handleDelete(row.user_id)}
+                  onClick={() => handleDelete(row.recreational_id)}
                 >
-                  Delete
+                  ลบ
                 </Button>
               </TableCell>
             </TableRow>
