@@ -64,19 +64,13 @@ const Addpage = () => {
     e.preventDefault();
     // You would handle the form submission here
     // This could involve preparing the data and sending it to an API
-    console.log(formData);
+    console.log(formData.field1);
   };
 
 
   return (
-    <div
-      style={{
-        background: "#f0f0f0",
-      }}
-    >
-      <div
-        className="header"
-        style={{
+    <div style={{ background: "#f0f0f0" }}>
+      <div className="header" style={{
           marginLeft: isSidebarOpen ? 200 : 0,
           transition: "margin 0.3s",
         }}
@@ -84,73 +78,93 @@ const Addpage = () => {
         <Navbar onToggleSidebar={handleToggleSidebar} />
       </div>
       <div className={isSidebarOpen ? "sidebar-open" : "sidebar-closed"}>
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-        />
+        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       </div>
       <br />
-      <div
-        className="content-container"
-        style={{
+      <div className="content-container" style={{
           marginLeft: isSidebarOpen ? 300 : 100,
           marginRight: isSidebarOpen ? 70 : 100,
           transition: "margin 0.3s",
         }}
       >
-        <h1>เพิ่มข้อมูล</h1>
-        <div style={{ background: "#f0f0f0" }}>
-      {/* Navbar and Sidebar components */}
-      <Paper elevation={3} style={{
-        margin: '1rem',
-        padding: '1rem'
-      }}>
-        <form onSubmit={handleSubmit}>
-          {/* Loop through an array to render TextField components */}
-          {[...Array(7).keys()].map((i) => (
+        <h1>เพิ่มข้อมูลอุปกรณ์กีฬา</h1>
+        <Paper elevation={3} style={{ margin: '1rem', padding: '1rem' }}>
+          <form onSubmit={handleSubmit}>
             <TextField
-              key={i}
-              label={`Field ${i + 1}`}
+              label="Field 1"
               variant="outlined"
-              name={`field${i + 1}`}
-              value={formData[`field${i + 1}`]}
+              name="field1"
+              value={formData.field1}
               onChange={handleChange}
               style={{ margin: '0.5rem' }}
               fullWidth
             />
-          ))}
-          <Box textAlign="center" my={2}>
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<AddAPhotoIcon />}
-            >
-              Add Photo
-              <input
-                type="file"
-                hidden
-                onChange={handlePhotoChange}
-              />
-            </Button>
-          </Box>
-          {/* Display uploaded image if any */}
-          {formData.photo && (
+            <TextField
+              label="Field 2"
+              variant="outlined"
+              name="field2"
+              value={formData.field2}
+              onChange={handleChange}
+              style={{ margin: '0.5rem' }}
+              fullWidth
+            />
+             <TextField
+              label="Field 2"
+              variant="outlined"
+              name="field2"
+              value={formData.field2}
+              onChange={handleChange}
+              style={{ margin: '0.5rem' }}
+              fullWidth
+            />
+             <TextField
+              label="Field 2"
+              variant="outlined"
+              name="field2"
+              value={formData.field2}
+              onChange={handleChange}
+              style={{ margin: '0.5rem' }}
+              fullWidth
+            />
+             <TextField
+              label="Field 2"
+              variant="outlined"
+              name="field2"
+              value={formData.field2}
+              onChange={handleChange}
+              style={{ margin: '0.5rem' }}
+              fullWidth
+            />
             <Box textAlign="center" my={2}>
-              <img
-                src={URL.createObjectURL(formData.photo)}
-                alt="Uploaded"
-                style={{ maxWidth: '100%', maxHeight: '300px' }}
-              />
+              <Button
+                variant="contained"
+                component="label"
+                startIcon={<AddAPhotoIcon />}
+              >
+                เพิ่มรูปภาพ
+                <input
+                  type="file"
+                  hidden
+                  onChange={handlePhotoChange}
+                />
+              </Button>
             </Box>
-          )}
-          <Box textAlign="center" my={2}>
-            <Button type="submit" variant="contained" color="primary">
-              Submit
-            </Button>
-          </Box>
-        </form>
-      </Paper>
-    </div>
+            {formData.photo && (
+              <Box textAlign="center" my={2}>
+                <img
+                  src={URL.createObjectURL(formData.photo)}
+                  alt="Uploaded"
+                  style={{ maxWidth: '100%', maxHeight: '300px' }}
+                />
+              </Box>
+            )}
+            <Box textAlign="center" my={2}>
+              <Button type="submit" variant="contained" color="primary">
+                ส่ง
+              </Button>
+            </Box>
+          </form>
+        </Paper>
       </div>
     </div>
   );
