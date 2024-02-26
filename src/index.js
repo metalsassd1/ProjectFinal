@@ -11,6 +11,7 @@ import Report from "./pages/report/Report.js";
 import AddpageEn from "./pages/recreational/supPage/addPage.js";
 import AddpageEq from "./pages/EquipmentMan/supPage/addPage.js";
 import AddpageUs from "./pages/UserMan/supPage/addPage.js";
+import Emailsener from "./pages/EmailJs/Email.js"
 
 ReactDOM.render(
   <React.StrictMode>
@@ -25,6 +26,7 @@ ReactDOM.render(
         <Route path="/4" element={<UserMan />} />
         <Route path="/4/add" element={<AddpageUs />} />
         <Route path="/5" element={<Report />} />
+        <Route path="/Sender" element={<Emailsener />} />
       </Routes>
     </Router>
   </React.StrictMode>,
