@@ -11,7 +11,7 @@ import Report from "./pages/report/Report.js";
 import AddpageEn from "./pages/recreational/supPage/addPage.js";
 import AddpageEq from "./pages/EquipmentMan/supPage/addPage.js";
 import AddpageUs from "./pages/UserMan/supPage/addPage.js";
-import Emailsener from "./pages/EmailJs/Email.js"
+import Emailsener from "./pages/EmailJs/rotueTheme.js"
 
 ReactDOM.render(
   <React.StrictMode>
