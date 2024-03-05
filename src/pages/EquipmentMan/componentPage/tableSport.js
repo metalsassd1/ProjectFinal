@@ -61,10 +61,12 @@ const MyTable = () => {
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
             <TableCell>จำนวน</TableCell>
             <TableCell>ประเภท</TableCell>
             <TableCell>วันที่นำเข้า</TableCell>
+            <TableCell>อัพเดทล่าสุด</TableCell>
             <TableCell>หมายเหตุ</TableCell>
             <TableCell>
               <Button
@@ -80,10 +82,12 @@ const MyTable = () => {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.ID}>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.quantity}</TableCell>
-              <TableCell>{row.category}</TableCell>
+              <TableCell>{row.id}</TableCell>
+              <TableCell>{row.equipment_name}</TableCell>
+              <TableCell>{row.quantity_in_stock}</TableCell>
+              <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.import_date}</TableCell>
+              <TableCell>{row.last_update}</TableCell>
               <TableCell>{row.note}</TableCell>
               <TableCell>
                 <Button

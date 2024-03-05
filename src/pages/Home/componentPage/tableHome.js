@@ -38,6 +38,7 @@ const MyTable = () => {
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
             <TableCell>จำนวน</TableCell>
             <TableCell>ประเภท</TableCell>
@@ -50,13 +51,14 @@ const MyTable = () => {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
+              <TableCell>{row.loan_id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
-              <TableCell>{row.quantity}</TableCell>
+              <TableCell>{row.quantity_borrowed}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
-              <TableCell>{row.loan_date}</TableCell>
+              <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
-              <TableCell>{row.status}</TableCell>
+              <TableCell>{row.loan_status}</TableCell>
             </TableRow>
           ))}
         </TableBody>

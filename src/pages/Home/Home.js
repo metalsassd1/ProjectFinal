@@ -4,7 +4,7 @@ import Sidebar from "../../components/navigatorbar";
 import Navbar from "../../components/navbar";
 import MyTable from "./componentPage/tableHome";
 import RectangleBox from "./componentPage/chart/UserCount";
-import RectangleBox1 from "./componentPage/chart/UesrLentTotal";
+import RectangleBox1 from "./componentPage/chart/returnedCount";
 import RectangleBox2 from "./componentPage/chart/totalLend";
 import RectangleBox3 from "./componentPage/chart/equipmentCount";
 
@@ -73,13 +73,13 @@ const App = () => {
               <RectangleBox3 />
             </div>
             <div className="box1">
+              <RectangleBox />
+            </div>
+            <div className="box1">
               <RectangleBox2 />
             </div>
             <div className="box1">
               <RectangleBox1 />
-            </div>
-            <div className="box1">
-              <RectangleBox />
             </div>
           </div>
         </div>

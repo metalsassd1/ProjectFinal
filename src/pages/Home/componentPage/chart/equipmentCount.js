@@ -31,7 +31,7 @@ const RectangleBox3 = () => {
     >
       {/* Check if data exists before displaying */}
       {data ? (
-        <p>{`Combined Count: ${data.combinedCount}`}</p>
+        <p>{`จำนวนอุปกรณ์ทั้งหมด : ${data.combinedCount}`}</p>
       ) : (
         <p>Loading data...</p>
       )}

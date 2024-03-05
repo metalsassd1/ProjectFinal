@@ -6,7 +6,7 @@ const RectangleBox1 = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:4000/api/home/UesrLentTotal")
+      .get("http://localhost:4000/api/home/returnedCount")
       .then((response) => {
         console.log("Data from API:", response.data);
         setData(response.data);
@@ -42,7 +42,7 @@ const RectangleBox1 = () => {
     >
       {/* Check if data exists before displaying */}
       {data ? (
-        <p>{`totalUsers: ${data.totalUsers}`}</p>
+        <p>{`จำนวนการคืนทั้งหมด : ${data.returnedCount}`}</p>
       ) : (
         <p>Loading data...</p>
       )}

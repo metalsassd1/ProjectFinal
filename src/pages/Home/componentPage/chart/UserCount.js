@@ -41,7 +41,11 @@ const RectangleBox = () => {
       }}
     >
       {/* Check if data exists before displaying */}
-      {data ? <p>{`User Count: ${data.userCount}`}</p> : <p>Loading data...</p>}
+      {data ? (
+        <p>{`ผู้ใช้ทั้งหมด : ${data.userCount}`}</p>
+      ) : (
+        <p>Loading data...</p>
+      )}
     </div>
   );
 };

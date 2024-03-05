@@ -41,7 +41,11 @@ const RectangleBox2 = () => {
       }}
     >
       {/* Check if data exists before displaying */}
-      {data ? <p>{`totalLend: ${data.totalLend}`}</p> : <p>Loading data...</p>}
+      {data ? (
+        <p>{`จำนวนการยืมทั้งหมด : ${data.totalLend}`}</p>
+      ) : (
+        <p>Loading data...</p>
+      )}
     </div>
   );
 };

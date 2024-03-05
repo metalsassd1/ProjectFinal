@@ -48,12 +48,11 @@ const MyTable = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>ID</TableCell>
             <TableCell>Username</TableCell>
-            <TableCell>Password</TableCell>
             <TableCell>Email</TableCell>
-            <TableCell>Registration Date</TableCell>
-            <TableCell>Last Login Date</TableCell>
+            <TableCell>Registration date</TableCell>
+            <TableCell>Last login</TableCell>
             <TableCell>
               <Button
                 variant="contained"
@@ -68,12 +67,11 @@ const MyTable = () => {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.user_id}>
-              <TableCell>{row.name || "N/A"}</TableCell>
+              <TableCell>{row.user_id}</TableCell>
               <TableCell>{row.username}</TableCell>
-              <TableCell>{row.password}</TableCell>
               <TableCell>{row.email}</TableCell>
               <TableCell>{row.registration_date}</TableCell>
-              <TableCell>{row.last_login_date}</TableCell>
+              <TableCell>{row.last_login}</TableCell>
               <TableCell>
                 <Button
                   variant="contained"

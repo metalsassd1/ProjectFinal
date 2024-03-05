@@ -29,9 +29,9 @@ const MyTable = () => {
     fetchData();
   }, []); // useEffect with [] to fetch data only once when the component mounts
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Available":
+  const getStatusColor = (loan_status) => {
+    switch (loan_status) {
+      case "Returned":
         return "green";
       case "Borrowed":
         return "orange";
@@ -53,29 +53,30 @@ const MyTable = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Equipment Name</TableCell>
-            <TableCell>Quantity</TableCell>
-            <TableCell>Equipment Type</TableCell>
-            <TableCell>Borrower</TableCell>
-            <TableCell>Loan Date</TableCell>
-            <TableCell>Return Date</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell></TableCell>
+            <TableCell>ID</TableCell>
+            <TableCell>ชื่ออุปกรณ์</TableCell>
+            <TableCell>จำนวน</TableCell>
+            <TableCell>ประเภท</TableCell>
+            <TableCell>ผู้ยืม</TableCell>
+            <TableCell>วันที่ยืม</TableCell>
+            <TableCell>วันที่คืน</TableCell>
+            <TableCell>สถานะ</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
+              <TableCell>{row.loan_id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
-              <TableCell>{row.quantity}</TableCell>
+              <TableCell>{row.quantity_borrowed}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
-              <TableCell>{row.loan_date}</TableCell>
+              <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
               <TableCell>
                 <div
                   style={{
-                    backgroundColor: getStatusColor(row.status),
+                    backgroundColor: getStatusColor(row.loan_status),
                     width: "20px",
                     height: "20px",
                     borderRadius: "50%",
@@ -83,7 +84,7 @@ const MyTable = () => {
                     marginRight: "5px",
                   }}
                 />
-                {row.status}
+                {row.loan_status}
               </TableCell>
               <TableCell>
                 <Button
