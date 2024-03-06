@@ -39,8 +39,23 @@ const MyTable = () => {
     // Implement edit functionality using id
   };
 
-  const handleDelete = (id) => {
-    // Implement delete functionality using id
+  const handleDelete = async (id) => {
+    const isConfirmed = window.confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?");
+
+    if (isConfirmed) {
+      try {
+        await axios.delete(
+          `http://localhost:4000/api/recreational/delete/${id}`
+        );
+        // หลังจากลบข้อมูลสำเร็จ สามารถทำการ fetch ข้อมูลใหม่เพื่ออัปเดตหน้าตาราง
+        const response = await axios.get(
+          "http://localhost:4000/api/recreational/table"
+        );
+        setRows(response.data);
+      } catch (error) {
+        console.error("Error deleting data:", error);
+      }
+    }
   };
 
   return (
@@ -88,7 +103,7 @@ const MyTable = () => {
                   variant="contained"
                   color="secondary"
                   style={{ marginLeft: 10 }}
-                  onClick={() => handleDelete(row.recreational_id)}
+                  onClick={() => handleDelete(row.id)}
                 >
                   ลบ
                 </Button>

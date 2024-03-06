@@ -39,8 +39,21 @@ const MyTable = () => {
     // Implement edit functionality using userId
   };
 
-  const handleDelete = (userId) => {
-    // Implement delete functionality using userId
+  const handleDelete = async (id) => {
+    const isConfirmed = window.confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?");
+
+    if (isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:4000/api/user/delete/${id}`);
+        // หลังจากลบข้อมูลสำเร็จ สามารถทำการ fetch ข้อมูลใหม่เพื่ออัปเดตหน้าตาราง
+        const response = await axios.get(
+          "http://localhost:4000/api/user/table"
+        );
+        setRows(response.data);
+      } catch (error) {
+        console.error("Error deleting data:", error);
+      }
+    }
   };
 
   return (
@@ -66,8 +79,8 @@ const MyTable = () => {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.user_id}>
-              <TableCell>{row.user_id}</TableCell>
+            <TableRow key={row.id}>
+              <TableCell>{row.id}</TableCell>
               <TableCell>{row.username}</TableCell>
               <TableCell>{row.email}</TableCell>
               <TableCell>{row.registration_date}</TableCell>
@@ -84,7 +97,7 @@ const MyTable = () => {
                   variant="contained"
                   color="secondary"
                   style={{ marginLeft: 10 }}
-                  onClick={() => handleDelete(row.user_id)}
+                  onClick={() => handleDelete(row.id)}
                 >
                   Delete
                 </Button>

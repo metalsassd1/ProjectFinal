@@ -55,7 +55,17 @@ const MyTable = () => {
       }
     }
   };
-
+  const handleUpdate = async (id, updatedData) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:4000/api/sport/update/${id}`,
+        updatedData
+      );
+      console.log(response.data); // Log the response, or handle it as needed
+    } catch (error) {
+      console.error("Error updating data:", error);
+    }
+  };
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -93,7 +103,7 @@ const MyTable = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleEdit(row.ID)}
+                  onClick={() => handleEdit(row.id)}
                 >
                   แก้ไข
                 </Button>
@@ -101,7 +111,7 @@ const MyTable = () => {
                   variant="contained"
                   color="secondary"
                   style={{ marginLeft: 10 }}
-                  onClick={() => handleDelete(row.ID)}
+                  onClick={() => handleDelete(row.id)}
                 >
                   ลบ
                 </Button>
