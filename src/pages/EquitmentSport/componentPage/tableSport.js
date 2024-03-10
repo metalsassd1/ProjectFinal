@@ -11,9 +11,14 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import ModalAddPage from "../../../components/addPage/addPage";
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleOpen = () => setModalOpen(true);
+  const handleClose = () => setModalOpen(false);
   const navigate = useNavigate();
 
   const handleRedirect = (path) => {
@@ -79,13 +84,18 @@ const MyTable = () => {
             <TableCell>อัพเดทล่าสุด</TableCell>
             <TableCell>หมายเหตุ</TableCell>
             <TableCell>
-              <Button
+            <Button
                 variant="contained"
                 color="primary"
-                onClick={() => handleRedirect("/2/add")}
+                onClick={handleOpen}
               >
                 เพิ่มข้อมูล
               </Button>
+              <ModalAddPage 
+              open={modalOpen} 
+              handleClose={handleClose}
+              label={"อุปกรณ์กีฬา"}
+              />
             </TableCell>
           </TableRow>
         </TableHead>

@@ -9,17 +9,6 @@ const SearchBar = ({ onSearch, onFilter1, onFilter2 }) => {
     }
   };
 
-  const handleFilter1 = () => {
-    if (onFilter1) {
-      onFilter1();
-    }
-  };
-
-  const handleFilter2 = () => {
-    if (onFilter2) {
-      onFilter2();
-    }
-  };
 
   return (
     <div style={styles.container}>
@@ -32,12 +21,6 @@ const SearchBar = ({ onSearch, onFilter1, onFilter2 }) => {
       />
       <button onClick={handleSearch} style={styles.button}>
         Search
-      </button>
-      <button onClick={handleFilter1} style={styles.filterButton}>
-        Filter 1
-      </button>
-      <button onClick={handleFilter2} style={styles.filterButton}>
-        Filter 2
       </button>
     </div>
   );

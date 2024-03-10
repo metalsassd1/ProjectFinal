@@ -19,7 +19,7 @@ const MenuProps = {
 };
 
 // คอมโพเนนต์ที่สามารถรับ props เพื่อแสดงรายการตัวเลือก
-export default function MultipleSelectCheckmarks({ names, onSelectionChange  }) {
+export default function MultipleSelectCheckmarks({ names, onSelectionChange,label  }) {
   const [personName, setPersonName] = useState([]);
 
   const handleChange = (event) => {
@@ -34,7 +34,7 @@ export default function MultipleSelectCheckmarks({ names, onSelectionChange  }) 
   return (
     <div>
       <FormControl sx={{ m: 1, width: 300 }}>
-        <InputLabel id="demo-multiple-checkbox-label">หัวข้อ</InputLabel>
+        <InputLabel id="demo-multiple-checkbox-label">{label}</InputLabel>
         <Select
           labelId="demo-multiple-checkbox-label"
           id="demo-multiple-checkbox"

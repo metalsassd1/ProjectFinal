@@ -10,15 +10,15 @@ import {
   Paper,
   Button,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import ModalAddPage from "../../../components/addPage/addPageCustoms";
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
-  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const handleRedirect = (path) => {
-    navigate(path);
-  };
+  const handleOpen = () => setModalOpen(true);
+  const handleClose = () => setModalOpen(false);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,18 +62,23 @@ const MyTable = () => {
         <TableHead>
           <TableRow>
             <TableCell>ID</TableCell>
-            <TableCell>Username</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Registration date</TableCell>
-            <TableCell>Last login</TableCell>
+            <TableCell>ชื่อผู้ใช้</TableCell>
+            <TableCell>password</TableCell>
+            <TableCell>วันที่นำเข้า</TableCell>
+            <TableCell>วันที่อัพเดตล่าสุด</TableCell>
             <TableCell>
-              <Button
+            <Button
                 variant="contained"
                 color="primary"
-                onClick={() => handleRedirect("/4/add")}
+                onClick={handleOpen}
               >
-                Add User
+                เพิ่มข้อมูล
               </Button>
+              <ModalAddPage 
+              open={modalOpen} 
+              handleClose={handleClose}
+              label={"อุปกรณ์กีฬา"}
+              />
             </TableCell>
           </TableRow>
         </TableHead>
