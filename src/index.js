@@ -10,12 +10,13 @@ import UserMan from "./pages/UserMan/User.js";
 import Report from "./pages/report/Report.js";
 import AddpageEq from "./pages/EquitmentSport/supPage/addPage.js";
 import Emailsener from "./pages/EmailJs/rotueTheme.js";
-
+import Borrower from "./pages/Borrower/index.js";
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/borrower" element={<Borrower />} />
         <Route path="/1" element={<Manage />} />
         <Route path="/2" element={<EquipmentMan />} />
         <Route path="/2/add" element={<AddpageEq />} />
