@@ -11,7 +11,7 @@ import {
   Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import ModalAddPage from "../../../components/addPage/addPage";
+import ModalAddPage from "../../../components/modalComponent/addPage";
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);

@@ -10,7 +10,7 @@ import {
   Paper,
   Button,
 } from "@mui/material";
-import ModalAddPage from "../../../components/addPage/addPageCustoms";
+import ModalAddPage from "../../../components/modalComponent/addPageCustoms";
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
