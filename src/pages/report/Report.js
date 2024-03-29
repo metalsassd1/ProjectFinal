@@ -4,6 +4,7 @@ import Sidebar from "../../components/navigatorbar";
 import TableReport from "./componentPage/tableReport";
 import Barchart from "./componentPage/barChart";
 import Piechart from "./componentPage/pieChart";
+import * as XLSX from 'xlsx';
 
 function ReportPage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -11,6 +12,20 @@ function ReportPage(params) {
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  const exportToExcel=(data,sheetName,fileName)=>{
+    //workbook
+    const workbook = XLSX.utils.book_new();
+
+    //converworksheet
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    //add workbook
+    XLSX.utils.book_append_sheet(workbook,worksheet,sheetName);
+    
+    XLSX.writeFile(workbook,`${fileName}.xlsx`);
+  };
+
 
   const chartContainerStyle = {
     display: 'flex',
@@ -53,7 +68,9 @@ function ReportPage(params) {
           <Piechart />
         </div>
         <div className="tableHome">
-          <TableReport />
+          <TableReport 
+          exportToExcel={exportToExcel}
+          />
         </div>
       </div>
     </div>

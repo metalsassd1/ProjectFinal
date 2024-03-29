@@ -77,7 +77,7 @@ const MyTable = () => {
               <ModalAddPage 
               open={modalOpen} 
               handleClose={handleClose}
-              label={"อุปกรณ์กีฬา"}
+              label={"ผู้ใช้"}
               />
             </TableCell>
           </TableRow>

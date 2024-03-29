@@ -8,10 +8,97 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Button,
+  TextField
 } from "@mui/material";
 
-const MyTable = () => {
+const row = [
+  {
+    id: 1,
+    equipment_name: "ฟุตบอล",
+    quantity: 25,
+    equipment_equipment_type: "New York",
+    status: "พร้อมใช้งาน",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 2,
+    equipment_name: "ฟุตบอล",
+    quantity: 30,
+    equipment_equipment_type: "Los Angeles",
+    status: "ถูกยืม",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 3,
+    equipment_name: "ฟุตบอล",
+    quantity: 22,
+    equipment_equipment_type: "Chicago",
+    status: "",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 4,
+    equipment_name: "ฟุตบอล",
+    quantity: 30,
+    equipment_equipment_type: "Los Angeles",
+    status: "ถูกยืม",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 5,
+    equipment_name: "ฟุตบอล",
+    quantity: 22,
+    equipment_equipment_type: "Chicago",
+    status: "หายไป",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 6,
+    equipment_name: "ฟุตบอล",
+    quantity: 30,
+    equipment_equipment_type: "Los Angeles",
+    status: "พร้อมใช้งาน",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 7,
+    equipment_name: "ฟุตบอล",
+    quantity: 22,
+    equipment_equipment_type: "Chicago",
+    status: "ถูกยืม",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+  {
+    id: 8,
+    equipment_name: "ฟุตบอล",
+    quantity: 22,
+    equipment_equipment_type: "Chicago",
+    status: "",
+    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
+    loan_date: "10/12/23",
+    return_date: "1/10/27",
+  },
+];
+
+const MyTable = ({exportToExcel}) => {
   const [rows, setRows] = useState([]);
+  const [showInputBox, setShowInputBox] = useState(false);
+  const [fileName, setFileName] = useState('Report');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +115,24 @@ const MyTable = () => {
     fetchData();
   }, []); // ในที่นี้ใส่ [] เพื่อให้ useEffect ทำงานเพียงครั้งเดียวเมื่อ component ถูก mount
 
+   // Handler to show the input box and initiate export process
+   const handleExportClick = () => {
+    setShowInputBox(true); 
+  };
+
+  // Handler for the final export action
+  const handleFinalExport = () => {
+    exportToExcel(rows, 'EquipmentData', fileName);
+    setShowInputBox(false); // Hide input box after export
+    setFileName('Report'); 
+  };
+
+  // Handler to cancel the export process
+  const handleCancel = () => {
+    setShowInputBox(false); // Hide input box
+    setFileName('Report'); 
+  };
+  
   return (
     <TableContainer component={Paper}>
       <h2 style={{ textAlign: "center" }}>
@@ -46,7 +151,7 @@ const MyTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {row.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.equipment_name}</TableCell>
               <TableCell>{row.quantity}</TableCell>
@@ -59,6 +164,27 @@ const MyTable = () => {
           ))}
         </TableBody>
       </Table>
+      {showInputBox && (
+        <div>
+          <TextField
+            label="File Name"
+            variant="outlined"
+            size="small"
+            value={fileName}
+            onChange={(e) => setFileName(e.target.value)} // Update fileName on change
+            style={{ marginRight: '10px' }}
+          />
+          <Button variant="contained" color="primary" onClick={handleFinalExport} style={{ marginRight: '10px' }}>
+            Confirm Export
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </div>
+      )}
+      {!showInputBox && (
+        <Button onClick={handleExportClick}>Export to Excel</Button>
+      )}
     </TableContainer>
   );
 };
