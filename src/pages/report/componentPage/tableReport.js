@@ -167,7 +167,7 @@ const MyTable = ({exportToExcel}) => {
       {showInputBox && (
         <div>
           <TextField
-            label="File Name"
+            label="ชื่อไฟล์"
             variant="outlined"
             size="small"
             value={fileName}
@@ -175,10 +175,10 @@ const MyTable = ({exportToExcel}) => {
             style={{ marginRight: '10px' }}
           />
           <Button variant="contained" color="primary" onClick={handleFinalExport} style={{ marginRight: '10px' }}>
-            Confirm Export
+            ยืนยัน
           </Button>
           <Button variant="outlined" color="secondary" onClick={handleCancel}>
-            Cancel
+            ยกเลิก
           </Button>
         </div>
       )}

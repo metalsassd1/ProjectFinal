@@ -9,6 +9,7 @@ import Report from './pages/report/Report.js';
 import AddpageEq from './pages/EquitmentSport/supPage/addPage.js';
 import Emailsener from './pages/EmailJs/rotueTheme.js';
 import Borrower from './pages/Borrower/index.js';
+import MainPageUser from './pages/MainPageUser/mainPage.js'
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
         <Route path="/4" element={<UserMan />} />
         <Route path="/5" element={<Report />} />
         <Route path="/Sender" element={<Emailsener />} />
+        <Route path="/MainPage" element={<MainPageUser />} />
       </Routes>
     </Router>
   );
