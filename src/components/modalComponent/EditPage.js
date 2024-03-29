@@ -1,27 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Box, Typography, Button, TextField, Paper } from "@mui/material";
 import axios from "axios";
+import MultipleSelectCheckmarks from '../dropdown'; // Import the dropdown component
 
-const CustomModal = ({ open, handleClose, label, user }) => {
+const CustomModal = ({ open, handleClose, user,label }) => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     full_name: "",
     email: "",
-    is_admin: false,
+    is_admin: [],
   });
 
   useEffect(() => {
     if (user) {
       setFormData({
         username: user.username || "",
-        password: user.password || "",
+        password: user.password || "", // For security, consider not prefilling passwords
         full_name: user.full_name || "",
         email: user.email || "",
-        is_admin: user.is_admin || false,
+        is_admin: user.is_admin ? ['Admin'] : ['User'], // Set the dropdown based on the is_admin boolean
       });
     }
   }, [user]);
+
+  const handleRoleChange = (selectedRoles) => {
+    // Update the formData to reflect the changes in role
+    setFormData(prevState => ({
+      ...prevState,
+      is_admin: selectedRoles.includes('Admin')
+    }));
+  };
 
   const handleChangeinput = (e) => {
     const { name, value } = e.target;
@@ -58,13 +67,13 @@ const CustomModal = ({ open, handleClose, label, user }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 400,
+          width: "80%",
           bgcolor: "background.paper",
           boxShadow: 24,
           p: 4,
         }}
       >
-        <h1>{label}</h1>
+        <Typography id="modal-modal-title" variant="h4" component="h1">แก้ไข{label}</Typography>
         <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
           <form onSubmit={handleSubmit}>
             <TextField
@@ -103,8 +112,13 @@ const CustomModal = ({ open, handleClose, label, user }) => {
               style={{ margin: "0.5rem" }}
               fullWidth
             />
+            <MultipleSelectCheckmarks
+            names={['Admin', 'User']}
+            onSelectionChange={handleRoleChange}
+            label="Role"
+          />
             <Box textAlign="center" my={2}>
-              <Button type="submit" variant="contained" color="primary">
+              <Button type="submit" variant="contained" color="success">
                 บันทึก
               </Button>
             </Box>

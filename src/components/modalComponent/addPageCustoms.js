@@ -17,7 +17,6 @@ const style = {
 export default function CustomModal({ open, handleClose, label }) {
   const nameType = ["บุคลากรภายนอก", "บุคลากรภายใน","นักศึกษา"];
   const [type, setType] = useState("");
-  const [selectedDateUpdate, setSelectedDateUpdate] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -129,18 +128,6 @@ export default function CustomModal({ open, handleClose, label }) {
               names={nameType}
               onSelectionChange={handleChange}
               label={"สถานะผู้ใช้"}
-            />
-            <TextField
-              label="วันที่อัพเดตล่าสุด"
-              type="date"
-              name="date"
-              value={selectedDateUpdate}
-              onChange={(e) => setSelectedDateUpdate(e.target.value)}
-              style={{ margin: "0.5rem" }}
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
             />
             <Box textAlign="center" my={2}>
               <Button type="submit" variant="contained" color="success">
