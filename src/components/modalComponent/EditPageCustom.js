@@ -1,34 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Box, Typography, Button, TextField, Paper } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import axios from "axios";
-import MultipleSelectCheckmarks from '../dropdown'; // Import the dropdown component
 
-const CustomModal = ({ open, handleClose, user,label }) => {
+const CustomModal = ({ open, handleClose, user, label }) => {
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  };
+
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    full_name: "",
-    email: "",
-    is_admin: [],
+    id: user?.id || "",
+    username: user?.username || "",
+    password: user?.password || "",
+    full_name: user?.full_name || "",
+    email: user?.email || "",
+    registration_date: user?.registration_date
+      ? new Date(user.registration_date).toISOString().split("T")[0]
+      : getCurrentDate(),
+    is_admin: user?.is_admin || "",
   });
 
-  useEffect(() => {
-    if (user) {
-      setFormData({
-        username: user.username || "",
-        password: user.password || "", // For security, consider not prefilling passwords
-        full_name: user.full_name || "",
-        email: user.email || "",
-        is_admin: user.is_admin ? ['Admin'] : ['User'], // Set the dropdown based on the is_admin boolean
-      });
-    }
-  }, [user]);
-
-  const handleRoleChange = (selectedRoles) => {
-    // Update the formData to reflect the changes in role
-    setFormData(prevState => ({
+  const handleRoleChange = (event) => {
+    // Assuming value is passed as a string from the dropdown, convert to number
+    const isAdminValue = event.target.value;
+    console.log(isAdminValue);
+    setFormData((prevState) => ({
       ...prevState,
-      is_admin: selectedRoles.includes('Admin')
+      is_admin: isAdminValue,
     }));
   };
 
@@ -47,8 +60,8 @@ const CustomModal = ({ open, handleClose, user,label }) => {
         `http://localhost:4000/api/user/update/${user.id}`,
         formData
       );
-      console.log(response.data); // Log response from server
-      handleClose(); // Close modal after successful submission
+      console.log(response.data);
+      handleClose();
     } catch (error) {
       console.error("Error updating data:", error);
     }
@@ -73,7 +86,9 @@ const CustomModal = ({ open, handleClose, user,label }) => {
           p: 4,
         }}
       >
-        <Typography id="modal-modal-title" variant="h4" component="h1">แก้ไข{label}</Typography>
+        <Typography id="modal-modal-title" variant="h4" component="h1">
+          แก้ไข{label}
+        </Typography>
         <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
           <form onSubmit={handleSubmit}>
             <TextField
@@ -81,6 +96,7 @@ const CustomModal = ({ open, handleClose, user,label }) => {
               variant="outlined"
               name="full_name"
               value={formData.full_name}
+              placeholder={user.full_name} // Use user data as placeholder
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
@@ -90,6 +106,7 @@ const CustomModal = ({ open, handleClose, user,label }) => {
               variant="outlined"
               name="username"
               value={formData.username}
+              placeholder={user.username} // Use user data as placeholder
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
@@ -99,6 +116,7 @@ const CustomModal = ({ open, handleClose, user,label }) => {
               variant="outlined"
               name="password"
               value={formData.password}
+              placeholder={user.password} // Use user data as placeholder
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
@@ -108,15 +126,25 @@ const CustomModal = ({ open, handleClose, user,label }) => {
               variant="outlined"
               name="email"
               value={formData.email}
+              placeholder={user.email} // Use user data as placeholder
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
             />
-            <MultipleSelectCheckmarks
-            names={['Admin', 'User']}
-            onSelectionChange={handleRoleChange}
-            label="Role"
-          />
+            <FormControl fullWidth>
+              <InputLabel id="is-admin-label">Role</InputLabel>
+              <Select
+                labelId="is-admin-label"
+                id="is-admin-select"
+                value={formData.is_admin.toString()}
+                label="Role"
+                onChange={(e) => handleRoleChange(e)}
+              >
+                <MenuItem value={"Admin"}>Admin</MenuItem>
+                <MenuItem value={"User"}>User</MenuItem>
+              </Select>
+            </FormControl>
+
             <Box textAlign="center" my={2}>
               <Button type="submit" variant="contained" color="success">
                 บันทึก
