@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Box, Typography, Button,TextField,Paper } from '@mui/material';
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  TextField,
+  Paper,
+} from "@mui/material";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import MultipleSelectCheckmarks from "../dropdown"
+import MultipleSelectCheckmarks from "../dropdown";
+import axios from "axios";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 1400,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
 };
 
-export default function CustomModal({ open, handleClose, label }) {
+export default function AddModalCentralize({ open, handleClose, label ,API}) {
   const nameType = ["อุปกรณ์นันทนาการ", "อุปกรณ์กีฬา"];
   const [type, setType] = useState("");
   const [selectedDateStore, setSelectedDateStore] = useState("");
@@ -39,11 +47,11 @@ export default function CustomModal({ open, handleClose, label }) {
     return () => clearInterval(intervalId); // Cleanup the interval on component unmount
   }, []);
 
-
   const [formData, setFormData] = useState({
     field1: "",
     field2: "",
     field3: "",
+    field4: "",
   });
 
   const handleChange = (selectedValues) => {
@@ -60,19 +68,27 @@ export default function CustomModal({ open, handleClose, label }) {
     }));
   };
 
-  // Handle photo upload
-  const handlePhotoChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      photo: e.target.files[0],
-    }));
-  };
-
   // Handle form submit
   const handleSubmit = (e) => {
     e.preventDefault();
-    // You would handle the form submission here
-    // This could involve preparing the data and sending it to an API
+    const data = {
+      equipment_name: formData.field1,
+      import_date: selectedDateStore,
+      equipment_type: formData.field2,
+      quantity_in_stock: formData.field3,
+      note: formData.field4,
+    };
+
+    const apiEndpoint = API;
+    axios
+      .post(apiEndpoint, data)
+      .then((response) => {
+        console.log("Data added successfully:", response.data);
+        handleClose(); // Close the modal on success
+      })
+      .catch((error) => {
+        console.error("Error adding data:", error);
+      });
     console.log(formData.field1);
   };
 
@@ -84,7 +100,7 @@ export default function CustomModal({ open, handleClose, label }) {
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-      <h1>เพิ่มข้อมูล{label}</h1>
+        <h1>เพิ่มข้อมูล{label}</h1>
         <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
           <form onSubmit={handleSubmit}>
             <TextField
@@ -99,7 +115,7 @@ export default function CustomModal({ open, handleClose, label }) {
             <TextField
               label="วันที่นำเข้า"
               type="date"
-              name="date"
+              name="selectedDateStore"
               value={selectedDateStore}
               onChange={(e) => setSelectedDateStore(e.target.value)}
               style={{ margin: "0.5rem" }}
@@ -108,28 +124,18 @@ export default function CustomModal({ open, handleClose, label }) {
                 shrink: true,
               }}
             />
-            <TextField
-              label="วันที่อัพเดตล่าสุด"
-              type="date"
-              name="date"
-              value={selectedDateUpdate}
-              onChange={(e) => setSelectedDateUpdate(e.target.value)}
-              style={{ margin: "0.5rem" }}
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
             <MultipleSelectCheckmarks
+              name={"field2"}
               names={nameType}
+              value={formData.field2}
               onSelectionChange={handleChange}
               label={"ประเภท"}
             />
             <TextField
               label="จำนวน"
               variant="outlined"
-              name="field2"
-              value={formData.field2}
+              name="field3"
+              value={formData.field3}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
@@ -137,8 +143,8 @@ export default function CustomModal({ open, handleClose, label }) {
             <TextField
               label="หมายเหตุ"
               variant="outlined"
-              name="field3"
-              value={formData.field3}
+              name="field4"
+              value={formData.field4}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth

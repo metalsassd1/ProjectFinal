@@ -25,7 +25,7 @@ const style = {
   p: 4,
 };
 
-export default function CustomModal({ open, handleClose, label, user }) {
+export default function CustomAddModal({ open, handleClose, label, user }) {
   const nameType = ["Admin", "not_Admin"];
   const [type, setType] = useState("");
 

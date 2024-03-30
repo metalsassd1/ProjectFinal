@@ -12,8 +12,12 @@ import {
   MenuItem,
 } from "@mui/material";
 import axios from "axios";
+import MultipleSelectCheckmarks from "../dropdown";
 
-const CustomEdirModal = ({ open, handleClose, user, label }) => {
+const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
+  const nameType = ["อุปกรณ์นันทนาการ", "อุปกรณ์กีฬา"];
+  const [type, setType] = useState("");
+
   const getCurrentDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -24,25 +28,17 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
   };
 
   const [formData, setFormData] = useState({
-    id: user?.id || "",
-    username: user?.username || "",
-    password: user?.password || "",
-    full_name: user?.full_name || "",
-    email: user?.email || "",
-    registration_date: user?.registration_date
-      ? new Date(user.registration_date).toISOString().split("T")[0]
-      : getCurrentDate(),
-    is_admin: user?.is_admin || "",
+    field1: storeData?.equipment_name || "",
+    field2: storeData?.quantity_in_stock || "",
+    field3: storeData?.equipment_type || "",
+    field4: storeData?.note || "",
+    field5: storeData?.last_update || "",
+    field6: getCurrentDate(),
   });
 
-  const handleRoleChange = (event) => {
-    // Assuming value is passed as a string from the dropdown, convert to number
-    const isAdminValue = event.target.value;
-    console.log(isAdminValue);
-    setFormData((prevState) => ({
-      ...prevState,
-      is_admin: isAdminValue,
-    }));
+  const handleChange = (selectedValues) => {
+    console.log("Accessing storeData data:", storeData);
+    setType(selectedValues);
   };
 
   const handleChangeinput = (e) => {
@@ -51,19 +47,32 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
       ...prevState,
       [name]: value,
     }));
+
+    console.log(formData.field1);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const DataItem = {
+      equipment_name: formData.field1,
+      quantity_in_stock: formData.field2,
+      equipment_type: type,
+      note: formData.field4,
+      last_update: formData.field6,
+    };
+
+    // Construct the API endpoint with the storeData id
+    const apiEndpoint = `${API}/${storeData.id}`;
+
     try {
-      const response = await axios.put(
-        `http://localhost:4000/api/user/update/${user.id}`,
-        formData
-      );
+      const response = await axios.put(apiEndpoint, DataItem);
       console.log(response.data);
       handleClose();
+      // console.log(apiEndpoint)
     } catch (error) {
       console.error("Error updating data:", error);
+      console.log(formData.field1);
     }
   };
 
@@ -92,59 +101,47 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
         <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
           <form onSubmit={handleSubmit}>
             <TextField
-              label="ชื่อ-นามสกุล"
+              label="ชื่ออุปกรณ์"
               variant="outlined"
-              name="full_name"
-              value={formData.full_name}
-              placeholder={user.full_name} // Use user data as placeholder
+              name="field1"
+              value={formData.field1}
+              placeholder={storeData.equipment_name} // Use storeData data as placeholder
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
             />
             <TextField
-              label="ชื่อผู้ใช้"
+              label="จำนวน"
               variant="outlined"
-              name="username"
-              value={formData.username}
-              placeholder={user.username} // Use user data as placeholder
+              name="field2"
+              value={formData.field2}
+              placeholder={storeData.quantity_in_stock} // Use storeData data as placeholder
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
             />
             <TextField
-              label="รหัสผ่าน"
+              label="หมายเหตุ"
               variant="outlined"
-              name="password"
-              value={formData.password}
-              placeholder={user.password} // Use user data as placeholder
+              name="field4"
+              value={formData.field4}
+              placeholder={storeData.note} // Use storeData data as placeholder
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
             />
             <TextField
-              label="Email"
-              variant="outlined"
-              name="email"
-              value={formData.email}
-              placeholder={user.email} // Use user data as placeholder
-              onChange={handleChangeinput}
-              style={{ margin: "0.5rem" }}
+              label={"วันอัพเดตล่าสุด :" + storeData.last_update}
               fullWidth
+              disabled
             />
-            <FormControl fullWidth>
-              <InputLabel id="is-admin-label">Role</InputLabel>
-              <Select
-                labelId="is-admin-label"
-                id="is-admin-select"
-                value={formData.is_admin.toString()}
-                label="Role"
-                onChange={(e) => handleRoleChange(e)}
-              >
-                <MenuItem value={"Admin"}>Admin</MenuItem>
-                <MenuItem value={"User"}>User</MenuItem>
-              </Select>
-            </FormControl>
-
+            <MultipleSelectCheckmarks
+              name={"field3"}
+              names={nameType}
+              value={formData.field3}
+              onSelectionChange={handleChange}
+              label={"ประเภท"}
+            />
             <Box textAlign="center" my={2}>
               <Button type="submit" variant="contained" color="success">
                 บันทึก
@@ -157,4 +154,4 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
   );
 };
 
-export default CustomEdirModal;
+export default EditModalCentralize;

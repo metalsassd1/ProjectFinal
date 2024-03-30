@@ -12,36 +12,49 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ModalAddPage from "../../../components/modalComponent/addPage";
+import EditModal from "../../../components/modalComponent/EditPage"
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [selectedRec, setSelectedRec] = useState(null);
 
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
   const navigate = useNavigate();
 
+  const addAPI = "http://localhost:4000/api/recreational/add"
+  const editAPI = "http://localhost:4000/api/recreational/update"
+
   const handleRedirect = (path) => {
     navigate(path);
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4000/api/recreational/table"
+      );
+      setRows(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/api/recreational/table"
-        );
-        setRows(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
 
     fetchData();
   }, []);
 
-  const handleEdit = (id) => {
-    // Implement edit functionality using id
+  const handleEditOpen = (user) => {
+    console.log(user)
+    setSelectedRec(user); // Set the selected user to edit
+    setModalEditOpen(true); // Open the edit modal
+  };
+
+  const handleEditClose = () => {
+    setModalEditOpen(false);
+    fetchData(); // Refresh data after closing the modal
   };
 
   const handleDelete = async (id) => {
@@ -87,6 +100,7 @@ const MyTable = () => {
               open={modalOpen} 
               handleClose={handleClose}
               label={"อุปกรณ์นันทนาการ"}
+              API={addAPI}
               />
             </TableCell>
           </TableRow>
@@ -105,7 +119,7 @@ const MyTable = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleEdit(row.recreational_id)}
+                  onClick={() =>handleEditOpen(row)}
                 >
                   แก้ไข
                 </Button>
@@ -122,6 +136,15 @@ const MyTable = () => {
           ))}
         </TableBody>
       </Table>
+      {selectedRec && (
+        <EditModal
+          open={modalEditOpen}
+          handleClose={handleEditClose}
+          storeData={selectedRec}
+          label={"อุปกรณ์นันทนาการ"}
+          API={editAPI}
+        />
+      )}
     </TableContainer>
   );
 };
