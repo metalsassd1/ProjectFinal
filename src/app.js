@@ -10,13 +10,15 @@ import AddpageEq from './pages/EquitmentSport/supPage/addPage.js';
 import Emailsener from './pages/EmailJs/rotueTheme.js';
 import Borrower from './pages/Borrower/index.js';
 import MainPageUser from './pages/MainPageUser/mainPage.js'
+import ReturnTo from './pages/ReturnTo/return.js'
+import QRgen from './pages/ReturnTo/QRcodeGen.js'
 
 const App = () => {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/borrower" element={<Borrower />} />
+        <Route path="/borrower/:Ename/:Etype" element={<Borrower />} />
         <Route path="/1" element={<Manage />} />
         <Route path="/2" element={<EquipmentMan />} />
         <Route path="/2/add" element={<AddpageEq />} />
@@ -25,6 +27,8 @@ const App = () => {
         <Route path="/5" element={<Report />} />
         <Route path="/Sender" element={<Emailsener />} />
         <Route path="/MainPage" element={<MainPageUser />} />
+        <Route path="/qr" element={<QRgen />} />
+        <Route path="/return" element={<ReturnTo />} />
       </Routes>
     </Router>
   );

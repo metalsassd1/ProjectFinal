@@ -7,6 +7,10 @@ import { Box, Button } from "@mui/material";
 import { FormOptions } from "./components/FormOptions";
 import { MuiDateRangePicker } from "../../components/MuiDateRangePicker";
 import { CarTaxiFront } from "lucide-react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { serialize } from "object-to-formdata";
 
 const schema = z.object({
   borrower_name: z.string().min(1, { message: "โปรดกรอกชื่อผู้ยืม" }),
@@ -34,41 +38,88 @@ const schema = z.object({
 });
 
 export default function Borrower() {
+  const [quantity_borrowed, setQuantity_borrowed] = useState(1);
+  const { Ename, Etype } = useParams();
+  const navigate = useNavigate();
+
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       borrower_name: "",
-      equip_name: "",
+      equip_name: Ename,
       identify_id: "",
       phone: "",
-      email: "",
+      quantity_borrowed: 0,
+      duration: "",
     },
   });
   const [option, setOption] = useState("");
-  const onSubmit = (value) => {
-    console.log(value);
+
+  const handleChangeinput = (e) => {
+    setQuantity_borrowed(e.target.value);
   };
+
+  const onSubmit = async (data) => {
+    // Formatted data object if needed, or you can directly use `data`
+    const formattedData = {
+      borrower_name: data.borrower_name,
+      equipment_name: data.equip_name,
+      identification_id: data.identify_id,
+      quantity_borrowed: quantity_borrowed,
+      contact: {
+        phone: data.phone,
+        email: data.email,
+        backup_phone: data.backup_phone,
+        backup_email: data.backup_email,
+      },
+      equipment_type: Etype,
+      department: data.department,
+      branch: data.branch,
+      faculty: data.faculty,
+      options: data.options,
+      borrow_date: data.duration.start.toISOString().split("T")[0],
+      return_date: data.duration.end.toISOString().split("T")[0],
+      loan_status: "ยืม",
+    };
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/api/Borrowed/borrow",
+        formattedData
+      );
+      console.log(response.data);
+      alert("Form submitted successfully!");
+      // Handle successful form submission (e.g., clearing the form, showing a success message)
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
+      console.log("Navigating with data:", formattedData);
+
+      // Handle errors (e.g., showing an error message)
+    }
+  };
+
   function renderOrganize() {
     switch (option) {
       case "inside":
         return (
           <Box
-          display={"flex"}
-          gap={1}
-          flexDirection={{ xs: "column", sm: "row" }}
+            display={"flex"}
+            gap={1}
+            flexDirection={{ xs: "column", sm: "row" }}
           >
             <MuiInput
               control={form.control}
               name={"identify_id"}
               label={"รหัสพนักงาน / รหัสบัตรประชาชน"}
               required={true}
-              />
+            />
             <MuiInput
               control={form.control}
               name={"department"}
               label={"หน่วยงาน"}
               required={true}
-              />
+            />
           </Box>
         );
       case "outside":
@@ -77,22 +128,22 @@ export default function Borrower() {
             display={"flex"}
             flexDirection={{ xs: "column", sm: "row" }}
             gap={1}
-            >
+          >
             <MuiInput
               control={form.control}
               name={"identify_id"}
               label={"รหัสบัตรประชาชน"}
               required={true}
-              />
+            />
             <MuiInput
               control={form.control}
               name={"department"}
               label={"หน่วยงาน"}
               required={true}
-              />
+            />
           </Box>
         );
-        case "student":
+      case "student":
         return (
           <>
             <MuiInput
@@ -100,12 +151,12 @@ export default function Borrower() {
               name={"identify_id"}
               label={"รหัสนักศึกษา / รหัสบัตรประชาชน"}
               required={true}
-              />
+            />
             <Box
               display={"flex"}
               flexDirection={{ xs: "column", sm: "row" }}
               gap={1}
-              >
+            >
               <MuiInput
                 control={form.control}
                 name={"branch"}
@@ -117,11 +168,11 @@ export default function Borrower() {
                 name={"faculty"}
                 label={"คณะ"}
                 required={true}
-                />
+              />
             </Box>
           </>
         );
-        default:
+      default:
         return (
           <Box display={"flex"} gap={1}>
             <MuiInput
@@ -129,7 +180,7 @@ export default function Borrower() {
               name={"identify_id"}
               label={"รหัสบัตรประชาชน"}
               required={true}
-              />
+            />
             <MuiInput
               control={form.control}
               name={"department"}
@@ -163,6 +214,7 @@ export default function Borrower() {
   useEffect(() => {
     if (form.formState.errors) {
       console.log(form.formState.errors);
+      console.log(Ename);
     }
   }, [form.formState.errors]);
   return (
@@ -183,13 +235,30 @@ export default function Borrower() {
           width="100%"
           gap="1rem" // Changed sx gap to shorthand
         >
-          <MuiInput
-            control={form.control}
-            name={"equip_name"}
-            label={"ชื่ออุปกรณ์"}
-            fullWidth
-            required={true}
-          />
+          <Box
+            display={"flex"}
+            flexDirection={{ xs: "column", sm: "row" }} // Flex direction changes on small screens
+            gap={{ xs: 1, sm: 1 }} // No gap on small screens, 1rem gap on larger screens
+            width={"100%"}
+          >
+            <MuiInput
+              control={form.control}
+              name={"equip_name"}
+              label={"ชื่ออุปกรณ์"}
+              fullWidth
+              required={true}
+            />
+            <MuiInput
+              control={form.control}
+              name="quantity_borrowed"
+              type="number"
+              min="1" // Minimum value
+              max="100" // Maximum value
+              label="จำนวน"
+              fullWidth
+              required={true}
+            />
+          </Box>
           <MuiDateRangePicker
             control={form.control}
             name={"duration"}

@@ -17,26 +17,29 @@ const MyTable = ({exportToExcel}) => {
   const [rows, setRows] = useState([]);
   const [showInputBox, setShowInputBox] = useState(false);
   const [fileName, setFileName] = useState('Report');
+  const [resData,setResdata] = useState('');
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:4000/api/home/management"
+      );
+      setRows(response.data); // setRows เพื่ออัพเดท state rows
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4000/api/home/management"
-        );
-        setRows(response.data); // setRows เพื่ออัพเดท state rows
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchData();
-  }, []); // ในที่นี้ใส่ [] เพื่อให้ useEffect ทำงานเพียงครั้งเดียวเมื่อ component ถูก mount
+}, []); 
 
    // Handler to show the input box and initiate export process
    const handleExportClick = () => {
     setShowInputBox(true); 
   };
+
+ 
 
   // Handler for the final export action
   const handleFinalExport = () => {
@@ -72,12 +75,12 @@ const MyTable = ({exportToExcel}) => {
           {rows.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.equipment_name}</TableCell>
-              <TableCell>{row.quantity}</TableCell>
+              <TableCell>{row.quantity_borrowed}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
-              <TableCell>{row.loan_date}</TableCell>
+              <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
-              <TableCell>{row.status}</TableCell>
+              <TableCell>{row.loan_status}</TableCell>
             </TableRow>
           ))}
         </TableBody>

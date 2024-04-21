@@ -57,15 +57,6 @@ const MyPage = () => {
         />
         <TableMain />
       </div>
-      <div className="submit-but">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate("/borrower")}
-        >
-          ยืม
-        </Button>
-      </div>
     </div>
   );
 };

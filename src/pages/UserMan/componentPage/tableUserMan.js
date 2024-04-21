@@ -96,7 +96,7 @@ const MyTable = () => {
               <TableCell>{row.email}</TableCell>
               <TableCell>{row.password}</TableCell>
               <TableCell>{row.registration_date}</TableCell>
-              <TableCell>{row.last_login}</TableCell>
+              <TableCell>{row.last_update}</TableCell>
               <TableCell>{getRoleLabel(row.is_admin)}</TableCell>
               <TableCell>
                 <Button

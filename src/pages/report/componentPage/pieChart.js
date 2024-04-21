@@ -11,6 +11,7 @@ const CustomPieChart = () => {
         const response = await axios.get(
           "http://localhost:4000/api/home/management"
         );
+        console.log("Equipment Data:", response.data); // Debugging line
         setEquipmentData(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -18,9 +19,10 @@ const CustomPieChart = () => {
     };
 
     fetchData();
-  }, []); // useEffect ทำงานเพียงครั้งเมื่อ component ถูก mount
+  }, []);
 
-  // Assuming you want to show the count of equipment based on their status
+  if (equipmentData.length === 0) return <p>Loading data...</p>; // Handling no data
+
   const statusCounts = {
     พร้อมใช้งาน: 0,
     ถูกยืม: 0,
@@ -41,6 +43,8 @@ const CustomPieChart = () => {
     name: status,
     value: count,
   }));
+
+  console.log("Pie Data:", pieData); // Debugging line
 
   return (
     <PieChart width={500} height={370}>

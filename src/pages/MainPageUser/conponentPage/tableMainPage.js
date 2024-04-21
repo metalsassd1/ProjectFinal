@@ -9,99 +9,52 @@ import {
   TableRow,
   Paper,
   TextField,
+  Button,
 } from "@mui/material";
 import Searchfillter from "./SearchFillter";
+import { useNavigate } from "react-router-dom";
 
-// ... (import statements)
-
-const row = [
+const mockData = [
   {
     id: 1,
-    equipment_name: "ฟุตบอล",
-    quantity: 25,
-    equipment_equipment_type: "New York",
-    status: "Returned",
-    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-    loan_date: "10/12/23",
-    return_date: "1/10/27",
+    equipment_name: "Treadmill",
+    quantity_in_stock: 5,
+    quantity_borrowed: 1,
+    equipment_type: "Recreational",
+    return_date: "2024-05-20",
+    loan_status: "Borrowed"
   },
   {
     id: 2,
-    equipment_name: "ฟุตบอล",
-    quantity: 30,
-    equipment_equipment_type: "Los Angeles",
-    status: "Borrowed",
-    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-    loan_date: "10/12/23",
-    return_date: "1/10/27",
+    equipment_name: "Yoga Mat",
+    quantity_in_stock: 10,
+    quantity_borrowed: 2,
+    equipment_type: "Sport",
+    return_date: "2024-06-15",
+    loan_status: "Returned"
   },
   {
     id: 3,
-    equipment_name: "ฟุตบอล",
-    quantity: 22,
-    equipment_equipment_type: "Chicago",
-    status: "",
-    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-    loan_date: "10/12/23",
-    return_date: "1/10/27",
+    equipment_name: "Basketball",
+    quantity_in_stock: 15,
+    quantity_borrowed: 3,
+    equipment_type: "Sport",
+    return_date: "2024-07-10",
+    loan_status: "Borrowed"
   },
-  {
-    id: 4,
-    equipment_name: "ฟุตบอล",
-    quantity: 30,
-    equipment_equipment_type: "Los Angeles",
-    status: "Borrowed",
-    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-    loan_date: "10/12/23",
-    return_date: "1/10/27",
-  },
-  {
-    id: 5,
-    equipment_name: "ฟุตบอล",
-    quantity: 22,
-    equipment_equipment_type: "Chicago",
-    status: "หายไป",
-    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-    loan_date: "10/12/23",
-    return_date: "1/10/27",
-  },
-  {
-    id: 6,
-    equipment_name: "ฟุตบอล",
-    quantity: 30,
-    equipment_equipment_type: "Los Angeles",
-    status: "Returned",
-    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-    loan_date: "10/12/23",
-    return_date: "1/10/27",
-  },
-  {
-    id: 7,
-    equipment_name: "ฟุตบอล",
-    quantity: 22,
-    equipment_equipment_type: "Chicago",
-    status: "Borrowed",
-    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-    loan_date: "10/12/23",
-    return_date: "1/10/27",
-  },
-  {
-    id: 8,
-    equipment_name: "ฟุตบอล",
-    quantity: 22,
-    equipment_equipment_type: "Chicago",
-    status: "Returned",
-    borrower_name: "คฤจพัชหัสฤทัย คชามาสผจญ",
-    loan_date: "10/12/23",
-    return_date: "1/10/27",
-  },
+  // ... more items ...
 ];
 
+
 const MyTable = ({}) => {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState(mockData);
+  const [resData, setResdata] = useState([]);
+  const [displayedRows, setDisplayedRows] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch your initial data
+    fetchStock();
     fetchData();
   }, []);
 
@@ -111,30 +64,36 @@ const MyTable = ({}) => {
         "http://localhost:4000/api/home/management"
       );
       setRows(response.data);
+      setDisplayedRows(response.data); // Initialize displayedRows with fetched data
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchStock = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:4000/api/home/getStock`
+      );
+      setResdata(response.data);
+      console.log(resData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
   const handleSearch = (searchTerm) => {
-    // Implement your search logic here. This can be an API call or a local filter.
-    // Example of a local filter:
     const filteredRows = rows.filter((row) =>
       row.equipment_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setRows(filteredRows);
-
-    // If it's an API call, you would do something like this:
-    // axios.get(`http://localhost:4000/api/search?term=${searchTerm}`).then(response => {
-    //   setRows(response.data);
-    // });
+    setDisplayedRows(filteredRows); // Update displayedRows with filtered results
   };
 
   const getStatusColor = (loan_status) => {
     switch (loan_status) {
-      case "Returned":
+      case "คืน":
         return "green";
-      case "Borrowed":
+      case "ยืม":
         return "orange";
       default:
         return "gray";
@@ -154,50 +113,56 @@ const MyTable = ({}) => {
               <TableCell>ID</TableCell>
               <TableCell>ชื่ออุปกรณ์</TableCell>
               <TableCell>จำนวนคงเหลือ</TableCell>
-              <TableCell>ประเภท</TableCell>
               <TableCell>จำนวน</TableCell>
+              <TableCell>ประเภท</TableCell>
               <TableCell>วันที่นำเข้า</TableCell>
               <TableCell>สถานะ</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {row.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.loan_id}</TableCell>
-                <TableCell>{row.equipment_name}</TableCell>
-                <TableCell>{row.quantity_borrowed}</TableCell>
-                <TableCell>{row.equipment_type}</TableCell>
-                <TableCell>{row.return_date}</TableCell>
-                <TableCell>
-                  <div
-                    style={{
-                      borderRadius: "20%",
-                      display: "inline-block",
-                    }}
-                  >
-                    <TextField
-                      label="ระบุ"
-                      size="small" // Makes the TextField smaller
-                      variant="outlined" // Gives it an outlined look
-                      style={{ width: "80px" }} // Adjust the width as needed
+            {rows.map((row) => {
+              // Find the corresponding stock data for this row
+              const stockItem = resData.find(
+                (item) => item.equipment_name === row.equipment_name
+              );
+
+              return (
+                <TableRow key={row.id}>
+                  <TableCell>{row.id}</TableCell>
+                  <TableCell>{row.equipment_name}</TableCell>
+                  <TableCell>
+                    {stockItem ? stockItem.quantity_in_stock : "N/A"}
+                  </TableCell>
+                  <TableCell>{row.quantity_borrowed}</TableCell>
+                  <TableCell>{row.equipment_type}</TableCell>
+                  <TableCell>{row.return_date}</TableCell>
+                  <TableCell>
+                    <div
+                      style={{
+                        backgroundColor: getStatusColor(row.loan_status),
+                        width: "20px",
+                        height: "20px",
+                        borderRadius: "50%",
+                        display: "inline-block",
+                        marginRight: "5px",
+                      }}
                     />
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div
-                    style={{
-                      backgroundColor: getStatusColor(row.loan_status),
-                      width: "20px",
-                      height: "20px",
-                      borderRadius: "50%",
-                      display: "inline-block",
-                      marginRight: "5px",
-                    }}
-                  />
-                  {row.loan_status}
-                </TableCell>
-              </TableRow>
-            ))}
+                    {row.loan_status}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() =>
+                        navigate(`/borrower/${row.equipment_name}/${row.equipment_type}`)
+                      } // Pass the equipment name as a URL parameter
+                    >
+                      ยืม
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>

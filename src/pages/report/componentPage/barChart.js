@@ -24,7 +24,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'rec
       
       const barData = rows.map((item) => ({
         name: item.equipment_name,
-        quantity: item.quantity,
+        quantity: item.quantity_borrowed,
       }));
 
       

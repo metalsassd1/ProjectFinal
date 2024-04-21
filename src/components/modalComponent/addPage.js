@@ -26,7 +26,6 @@ export default function AddModalCentralize({ open, handleClose, label ,API}) {
   const nameType = ["อุปกรณ์นันทนาการ", "อุปกรณ์กีฬา"];
   const [type, setType] = useState("");
   const [selectedDateStore, setSelectedDateStore] = useState("");
-  const [selectedDateUpdate, setSelectedDateUpdate] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,9 +73,10 @@ export default function AddModalCentralize({ open, handleClose, label ,API}) {
     const data = {
       equipment_name: formData.field1,
       import_date: selectedDateStore,
-      equipment_type: formData.field2,
+      equipment_type: type,
       quantity_in_stock: formData.field3,
       note: formData.field4,
+      last_update: selectedDateStore
     };
 
     const apiEndpoint = API;
@@ -89,7 +89,7 @@ export default function AddModalCentralize({ open, handleClose, label ,API}) {
       .catch((error) => {
         console.error("Error adding data:", error);
       });
-    console.log(formData.field1);
+    console.log(data);
   };
 
   return (

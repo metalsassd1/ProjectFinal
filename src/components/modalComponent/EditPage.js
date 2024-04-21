@@ -32,13 +32,14 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
     field2: storeData?.quantity_in_stock || "",
     field3: storeData?.equipment_type || "",
     field4: storeData?.note || "",
-    field5: storeData?.last_update || "",
+    field5: storeData?.import_date || "",
     field6: getCurrentDate(),
   });
 
   const handleChange = (selectedValues) => {
     console.log("Accessing storeData data:", storeData);
     setType(selectedValues);
+    console.log(formData.field6)
   };
 
   const handleChangeinput = (e) => {

@@ -110,7 +110,7 @@ const MyTable = () => {
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
-              <TableCell>{row.quantity_in_stock}</TableCell>
+              <TableCell>{row.Eq_quantity_in_stock}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.import_date}</TableCell>
               <TableCell>{row.last_update}</TableCell>
