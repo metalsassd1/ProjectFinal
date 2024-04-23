@@ -59,9 +59,12 @@ export default function Borrower() {
     setQuantity_borrowed(e.target.value);
   };
 
+  const id = Math.floor(Math.random() * 1000000);
+
   const onSubmit = async (data) => {
     // Formatted data object if needed, or you can directly use `data`
     const formattedData = {
+      id:id,
       borrower_name: data.borrower_name,
       equipment_name: data.equip_name,
       identification_id: data.identify_id,
@@ -80,6 +83,7 @@ export default function Borrower() {
       borrow_date: data.duration.start.toISOString().split("T")[0],
       return_date: data.duration.end.toISOString().split("T")[0],
       loan_status: "ยืม",
+      quantity_data:quantity_borrowed,
     };
 
     try {
@@ -89,11 +93,10 @@ export default function Borrower() {
       );
       console.log(response.data);
       alert("Form submitted successfully!");
-      // Handle successful form submission (e.g., clearing the form, showing a success message)
-    } catch (error) {
-      console.error("Error submitting form:", error);
       navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
       console.log("Navigating with data:", formattedData);
+    } catch (error) {
+      console.error("Error submitting form:", error);
 
       // Handle errors (e.g., showing an error message)
     }

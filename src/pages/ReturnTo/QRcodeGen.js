@@ -1,40 +1,54 @@
-// GenerateQR.js
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import QRCode from 'qrcode.react';
 import Return from './return';
+import axios from 'axios'; 
 
-function drawQRCode(canvas, text) {
-    let ctx = canvas.getContext('2d');
-    let size = 100;  // Set the size of QR Code
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#000';
-    // Simple pattern for illustration (not actual QR encoding)
-    for (let i = 0; i < size; i+=10) {
-        for (let j = 0; j < size; j+=10) {
-            if ((i+j)%20 === 0) {
-                ctx.fillRect(i, j, 10, 10);
-            }
-        }
-    }
-}
 
 const GenerateQR = () => {
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const data = queryParams.get('data');
-    const canvasRef = React.useRef(null);
+    const data = new URLSearchParams(location.search).get('data');
+    const borrowData = JSON.parse(decodeURIComponent(data))
 
-    React.useEffect(() => {
-        if (canvasRef.current) {
-            drawQRCode(canvasRef.current, data);
+    const handlePrint = () => {
+        const qrCode = document.getElementById("qrCodeElement");
+        const canvas = qrCode.querySelector('canvas');
+        const image = canvas.toDataURL("image/png");
+        const newWindow = window.open('', '_blank');
+        newWindow.document.write(`<img src="${image}" onload="window.print();window.close()" />`);
+        newWindow.document.close();
+    };
+
+     // Function to handle the return operation
+     const handleReturn = async () => {
+        const body ={
+            id: borrowData.id,  
+            equipment_name:borrowData.equipment_name,
+            quantity_borrowed:borrowData.quantity_borrowed
         }
-    }, [data]);
-    
+        try {
+            const response = await axios.put('http://localhost:4000/api/Borrowed/return',body );
+            alert('Return processed: ' + response.data.message);
+        } catch (error) {
+            console.error('Error processing return:', body);
+            alert('Failed to process return',error);
+        }
+    };
+
     return (
         <div>
-            <Return value={data}/>
-            <canvas ref={canvasRef} width="100" height="100" style={{border: '1px solid black'}}></canvas>
-            <button onClick={() => window.print()}>Print QR Code</button>
+            <h1>QR Code Generator</h1>
+            <QRCode 
+                id="qrCodeElement"
+                value={data ? decodeURIComponent(data) : 'No data provided'}
+                size={290}
+                level={"H"}
+                includeMargin={true}
+            />
+            <Return 
+            data = {borrowData}
+            />
+            <button onClick={handleReturn}>คืน</button>
         </div>
     );
 };

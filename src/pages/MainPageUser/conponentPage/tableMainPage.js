@@ -53,34 +53,23 @@ const MyTable = ({}) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch your initial data
-    fetchStock();
     fetchData();
   }, []);
-
+  
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/api/home/management"
+        "http://localhost:4000/api/home/eqloan"
       );
       setRows(response.data);
       setDisplayedRows(response.data); // Initialize displayedRows with fetched data
+      console.log(rows)
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
-  const fetchStock = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:4000/api/home/getStock`
-      );
-      setResdata(response.data);
-      console.log(resData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+
 
   const handleSearch = (searchTerm) => {
     const filteredRows = rows.filter((row) =>
@@ -110,44 +99,24 @@ const MyTable = ({}) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
               <TableCell>ชื่ออุปกรณ์</TableCell>
               <TableCell>จำนวนคงเหลือ</TableCell>
-              <TableCell>จำนวน</TableCell>
               <TableCell>ประเภท</TableCell>
-              <TableCell>วันที่นำเข้า</TableCell>
-              <TableCell>สถานะ</TableCell>
+              <TableCell>จำนวนที่ถูกยืม</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => {
               // Find the corresponding stock data for this row
-              const stockItem = resData.find(
-                (item) => item.equipment_name === row.equipment_name
-              );
-
               return (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
+                <TableRow >
                   <TableCell>{row.equipment_name}</TableCell>
                   <TableCell>
-                    {stockItem ? stockItem.quantity_in_stock : "N/A"}
+                    {row.max_quantity_in_stock}
                   </TableCell>
-                  <TableCell>{row.quantity_borrowed}</TableCell>
                   <TableCell>{row.equipment_type}</TableCell>
-                  <TableCell>{row.return_date}</TableCell>
                   <TableCell>
-                    <div
-                      style={{
-                        backgroundColor: getStatusColor(row.loan_status),
-                        width: "20px",
-                        height: "20px",
-                        borderRadius: "50%",
-                        display: "inline-block",
-                        marginRight: "5px",
-                      }}
-                    />
-                    {row.loan_status}
+                    {row.total_quantity_borrowed}
                   </TableCell>
                   <TableCell>
                     <Button

@@ -1,25 +1,27 @@
-// Return.js
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-const Return = () => {
+const Return = (data) => {
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const data = queryParams.get('data');
+    const borrowData = (data.data)
+
+    console.log(borrowData.borrower_name)
+    let displayContent;
 
     try {
-        const parsedData = JSON.parse(decodeURIComponent(data));
-        return (
+        displayContent = (
             <div>
                 <h1>Return Process</h1>
-                <p>Item: {parsedData.itemName}</p>
-                <p>User ID: {parsedData.userId}</p>
+                <p>Item: {borrowData.equipment_name}</p>
+                <p>User ID: {borrowData.identification_id}</p>
             </div>
         );
     } catch (error) {
         console.error("Error parsing data:", error);
-        return <p>Error in processing QR data. Please check the QR code and try again.</p>;
+        displayContent = <p>Error in processing QR data. Please check the QR code and try again.</p>;
     }
+
+    return displayContent;
 };
 
 export default Return;

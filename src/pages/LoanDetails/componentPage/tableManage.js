@@ -31,9 +31,9 @@ const MyTable = () => {
 
   const getStatusColor = (loan_status) => {
     switch (loan_status) {
-      case "Returned":
+      case "คืน":
         return "green";
-      case "Borrowed":
+      case "ยืม":
         return "orange";
       default:
         return "gray";
@@ -68,7 +68,8 @@ const MyTable = () => {
           <TableRow>
             <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
-            <TableCell>จำนวน</TableCell>
+            <TableCell>จำนวนที่ถูกยืมทั้งหมด</TableCell>
+            <TableCell>จำนวนที่ถูกยืม</TableCell>
             <TableCell>ประเภท</TableCell>
             <TableCell>ผู้ยืม</TableCell>
             <TableCell>วันที่ยืม</TableCell>
@@ -79,8 +80,9 @@ const MyTable = () => {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.loan_id}</TableCell>
+              <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
+              <TableCell>{row.quantity_data}</TableCell>
               <TableCell>{row.quantity_borrowed}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
