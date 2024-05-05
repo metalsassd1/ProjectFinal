@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { PieChart, Pie, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Tooltip, Legend, Cell } from "recharts";
 import axios from "axios";
 
 const CustomPieChart = () => {
@@ -8,9 +8,7 @@ const CustomPieChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:4000/api/home/management"
-        );
+        const response = await axios.get("http://localhost:4000/api/home/management");
         console.log("Equipment Data:", response.data); // Debugging line
         setEquipmentData(response.data);
       } catch (error) {
@@ -24,27 +22,27 @@ const CustomPieChart = () => {
   if (equipmentData.length === 0) return <p>Loading data...</p>; // Handling no data
 
   const statusCounts = {
-    พร้อมใช้งาน: 0,
-    ถูกยืม: 0,
-    หายไป: 0,
+    'พร้อมใช้งาน': { count: 0, color: '#32CD32' }, // Green
+    'ถูกยืม': { count: 0, color: '#ff7300' }, // Blue
+    'ไม่ได้ถูกใช้งาน': { count: 0, color: '#8884d8' }, // Orange
   };
 
   equipmentData.forEach((item) => {
-    if (item.status === "พร้อมใช้งาน") {
-      statusCounts["พร้อมใช้งาน"] += 1;
-    } else if (item.status === "ถูกยืม") {
-      statusCounts["ถูกยืม"] += 1;
-    } else if (item.status === "หายไป") {
-      statusCounts["หายไป"] += 1;
+    if (item.loan_status === "คืน") {
+      statusCounts['พร้อมใช้งาน'].count += 1;
+    } else if (item.loan_status === "ยืม") {
+      statusCounts['ถูกยืม'].count += 1;
+    } else if (item.loan_status === "") {
+      statusCounts['ไม่ได้ถูกใช้งาน'].count += 1;
     }
   });
 
-  const pieData = Object.entries(statusCounts).map(([status, count]) => ({
-    name: status,
-    value: count,
+  const pieData = Object.entries(statusCounts).map(([name, data]) => ({
+    name,
+    value: data.count,
+    color: data.color
   }));
 
-  console.log("Pie Data:", pieData); // Debugging line
 
   return (
     <PieChart width={500} height={370}>
@@ -54,10 +52,15 @@ const CustomPieChart = () => {
         data={pieData}
         cx="50%"
         cy="50%"
-        outerRadius={130}
-        fill="#8884d8"
+        outerRadius={160}
         label
-      />
+      >
+        {
+          pieData.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={entry.color} />
+          ))
+        }
+      </Pie>
       <Tooltip />
       <Legend />
     </PieChart>

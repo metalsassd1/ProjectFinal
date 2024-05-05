@@ -3,17 +3,32 @@ import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import SearchBar from "../../components/SeachBar";
 import TableManage from "./componentPage/tableManage";
+import axios from "axios";
 
 function Manage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [results, setResults] = useState([]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearch = async () => {
+    try {
+      const searchTerm = "บอล";
+      const encodedTerm = encodeURIComponent(searchTerm);
+      const searchUrl = `http://localhost:4000/api/search?term=${encodedTerm}`;
+      const response = await axios.get(searchUrl);
+      setResults(response.data); // Assuming the API returns the search results in the response body
+    } catch (error) {
+      console.error("Error during search:", error);
+      // Handle the error state appropriately
+    }
+  };
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleSearch = (searchTerm) => {
-    // Handle the search term, e.g., filter data based on the search term
-    console.log("Search term in Manage component:", searchTerm);
   };
 
   return (
@@ -45,9 +60,13 @@ function Manage(params) {
       >
         <h1>จัดการข้อมูลการยืม</h1>
         {/* Use the SearchBar component */}
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar
+          value={searchTerm}
+          onChange={handleSearchChange}
+          onSearch={handleSearch}
+        />
         <br />
-        <TableManage isOpen={isSidebarOpen} />
+        <TableManage isOpen={isSidebarOpen} data={results} />
       </div>
     </div>
   );

@@ -1,25 +1,21 @@
 import React, { useState } from "react";
+import axios from "axios";
 
-const SearchBar = ({ onSearch, onFilter1, onFilter2 }) => {
-  const [searchTerm, setSearchTerm] = useState("");
+const SearchBar = ({ value, onChange, onSearch }) => {  
 
-  const handleSearch = () => {
-    if (onSearch) {
-      onSearch(searchTerm);
-    }
-  };
+
 
 
   return (
     <div style={styles.container}>
-      <input
+       <input
         type="text"
         placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={value}
+        onChange={onChange}
         style={styles.input}
       />
-      <button onClick={handleSearch} style={styles.button}>
+      <button onClick={onSearch} style={styles.button}>
         Search
       </button>
     </div>

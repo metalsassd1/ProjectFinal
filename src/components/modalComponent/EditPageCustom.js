@@ -30,7 +30,7 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
     full_name: user?.full_name || "",
     email: user?.email || "",
     registration_date: user?.registration_date
-      ? new Date(user.registration_date).toISOString().split("T")[0]
+      ? new Date(user.registration_date)
       : getCurrentDate(),
     is_admin: user?.is_admin || "",
   });

@@ -27,12 +27,31 @@ const MyTable = () => {
   const addAPI = "http://localhost:4000/api/sport/add"
   const editAPI = "http://localhost:4000/api/sport/update"
 
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'No date provided'; // Handles null, undefined, or empty string
+  
+    const date = new Date(dateString);
+    if (isNaN(date)) return 'Invalid date'; // Check if the date is invalid
+  
+    return date.toLocaleDateString("TH", {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+  
   const fetchData = async () => {
     try {
       const response = await axios.get(
         "http://localhost:4000/api/sport/table"
       );
-      setRows(response.data);
+      const formattedData = response.data.map(item => ({
+        ...item,
+        import_date: formatDate(item.import_date),
+        last_update: formatDate(item.last_update)
+      }));
+      setRows(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

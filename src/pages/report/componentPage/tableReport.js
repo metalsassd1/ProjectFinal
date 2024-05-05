@@ -19,12 +19,31 @@ const MyTable = ({exportToExcel}) => {
   const [fileName, setFileName] = useState('Report');
   const [resData,setResdata] = useState('');
 
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'No date provided'; // Handles null, undefined, or empty string
+  
+    const date = new Date(dateString);
+    if (isNaN(date)) return 'Invalid date'; // Check if the date is invalid
+  
+    return date.toLocaleDateString("TH", {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
   const fetchData = async () => {
     try {
       const response = await axios.get(
         "http://localhost:4000/api/home/management"
       );
-      setRows(response.data); // setRows เพื่ออัพเดท state rows
+      const formattedData = response.data.map(item => ({
+        ...item,
+        borrow_date: formatDate(item.borrow_date),
+        return_date: formatDate(item.return_date)
+      }));
+      setRows(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -61,9 +80,12 @@ const MyTable = ({exportToExcel}) => {
       </h2>
       <Table>
         <TableHead>
-          <TableRow>
+        <TableRow style={{backgroundColor: "#D3D3D3"}}>
+            <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
-            <TableCell>จำนวน</TableCell>
+            <TableCell>คลังคงเหลือ</TableCell>
+            <TableCell>จำนวนที่ถูกยืมทั้งหมด</TableCell>
+            <TableCell>จำนวนที่ถูกยืม</TableCell>
             <TableCell>ประเภท</TableCell>
             <TableCell>ผู้ยืม</TableCell>
             <TableCell>วันที่ยืม</TableCell>
@@ -72,9 +94,12 @@ const MyTable = ({exportToExcel}) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows.map((row, index) => (
             <TableRow key={row.id}>
+              <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
+              <TableCell>{row.total_stock}</TableCell>
+              <TableCell>{row.quantity_data}</TableCell>
               <TableCell>{row.quantity_borrowed}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
