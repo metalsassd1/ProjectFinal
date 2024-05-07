@@ -11,6 +11,7 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { serialize } from "object-to-formdata";
+import emailjs from "emailjs-com";
 
 const schema = z.object({
   borrower_name: z.string().min(1, { message: "โปรดกรอกชื่อผู้ยืม" }),
@@ -39,7 +40,8 @@ const schema = z.object({
 
 export default function Borrower() {
   const [quantity_borrowed, setQuantity_borrowed] = useState(1);
-  const { Ename, Etype } = useParams();
+  const { Ename, Etype, desired_quantity } = useParams();
+  const [approvalStatus, setApprovalStatus] = useState(null);
   const navigate = useNavigate();
 
   const form = useForm({
@@ -49,22 +51,18 @@ export default function Borrower() {
       equip_name: Ename,
       identify_id: "",
       phone: "",
-      quantity_borrowed: 0,
+      quantity_borrowed: desired_quantity,
       duration: "",
     },
   });
   const [option, setOption] = useState("");
 
-  const handleChangeinput = (e) => {
-    setQuantity_borrowed(e.target.value);
-  };
 
   const id = Math.floor(Math.random() * 1000000);
-
   const onSubmit = async (data) => {
     // Formatted data object if needed, or you can directly use `data`
     const formattedData = {
-      id:id,
+      id: id,
       borrower_name: data.borrower_name,
       equipment_name: data.equip_name,
       identification_id: data.identify_id,
@@ -83,24 +81,53 @@ export default function Borrower() {
       borrow_date: data.duration.start.toISOString().split("T")[0],
       return_date: data.duration.end.toISOString().split("T")[0],
       loan_status: "ยืม",
-      quantity_data:quantity_borrowed,
+      quantity_data: quantity_borrowed,
+      submitEv:`http://localhost:4000/api/Borrowed/borrow/adminsubmit${data.equip_name}`
     };
+  
+
 
     try {
-      const response = await axios.post(
-        "http://localhost:4000/api/Borrowed/borrow",
-        formattedData
-      );
-      console.log(response.data);
-      alert("Form submitted successfully!");
-      navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
-      console.log("Navigating with data:", formattedData);
+      // Submit the borrowing request to the backend API
+      const response = await axios.post("http://localhost:4000/api/Borrowed/borrow", formattedData);
+      console.log("Server response:", response.data);
+      
+      // Now handle the email submission and wait for its completion
+      handleAdminsubmit(formattedData).then(() => {
+        if (approvalStatus !== null) {
+          console.log("Approval Status:", approvalStatus);
+          alert("Form submitted successfully! Approval Status: " + approvalStatus);
+          if (approvalStatus === "success") { // Assuming 'success' is a possible value indicating approval
+            navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
+          } else {
+            alert("Your request has been denied.");
+          }
+        }
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
-
-      // Handle errors (e.g., showing an error message)
+      alert("An error occurred while submitting the form.");
     }
   };
+  
+  const handleAdminsubmit = async (formattedData) => {
+    const service = "service_2kcoyx1";
+    const publicK = "_6kKCdpsY-m47jeg-";
+    const template = "template_k1dp1dm";
+  
+    const templateParams = { formattedData };
+    try {
+      const result = await emailjs.send(service, template, templateParams, publicK);
+      console.log("EmailJS result:", result);
+      setApprovalStatus(result.text === "OK" ? "success" : "failure"); // Assuming 'OK' is success
+      return Promise.resolve();
+    } catch (error) {
+      console.log("EmailJS error:", error.text);
+      setApprovalStatus("failure");
+      return Promise.reject();
+    }
+  };
+  
 
   function renderOrganize() {
     switch (option) {
@@ -250,16 +277,16 @@ export default function Borrower() {
               label={"ชื่ออุปกรณ์"}
               fullWidth
               required={true}
+              disabled={true}
             />
             <MuiInput
               control={form.control}
               name="quantity_borrowed"
               type="number"
-              min="1" // Minimum value
-              max="100" // Maximum value
               label="จำนวน"
               fullWidth
               required={true}
+              disabled={true}
             />
           </Box>
           <MuiDateRangePicker

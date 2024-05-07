@@ -18,7 +18,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/borrower/:Ename/:Etype" element={<Borrower />} />
+        <Route path="/borrower/:Ename/:Etype/:desired_quantity" element={<Borrower />} />
         <Route path="/1" element={<Manage />} />
         <Route path="/2" element={<EquipmentMan />} />
         <Route path="/2/add" element={<AddpageEq />} />

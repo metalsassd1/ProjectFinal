@@ -1,48 +1,51 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaCalendarCheck } from "react-icons/fa";
 
 const RectangleBox1 = () => {
   const [data, setData] = useState(null);
-
   useEffect(() => {
     axios
       .get("http://localhost:4000/api/home/returnedCount")
       .then((response) => {
-        console.log("Data from API:", response.data);
         setData(response.data);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
-        if (error.response) {
-          // The request was made and the server responded with a status code
-          console.error("Response data:", error.response.data);
-          console.error("Response status:", error.response.status);
-          console.error("Response headers:", error.response.headers);
-        } else if (error.request) {
-          // The request was made but no response was received
-          console.error("No response received. Request:", error.request);
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error("Error setting up the request:", error.message);
-        }
       });
   }, []);
+  
+  const boxStyle = {
+    width: "450px",
+    height: "100px",
+    backgroundColor: "#f0f8ff", // Alice blue
+    border: "2px solid #4682b4", // Steel blue
+    borderRadius: "10px",
+    padding: "60px",
+    textAlign: "center",
+    boxShadow: "5px 5px 10px #888888",
+    fontFamily: "'Arial', sans-serif",
+    color: "#333333",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '16px',
+    transition: 'all 0.3s ease-in-out'
+  };
+
+  const iconStyle = {
+    marginRight: '10px',
+    fontSize: '60px'
+  };
 
   return (
-    <div
-      style={{
-        width: "450px",
-        height: "100px",
-        backgroundColor: "lightblue",
-        border: "2px solid darkblue",
-        borderRadius: "8px",
-        padding: "16px",
-        textAlign: "center",
-      }}
-    >
-      {/* Check if data exists before displaying */}
+    <div style={boxStyle}>
       {data ? (
-        <p>{`จำนวนการคืนทั้งหมด : ${data.returnedCount}`}</p>
+        <p>
+          <FaCalendarCheck style={iconStyle} />
+          <p></p>
+          {`จำนวนการคืนทั้งหมด: ${data.returnedCount}`}
+        </p>
       ) : (
         <p>Loading data...</p>
       )}

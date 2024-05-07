@@ -6,14 +6,15 @@ import TableEquip from "./componentPage/tableSport";
 
 function Manage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");  // State to hold the search term
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleSearch = (searchTerm) => {
-    // Handle the search term, e.g., filter data based on the search term
-    console.log("Search term in Manage component:", searchTerm);
+  const handleSearch = (term) => {
+    setSearchTerm(term);  // Update the search term state
+    console.log("Search term in Manage component:", term);
   };
 
   return (
@@ -44,10 +45,10 @@ function Manage(params) {
         }}
       >
         <h1>จัดการข้อมูลอุปกรณ์กีฬา</h1>
-        {/* Use the SearchBar component */}
         <SearchBar onSearch={handleSearch} />
         <br />
-        <TableEquip isOpen={isSidebarOpen} />
+        {/* Pass searchTerm as a prop to TableEquip */}
+        <TableEquip searchTerm={searchTerm} isOpen={isSidebarOpen} />
       </div>
     </div>
   );

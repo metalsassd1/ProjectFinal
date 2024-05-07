@@ -128,11 +128,12 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
             <TextField
               label="จำนวนที่ถูกยืม"
               variant="outlined"
+              type="number"
               name="new_quantity_borrowed"
               value={formData.new_quantity_borrowed}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
-              fullWidth
+              
             />
             <TextField
               label="ผู้ยืม"

@@ -29,7 +29,6 @@ const ContactForm = () => {
       message: message,
       phoneNumber: phoneNumber,
       to: to,
-      subject: subject,
     };
     emailjs.send(service, template, templateParams, publicK).then(
       (result) => {
@@ -59,6 +58,7 @@ const ContactForm = () => {
     <Container className="contact-form">
       <Grid container justifyContent="center">
         <h1>แบบฟอร์มการแจ้งปัญหา</h1>
+        
         <Grid item xs={12} sm={6}>
           <form onSubmit={handleSubmit}>
             <TextField
@@ -68,6 +68,7 @@ const ContactForm = () => {
               onChange={(e) => setName(e.target.value)}
               fullWidth
               margin="normal"
+              required={true}
             />
             <TextField
               label="รหัสประจำตัว"
@@ -76,6 +77,7 @@ const ContactForm = () => {
               onChange={(e) => setsenderID(e.target.value)}
               fullWidth
               margin="normal"
+              required={true}
             />
             <TextField
               label="สถานะ"
@@ -84,14 +86,8 @@ const ContactForm = () => {
               onChange={(e) => setStatus(e.target.value)}
               fullWidth
               margin="normal"
+              required={true}
             />
-            <div>
-              <MultipleSelectCheckmarks
-                names={names}
-                onSelectionChange={handleChange}
-                label={"หัวข้อ"}
-              />
-            </div>
             <TextField
               label="ข้อความ"
               name="message"
@@ -101,6 +97,7 @@ const ContactForm = () => {
               margin="normal"
               multiline
               rows={4}
+              required={true}
             />
             <TextField
               label="เบอร์โทรศัพท์"
@@ -109,6 +106,7 @@ const ContactForm = () => {
               onChange={(e) => setPhoneNumber(e.target.value)}
               fullWidth
               margin="normal"
+              required={true}
             />
             <Box textAlign="center" my={2}>
               <Button type="submit" variant="contained" color="primary">
