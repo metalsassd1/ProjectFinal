@@ -12,7 +12,11 @@ import Borrower from './pages/Borrower/index.js';
 import MainPageUser from './pages/MainPageUser/mainPage.js'
 import ReturnTo from './pages/ReturnTo/return.js'
 import QRgen from './pages/ReturnTo/QRcodeGen.js'
+<<<<<<< HEAD
 import Adminsubmit from './pages/Borrower/components/adminEv.js'
+=======
+import Submit from './pages/Submit/Submit.js';
+>>>>>>> b04d6ba59c726fc00b4a1df685304c20af3b505b
 
 const App = () => {
   return (
@@ -30,7 +34,12 @@ const App = () => {
         <Route path="/MainPage" element={<MainPageUser />} />
         <Route path="/qr" element={<QRgen />} />
         <Route path="/return" element={<ReturnTo />} />
+<<<<<<< HEAD
         <Route path="/submit/:equipment_name/:id" element={<Adminsubmit />} />
+=======
+        <Route path="/submit" element={<Submit />} />
+
+>>>>>>> b04d6ba59c726fc00b4a1df685304c20af3b505b
       </Routes>
     </Router>
   );
