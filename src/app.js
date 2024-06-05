@@ -12,6 +12,7 @@ import Borrower from './pages/Borrower/index.js';
 import MainPageUser from './pages/MainPageUser/mainPage.js'
 import ReturnTo from './pages/ReturnTo/return.js'
 import QRgen from './pages/ReturnTo/QRcodeGen.js'
+import Adminsubmit from './pages/Borrower/components/adminEv.js'
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/MainPage" element={<MainPageUser />} />
         <Route path="/qr" element={<QRgen />} />
         <Route path="/return" element={<ReturnTo />} />
+        <Route path="/submit/:equipment_name/:id" element={<Adminsubmit />} />
       </Routes>
     </Router>
   );

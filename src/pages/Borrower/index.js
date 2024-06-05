@@ -80,9 +80,9 @@ export default function Borrower() {
       options: data.options,
       borrow_date: data.duration.start.toISOString().split("T")[0],
       return_date: data.duration.end.toISOString().split("T")[0],
-      loan_status: "ยืม",
+      loan_status: "รออนุมัติ",
       quantity_data: quantity_borrowed,
-      submitEv:`http://localhost:4000/api/Borrowed/borrow/adminsubmit${data.equip_name}`
+      submitEv:`http://localhost:3000/submit/${data.equip_name}/${id}`
     };
   
 
@@ -94,14 +94,10 @@ export default function Borrower() {
       
       // Now handle the email submission and wait for its completion
       handleAdminsubmit(formattedData).then(() => {
-        if (approvalStatus !== null) {
+        if (response) {
           console.log("Approval Status:", approvalStatus);
           alert("Form submitted successfully! Approval Status: " + approvalStatus);
-          if (approvalStatus === "success") { // Assuming 'success' is a possible value indicating approval
-            navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
-          } else {
-            alert("Your request has been denied.");
-          }
+          navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
         }
       });
     } catch (error) {

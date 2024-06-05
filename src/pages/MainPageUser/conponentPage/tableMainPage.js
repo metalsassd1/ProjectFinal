@@ -86,7 +86,7 @@ const MyTable = () => {
                   value={row.desired_quantity}
                   type="number"
                   inputProps={{ style: { textAlign: "center" }, min: 0 }}
-                  style={{ margin: "0 10px", width: "50px" }}
+                  style={{ margin: "0 10px", width: "60px" }}
                   disabled
                 />
                 <Button onClick={() => handleIncrement(row.equipment_name)}>+</Button>
