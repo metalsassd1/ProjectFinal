@@ -95,8 +95,7 @@ export default function Borrower() {
       // Now handle the email submission and wait for its completion
       handleAdminsubmit(formattedData).then(() => {
         if (response) {
-          console.log("Approval Status:", approvalStatus);
-          alert("Form submitted successfully! Approval Status: " + approvalStatus);
+          alert("Form submitted successfully!");
           navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
         }
       });

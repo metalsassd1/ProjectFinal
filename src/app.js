@@ -34,8 +34,8 @@ const App = () => {
         <Route path="/MainPage" element={<MainPageUser />} />
         <Route path="/qr" element={<QRgen />} />
         <Route path="/return" element={<ReturnTo />} />
-        <Route path="/submit/:equipment_name/:id" element={<Adminsubmit />} />
-        <Route path="/submit" element={<Submit />} />
+        <Route path="/success" element={<Adminsubmit/>}/>
+        <Route path="/submit/:equipment_name/:id" element={<Submit />} />
       </Routes>
     </Router>
   );

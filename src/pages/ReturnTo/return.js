@@ -1,27 +1,25 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import './Return.css';
 
 const Return = (data) => {
-    const location = useLocation();
-    const borrowData = (data.data)
+  const borrowData = data.data;
 
-    console.log(borrowData.borrower_name)
-    let displayContent;
+  let displayContent;
 
-    try {
-        displayContent = (
-            <div>
-                <h1>Return Process</h1>
-                <p>Item: {borrowData.equipment_name}</p>
-                <p>User ID: {borrowData.identification_id}</p>
-            </div>
-        );
-    } catch (error) {
-        console.error("Error parsing data:", error);
-        displayContent = <p>Error in processing QR data. Please check the QR code and try again.</p>;
-    }
+  try {
+    displayContent = (
+      <div className="return-container">
+        <h1 className="return-title">Return Process</h1>
+        <p className="return-text">Item: {borrowData.equipment_name}</p>
+        <p className="return-text">User ID: {borrowData.identification_id}</p>
+      </div>
+    );
+  } catch (error) {
+    console.error("Error parsing data:", error);
+    displayContent = <p className="return-error">Error in processing QR data. Please check the QR code and try again.</p>;
+  }
 
-    return displayContent;
+  return displayContent;
 };
 
 export default Return;
