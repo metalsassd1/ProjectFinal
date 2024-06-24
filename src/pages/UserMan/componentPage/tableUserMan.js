@@ -14,6 +14,7 @@ import {
 import ModalAddPage from "../../../components/modalComponent/addPageCustoms";
 import EditModal from "../../../components/modalComponent/EditPageCustom";
 import Grid from '@mui/material/Grid';
+import Swal from 'sweetalert2';
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
@@ -57,8 +58,10 @@ const MyTable = () => {
       }));
       setRows(formattedData);
       setFilteredRows(formattedData);
+      
     } catch (error) {
       console.error("Error fetching data:", error);
+     
     }
   };
 
@@ -86,13 +89,36 @@ const MyTable = () => {
   };
 
   const handleDelete = async (id) => {
-    const isConfirmed = window.confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?");
+    const { isConfirmed } = await Swal.fire({
+      title: "ต้องการดำเนินการหรือไม่?",
+      text: "ลบข้อมูล",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ตกลง",
+      cancelButtonText: "ยกเลิก"
+    });
     if (isConfirmed) {
       try {
         await axios.delete(`https://back-end-finals-project-pgow.onrender.com/api/user/delete/${id}`);
         fetchData();
+        await Swal.fire({
+          title: "ดำเนินการสำเร็จ!",
+          text: "ลบข้อมูล",
+          icon: "success",
+          confirmButtonText: "ตกลง",
+        });
       } catch (error) {
         console.error("Error deleting data:", error);
+        await Swal.fire({
+          title: "ดำเนินการไม่สำเร็จ!",
+          text:
+            "ไม่สามารถลบข้อมูลมูลได้: " +
+            (error.response?.data?.message || error.message),
+          icon: "error",
+          confirmButtonText: "ตกลง",
+        });
       }
     }
   };
@@ -196,7 +222,7 @@ const MyTable = () => {
                     color="primary"
                     onClick={() => handleEditOpen(row)}
                   >
-                    Edit
+                    แก้ไข
                   </Button>
                   <Button
                     variant="contained"
@@ -204,7 +230,7 @@ const MyTable = () => {
                     style={{ marginLeft: 10 }}
                     onClick={() => handleDelete(row.id)}
                   >
-                    Delete
+                    ลบ
                   </Button>
                 </TableCell>
               </TableRow>

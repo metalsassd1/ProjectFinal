@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Return.css';
+import Swal from 'sweetalert2';
 
 const Return = ({ data }) => {
   const borrowData = data;
   const [rows, setRows] = useState([]);
   const [containerClass, setContainerClass] = useState('return-container');
+  const [previousStatus, setPreviousStatus] = useState(null);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -21,9 +23,19 @@ const Return = ({ data }) => {
       if (matchingRow) {
         const isBorrowStatus = matchingRow.loan_status == "ยืม";
         setContainerClass(isBorrowStatus ? "return-container" : "return-container red-theme");
+
+        // Check if status has changed
+        if (previousStatus !== null && previousStatus !== matchingRow.loan_status) {
+          Swal.fire({
+            title: 'สถานะถูกอนุมัติ',
+            icon: 'success',
+            confirmButtonText: 'ตกลง'
+          });
+        }
+        setPreviousStatus(matchingRow.loan_status);
       }
     }
-  }, [rows, borrowData.id]);
+  }, [rows, borrowData.id, previousStatus]);
 
   const fetchDataUpdateStatus = async () => {
     try {

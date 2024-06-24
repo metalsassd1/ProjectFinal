@@ -10,6 +10,7 @@ import {
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import MultipleSelectCheckmarks from "../dropdown";
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 const style = {
   position: "absolute",
@@ -78,20 +79,34 @@ export default function AddModalCentralize({ open, handleClose, label ,API}) {
       note: formData.field4,
       last_update: selectedDateStore
     };
-
+  
     const apiEndpoint = API;
     axios
       .post(apiEndpoint, data)
       .then((response) => {
         console.log("Data added successfully:", response.data);
-        handleClose(); // Close the modal on success
+        Swal.fire({
+          title: 'ดำเนินการสำเร็จ!',
+          text: 'เพิ่มข้อมูล',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            handleClose(); // Close the modal after user clicks OK
+          }
+        });
       })
       .catch((error) => {
         console.error("Error adding data:", error);
+        Swal.fire({
+          title: 'ดำเนินการไม่สำเร็จ!',
+          text: 'เพิ่มข้อมูล ' + (error.response?.data?.message || error.message),
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
       });
     console.log(data);
   };
-
   return (
     <Modal
       open={open}

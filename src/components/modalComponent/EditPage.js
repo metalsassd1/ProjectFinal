@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import MultipleSelectCheckmarks from "../dropdown";
+import Swal from "sweetalert2";
 
 const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
   const nameType = ["อุปกรณ์นันทนาการ", "อุปกรณ์กีฬา"];
@@ -39,7 +40,7 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
   const handleChange = (selectedValues) => {
     console.log("Accessing storeData data:", storeData);
     setType(selectedValues);
-    console.log(formData.field6)
+    console.log(formData.field6);
   };
 
   const handleChangeinput = (e) => {
@@ -66,15 +67,45 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
     // Construct the API endpoint with the storeData id
     const apiEndpoint = `${API}/${storeData.id}`;
 
-    try {
-      const response = await axios.put(apiEndpoint, DataItem);
-      console.log(response.data);
-      handleClose();
-      // console.log(apiEndpoint)
-    } catch (error) {
-      console.error("Error updating data:", error);
-      console.log(formData.field1);
-    }
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      const DataItem = {
+        equipment_name: formData.field1,
+        quantity_in_stock: formData.field2,
+        equipment_type: type,
+        note: formData.field4,
+        last_update: formData.field6,
+      };
+
+      // Construct the API endpoint with the storeData id
+      const apiEndpoint = `${API}/${storeData.id}`;
+
+      try {
+        const response = await axios.put(apiEndpoint, DataItem);
+        console.log("Data updated successfully:", response.data);
+
+        await Swal.fire({
+          title: "ดำเนินการสำเร็จ!",
+          text: "แก้ไขข้อมูล",
+          icon: "success",
+          confirmButtonText: "ตกลง",
+        });
+
+        handleClose(); // Close the modal after user clicks OK
+      } catch (error) {
+        console.error("Error updating data:", error);
+
+        await Swal.fire({
+          title: "ดำเนินการไม่สำเร็จ!",
+          text:
+            "ไม่สามารถแก้ไขข้อมูลได้: " +
+            (error.response?.data?.message || error.message),
+          icon: "error",
+          confirmButtonText: "ตกลง",
+        });
+      }
+    };
   };
 
   return (

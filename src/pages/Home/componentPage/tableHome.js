@@ -9,6 +9,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import Swal from "sweetalert2";
 
 const MyTable = ({ searchTerms }) => {
   const [rows, setRows] = useState([]);
@@ -50,12 +51,24 @@ const MyTable = ({ searchTerms }) => {
   };
 
   const filterData = () => {
-    const filtered = rows.filter(item =>
-      item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
-      item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
-      item.equipment_type.toLowerCase().includes(searchTerms.equipment_type.toLowerCase()) &&
-      (item.borrower_name || "").toLowerCase().includes(searchTerms.borrower_name.toLowerCase()) &&
-      item.borrow_date.toLowerCase().includes(searchTerms.borrow_date.toLowerCase()) // เพิ่มเงื่อนไขการกรองตาม borrow_date
+    const filtered = rows.filter(
+      (item) =>
+        item.id
+          .toString()
+          .toLowerCase()
+          .includes(searchTerms.id.toLowerCase()) &&
+        item.equipment_name
+          .toLowerCase()
+          .includes(searchTerms.equipment_name.toLowerCase()) &&
+        item.equipment_type
+          .toLowerCase()
+          .includes(searchTerms.equipment_type.toLowerCase()) &&
+        (item.borrower_name || "")
+          .toLowerCase()
+          .includes(searchTerms.borrower_name.toLowerCase()) &&
+        item.borrow_date
+          .toLowerCase()
+          .includes(searchTerms.borrow_date.toLowerCase()) // เพิ่มเงื่อนไขการกรองตาม borrow_date
     );
     setFilteredRows(filtered);
   };
@@ -70,37 +83,63 @@ const MyTable = ({ searchTerms }) => {
         return "#D3D3D3";
     }
   };
-  
+
   const getRowStyle_Stock = (quantityInStock) => {
     return { backgroundColor: "#D3D3D3" };
   };
 
   const getRowStyle_borrowed = (quantity_borrowed) => {
     if (quantity_borrowed > 0) {
-      return { backgroundColor: "#FFA500" }; 
+      return { backgroundColor: "#FFA500" };
     } else {
-      return { backgroundColor: "#D3D3D3" }; 
+      return { backgroundColor: "#D3D3D3" };
     }
   };
   const handleReturn = async (data) => {
+    const { isConfirmed } = await Swal.fire({
+      title: "ต้องการดำเนินการหรือไม่?",
+      text: "คืนอุปกรณ์",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ตกลง",
+      cancelButtonText: "ยกเลิก",
+    });
+
     const body = {
       id: data.id,
       equipment_name: data.equipment_name,
-      quantity_borrowed: data.quantity_borrowed
+      quantity_borrowed: data.quantity_borrowed,
     };
-    try {
-      const response = await axios.put('https://back-end-finals-project-pgow.onrender.com/api/Borrowed/return', body);
-      alert('Return processed: ' + response.data.message);
-    } catch (error) {
-      console.error('Error processing return:', body);
-      alert('Failed to process return', error);
+    if (isConfirmed) {
+      try {
+        const response = await axios.put(
+          "https://back-end-finals-project-pgow.onrender.com/api/Borrowed/return",
+          body
+        );
+        Swal.fire({
+          title: "ดำเนินการสำเร็จ!",
+          text: "การคืน",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+      } catch (error) {
+        console.error("Error processing return:", error);
+        Swal.fire({
+          title: "ดำเนินการไม่สำเร็จ!",
+          text: "การคืน: " + (error.response?.data?.message || error.message),
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     }
   };
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow style={{backgroundColor: "#D3D3D3"}}>
+          <TableRow style={{ backgroundColor: "#D3D3D3" }}>
             <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
             <TableCell>คลังคงเหลือ</TableCell>
@@ -130,12 +169,19 @@ const MyTable = ({ searchTerms }) => {
               <TableCell>{row.borrower_name}</TableCell>
               <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
-              <TableCell style={{ backgroundColor: getStatusColor(row.loan_status) }}>
-                {row.loan_status || ''}
+              <TableCell
+                style={{ backgroundColor: getStatusColor(row.loan_status) }}
+              >
+                {row.loan_status || ""}
               </TableCell>
               <TableCell>
                 {row.loan_status === "ยืม" && (
-                  <button className="qr-button" onClick={() => handleReturn(row)}>คืน</button>
+                  <button
+                    className="qr-button"
+                    onClick={() => handleReturn(row)}
+                  >
+                    คืน
+                  </button>
                 )}
               </TableCell>
             </TableRow>

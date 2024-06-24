@@ -13,6 +13,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
+import Swal from "sweetalert2";
 
 dayjs.extend(utc);
 
@@ -77,9 +78,24 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
         formattedData
       );
       console.log(response.data);
-      handleClose();
+       await Swal.fire({
+        title: "ดำเนินการสำเร็จ!",
+        text: "แก้ไขข้อมูล",
+        icon: "success",
+        confirmButtonText: "ตกลง",
+      });
+
+      handleClose(); // Close the modal after user clicks OK
     } catch (error) {
       console.error("Error updating data:", error);
+      await Swal.fire({
+        title: "ดำเนินการไม่สำเร็จ!",
+        text:
+          "ไม่สามารถแก้ไขข้อมูลได้: " +
+          (error.response?.data?.message || error.message),
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
     }
   };
 

@@ -12,6 +12,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const CustomEdirModal = ({ open, handleClose, user, label }) => {
   const getCurrentDate = () => {
@@ -60,10 +61,27 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
         `http://localhost:4000/api/user/update/${user.id}`,
         formData
       );
-      console.log(response.data);
-      handleClose();
+      console.log("Data updated successfully:", response.data);
+
+        await Swal.fire({
+          title: "ดำเนินการสำเร็จ!",
+          text: "แก้ไขข้อมูล",
+          icon: "success",
+          confirmButtonText: "ตกลง",
+        });
+
+        handleClose(); // Close the modal after user clicks OK
     } catch (error) {
       console.error("Error updating data:", error);
+
+      await Swal.fire({
+        title: "ดำเนินการไม่สำเร็จ!",
+        text:
+          "ไม่สามารถแก้ไขข้อมูลได้: " +
+          (error.response?.data?.message || error.message),
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
     }
   };
 

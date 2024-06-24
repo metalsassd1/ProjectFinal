@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 const style = {
   position: "absolute",
@@ -117,12 +118,27 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
       .post("http://localhost:4000/api/user/add", data)
       .then((response) => {
         console.log("Data added successfully:", response.data);
-        handleClose(); // Close the modal on success
+        Swal.fire({
+          title: 'ดำเนินการสำเร็จ!',
+          text: 'เพิ่มข้อมูล',
+          icon: 'success',
+          confirmButtonText: 'ตกลง'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            handleClose(); // Close the modal after user clicks OK
+          }
+        });
       })
       .catch((error) => {
         console.error("Error adding data:", error);
+        Swal.fire({
+          title: 'ดำเนินการไม่สำเร็จ!',
+          text: 'ไม่สามารถเพิ่มข้อมูล ' + (error.response?.data?.message || error.message),
+          icon: 'error',
+          confirmButtonText: 'ตกลง'
+        });
       });
-    console.log(formData.field1);
+    console.log(data);
   };
 
   return (
