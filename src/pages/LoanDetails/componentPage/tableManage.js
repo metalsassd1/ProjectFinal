@@ -75,7 +75,7 @@ const MyTable = ({ searchTerms }) => {
     const isConfirmed = window.confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?");
     if (isConfirmed) {
       try {
-        await axios.delete(`http://localhost:4000/api/manage/delete/${id}`);
+        await axios.delete(`https://back-end-finals-project-pgow.onrender.com/api/manage/delete/${id}`);
         fetchData();
       } catch (error) {
         console.error("Error deleting data:", error);

@@ -8,7 +8,7 @@ const CustomPieChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/home/management");
+        const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/home/management");
         console.log("Equipment Data:", response.data); // Debugging line
         setEquipmentData(response.data);
       } catch (error) {

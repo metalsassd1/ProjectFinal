@@ -27,7 +27,7 @@ const MyTable = ({ rows, isMobile, onUpdateQuantity }) => { // Add onUpdateQuant
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/home/eqloan");
+      const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/home/eqloan");
       const updatedData = response.data.map(item => ({
         ...item,
         desired_quantity: 0,

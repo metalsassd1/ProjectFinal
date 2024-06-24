@@ -8,7 +8,7 @@ const CustomBarChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/home/management");
+        const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/home/management");
         setRows(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
