@@ -1,19 +1,24 @@
 import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
-import SearchBar from "../../components/SeachBar";
+import TextField from "@mui/material/TextField";
 import TableUser from "./componentPage/tableUserMan";
 
 function Manage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+  const [searchTerms, setSearchTerms] = useState({
+    id: "",
+    username: "",
+    email: "",
+    role: ""
+  });
+  
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleSearch = (searchTerm) => {
-    // Handle the search term, e.g., filter data based on the search term
-    console.log("Search term in Manage component:", searchTerm);
+  const handleSearch = (field, value) => {
+    setSearchTerms(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -44,10 +49,11 @@ function Manage(params) {
         }}
       >
         <h1>จัดการข้อมูลผู้ใช้</h1>
-        {/* Use the SearchBar component */}
-        <SearchBar onSearch={handleSearch} />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
+          
+        </div>
         <br />
-        <TableUser isOpen={isSidebarOpen} />
+        <TableUser isOpen={isSidebarOpen} searchTerms={searchTerms} />
       </div>
     </div>
   );

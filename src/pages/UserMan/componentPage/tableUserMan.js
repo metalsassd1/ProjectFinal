@@ -9,30 +9,38 @@ import {
   TableRow,
   Paper,
   Button,
+  TextField,
 } from "@mui/material";
 import ModalAddPage from "../../../components/modalComponent/addPageCustoms";
 import EditModal from "../../../components/modalComponent/EditPageCustom";
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [searchTerms, setSearchTerms] = useState({
+    id: "",
+    username: "",
+    email: "",
+    registration_date: "",
+    last_update: "",
+    is_admin: "",
+  });
 
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
 
   const handleEditOpen = (user) => {
-    setSelectedUser(user); // Set the selected user to edit
-    setModalEditOpen(true); // Open the edit modal
+    setSelectedUser(user);
+    setModalEditOpen(true);
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return "No date provided"; // Handles null, undefined, or empty string
-
+    if (!dateString) return "No date provided";
     const date = new Date(dateString);
-    if (isNaN(date)) return "Invalid date"; // Check if the date is invalid
-
+    if (isNaN(date)) return "Invalid date";
     return date.toLocaleDateString("TH", {
       year: "numeric",
       month: "long",
@@ -49,6 +57,7 @@ const MyTable = () => {
         last_update: formatDate(item.last_update)
       }));
       setRows(formattedData);
+      setFilteredRows(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -58,22 +67,33 @@ const MyTable = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    filterData();
+  }, [rows, searchTerms]);
+
+  const filterData = () => {
+    const filtered = rows.filter(item =>
+      item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
+      item.username.toLowerCase().includes(searchTerms.username.toLowerCase()) &&
+      item.email.toLowerCase().includes(searchTerms.email.toLowerCase()) &&
+      item.registration_date.toLowerCase().includes(searchTerms.registration_date.toLowerCase()) &&
+      item.last_update.toLowerCase().includes(searchTerms.last_update.toLowerCase()) &&
+      getRoleLabel(item.is_admin).toLowerCase().includes(searchTerms.is_admin.toLowerCase())
+    );
+    setFilteredRows(filtered);
+  };
+
   const handleEditClose = () => {
     setModalEditOpen(false);
-    fetchData(); // Refresh data after closing the modal
+    fetchData();
   };
 
   const handleDelete = async (id) => {
     const isConfirmed = window.confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?");
-
     if (isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/api/user/delete/${id}`);
-        // หลังจากลบข้อมูลสำเร็จ สามารถทำการ fetch ข้อมูลใหม่เพื่ออัปเดตหน้าตาราง
-        const response = await axios.get(
-          "http://localhost:4000/api/user/table"
-        );
-        setRows(response.data);
+        fetchData();
       } catch (error) {
         console.error("Error deleting data:", error);
       }
@@ -82,70 +102,120 @@ const MyTable = () => {
 
   const getRoleLabel = (is_admin) => is_admin === 1 ? "Admin" : "User";
 
+  const handleSearch = (field, value) => {
+    setSearchTerms(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>ชื่อผู้ใช้</TableCell>
-            <TableCell>อีเมล</TableCell>
-            <TableCell>password</TableCell>
-            <TableCell>วันที่นำเข้า</TableCell>
-            <TableCell>วันที่อัพเดตล่าสุด</TableCell>
-            <TableCell>Admin</TableCell>
-            <TableCell>
-              <Button variant="contained" color="primary" onClick={handleOpen}>
-                เพิ่มข้อมูล
-              </Button>
-              <ModalAddPage
-                open={modalOpen}
-                handleClose={handleClose}
-                label={"ผู้ใช้"}
-              />
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.username}</TableCell>
-              <TableCell>{row.email}</TableCell>
-              <TableCell>{row.password}</TableCell>
-              <TableCell>{row.registration_date}</TableCell>
-              <TableCell>{row.last_update}</TableCell>
-              <TableCell>{getRoleLabel(row.is_admin)}</TableCell>
+    <>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
+        <TextField
+          label="ค้นหาด้วย ID"
+          variant="outlined"
+          size="small"
+          value={searchTerms.id}
+          onChange={(e) => handleSearch("id", e.target.value)}
+        />
+        <TextField
+          label="ค้นหาด้วยชื่อผู้ใช้"
+          variant="outlined"
+          size="small"
+          value={searchTerms.username}
+          onChange={(e) => handleSearch("username", e.target.value)}
+        />
+        <TextField
+          label="ค้นหาด้วยอีเมล"
+          variant="outlined"
+          size="small"
+          value={searchTerms.email}
+          onChange={(e) => handleSearch("email", e.target.value)}
+        />
+        <TextField
+          label="ค้นหาด้วยวันที่ลงทะเบียน"
+          variant="outlined"
+          size="small"
+          value={searchTerms.registration_date}
+          onChange={(e) => handleSearch("registration_date", e.target.value)}
+        />
+        <TextField
+          label="ค้นหาด้วยวันที่อัพเดทล่าสุด"
+          variant="outlined"
+          size="small"
+          value={searchTerms.last_update}
+          onChange={(e) => handleSearch("last_update", e.target.value)}
+        />
+        <TextField
+          label="ค้นหาด้วยสถานะ Admin"
+          variant="outlined"
+          size="small"
+          value={searchTerms.is_admin}
+          onChange={(e) => handleSearch("is_admin", e.target.value)}
+        />
+      </div>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>ชื่อผู้ใช้</TableCell>
+              <TableCell>อีเมล</TableCell>
+              <TableCell>password</TableCell>
+              <TableCell>วันที่นำเข้า</TableCell>
+              <TableCell>วันที่อัพเดตล่าสุด</TableCell>
+              <TableCell>Admin</TableCell>
               <TableCell>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEditOpen(row)}
-                >
-                  Edit
+                <Button variant="contained" color="primary" onClick={handleOpen}>
+                  เพิ่มข้อมูล
                 </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  style={{ marginLeft: 10 }}
-                  onClick={() => handleDelete(row.id)}
-                >
-                  Delete
-                </Button>
+                <ModalAddPage
+                  open={modalOpen}
+                  handleClose={handleClose}
+                  label={"ผู้ใช้"}
+                />
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      {selectedUser && (
-        <EditModal
-          open={modalEditOpen}
-          handleClose={handleEditClose}
-          user={selectedUser}
-          label={"ผู้ใช้"}
-        />
-      )}
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {filteredRows.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{row.username}</TableCell>
+                <TableCell>{row.email}</TableCell>
+                <TableCell>{row.password}</TableCell>
+                <TableCell>{row.registration_date}</TableCell>
+                <TableCell>{row.last_update}</TableCell>
+                <TableCell>{getRoleLabel(row.is_admin)}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEditOpen(row)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    style={{ marginLeft: 10 }}
+                    onClick={() => handleDelete(row.id)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        {selectedUser && (
+          <EditModal
+            open={modalEditOpen}
+            handleClose={handleEditClose}
+            user={selectedUser}
+            label={"ผู้ใช้"}
+          />
+        )}
+      </TableContainer>
+    </>
   );
 };
 
