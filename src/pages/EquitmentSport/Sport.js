@@ -20,7 +20,7 @@ function Manage(params) {
   };
 
   const handleSearch = (term) => {
-    setSearchTerm(term);  // Update the search term state
+    setSearchTerms(term);  // Update the search term state
     console.log("Search term in Manage component:", term);
   };
 
