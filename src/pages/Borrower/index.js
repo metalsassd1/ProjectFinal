@@ -3,15 +3,24 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MuiInput } from "../../components/MuiInput";
-import { Box, Button } from "@mui/material";
+import { Box, Button, ThemeProvider, createTheme } from "@mui/material";
 import { FormOptions } from "./components/FormOptions";
 import { MuiDateRangePicker } from "../../components/MuiDateRangePicker";
-import { CarTaxiFront } from "lucide-react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { serialize } from "object-to-formdata";
+import { useParams, useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#4CAF50', // Green
+    },
+    background: {
+      default: '#ffffff', // White
+      paper: '#f1f5f9', // Light gray for form background
+    },
+  },
+});
 
 const schema = z.object({
   borrower_name: z.string().min(1, { message: "โปรดกรอกชื่อผู้ยืม" }),
@@ -243,6 +252,7 @@ export default function Borrower() {
     }
   }, [form.formState.errors]);
   return (
+    <ThemeProvider theme={theme}>
     <Box
       display="flex"
       justifyContent="center"
@@ -364,5 +374,6 @@ export default function Borrower() {
         </Box>
       </form>
     </Box>
+    </ThemeProvider>
   );
 }
