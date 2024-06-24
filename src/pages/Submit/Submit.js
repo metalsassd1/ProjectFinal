@@ -10,25 +10,58 @@ const Submit = () => {
   const navigate = useNavigate();
 
   const handleConfirm = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.put(
-        `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${equipment_name}/${id}`
-      );
-      console.log(response);
-    } catch (error) {
-      console.error("API call failed:", error);
-    } finally {
-      setLoading(false);
-      closePage();
+    const { isConfirmed } = await Swal.fire({
+      title: "ต้องการดำเนินการหรือไม่?",
+      text: "อนุมัติการยืม",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ตกลง",
+      cancelButtonText: "ยกเลิก",
+    });
+    if (isConfirmed) {
+      setLoading(true);
+      try {
+        const response = await axios.put(
+          `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${equipment_name}/${id}`
+        );
+        console.log(response);
+        await Swal.fire({
+          title: "ดำเนินการสำเร็จ!",
+          text: "อนุมัติการยืม",
+          icon: "success",
+          confirmButtonText: "ตกลง",
+        });
+      } catch (error) {
+        console.error("API call failed:", error);
+        await Swal.fire({
+          title: "ดำเนินการไม่สำเร็จ!",
+          text:
+            "ไม่สามารถอนุมัติการยืมได้: " +
+            (error.response?.data?.message || error.message),
+          icon: "error",
+          confirmButtonText: "ตกลง",
+        });
+      } finally {
+        setLoading(false);
+        closePage();
+      }
     }
   };
 
   const handleCancel = () => {
+    Swal.fire({
+      title: "ดำเนินการสำเร็จ!",
+      text: "ไม่อนุมัติการยืม",
+      icon: "success",
+      confirmButtonText: "ตกลง",
+    })
     closePage();
   };
 
   const closePage = () => {
+    
     // Option 1: Go back to the previous page
     // navigate(-1);
 
