@@ -7,41 +7,43 @@ import RectangleBox from "./componentPage/chart/UserCount";
 import RectangleBox1 from "./componentPage/chart/returnedCount";
 import RectangleBox2 from "./componentPage/chart/totalLend";
 import RectangleBox3 from "./componentPage/chart/equipmentCount";
+import TextField from "@mui/material/TextField";
 
 import "./Monitoring.css";
 
 const App = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [searchTerms, setSearchTerms] = useState({
+    id: "",
+    equipment_name: "",
+    equipment_type: "",
+    borrower_name: "",
+  });
 
-  useEffect(() => {
+   useEffect(() => {
     const fetchData = async () => {
-      // Fetch data or perform other actions if needed
       try {
-        // const result = await fetchDataFromAPI();
-        // setData(result);
+        // Fetch data if needed
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    // Fetch data on mount
     fetchData();
-
-    // Set up an interval for fetching data
-    const intervalId = setInterval(fetchData, 60000); // Assuming a 1-minute interval
-    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+    const intervalId = setInterval(fetchData, 60000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleSearch = (field, value) => {
+    setSearchTerms(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <div
-      style={{
-        background: "#f0f0f0",
-      }}
-    >
+    <div style={{ background: "#f0f0f0" }}>
       <div
         className="header"
         style={{
@@ -84,8 +86,38 @@ const App = () => {
           </div>
         </div>
         <br />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
+          <TextField
+            label="ค้นหาด้วย ID"
+            variant="outlined"
+            size="small"
+            value={searchTerms.id}
+            onChange={(e) => handleSearch("id", e.target.value)}
+          />
+          <TextField
+            label="ค้นหาด้วยชื่ออุปกรณ์"
+            variant="outlined"
+            size="small"
+            value={searchTerms.equipment_name}
+            onChange={(e) => handleSearch("equipment_name", e.target.value)}
+          />
+          <TextField
+            label="ค้นหาด้วยประเภท"
+            variant="outlined"
+            size="small"
+            value={searchTerms.equipment_type}
+            onChange={(e) => handleSearch("equipment_type", e.target.value)}
+          />
+          <TextField
+            label="ค้นหาด้วยชื่อผู้ยืม"
+            variant="outlined"
+            size="small"
+            value={searchTerms.borrower_name}
+            onChange={(e) => handleSearch("borrower_name", e.target.value)}
+          />
+        </div>
         <div className="tableHome">
-          <MyTable />
+          <MyTable searchTerms={searchTerms} />
         </div>
       </div>
     </div>

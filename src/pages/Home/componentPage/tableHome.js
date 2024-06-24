@@ -1,3 +1,4 @@
+// tableHome.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -10,15 +11,14 @@ import {
   Paper,
 } from "@mui/material";
 
-const MyTable = () => {
+const MyTable = ({ searchTerms }) => {
   const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
 
   const formatDate = (dateString) => {
-    if (!dateString) return "No date provided"; // Handles null, undefined, or empty string
-
+    if (!dateString) return "No date provided";
     const date = new Date(dateString);
-    if (isNaN(date)) return "Invalid date"; // Check if the date is invalid
-
+    if (isNaN(date)) return "Invalid date";
     return date.toLocaleDateString("TH", {
       year: "numeric",
       month: "long",
@@ -29,6 +29,10 @@ const MyTable = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [rows, searchTerms]);
 
   const fetchData = async () => {
     try {
@@ -46,23 +50,29 @@ const MyTable = () => {
     }
   };
 
+  const filterData = () => {
+    const filtered = rows.filter(item =>
+      item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
+      item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
+      item.equipment_type.toLowerCase().includes(searchTerms.equipment_type.toLowerCase()) &&
+      (item.borrower_name || "").toLowerCase().includes(searchTerms.borrower_name.toLowerCase())
+    );
+    setFilteredRows(filtered);
+  };
+
   const getStatusColor = (loan_status) => {
     switch (loan_status) {
       case "คืน":
-        return "#32CD32"; // Green color for returned items
+        return "#32CD32";
       case "ยืม":
-        return "#FFA500"; // Orange color for borrowed items
+        return "#FFA500";
       default:
-        return "#D3D3D3"; // Gray color for other statuses
+        return "#D3D3D3";
     }
   };
   
   const getRowStyle_Stock = (quantityInStock) => {
-    if (quantityInStock > 0 ) {
-      return { backgroundColor: "#D3D3D3" }; 
-    } else if(quantityInStock <= 0) {
-      return { backgroundColor: "#D3D3D3" }; 
-    }
+    return { backgroundColor: "#D3D3D3" };
   };
 
   const getRowStyle_borrowed = (quantity_borrowed) => {
@@ -73,13 +83,11 @@ const MyTable = () => {
     }
   };
 
-
-
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-        <TableRow style={{backgroundColor: "#D3D3D3"}}>
+          <TableRow style={{backgroundColor: "#D3D3D3"}}>
             <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
             <TableCell>คลังคงเหลือ</TableCell>
@@ -89,12 +97,11 @@ const MyTable = () => {
             <TableCell>ผู้ยืม</TableCell>
             <TableCell>วันที่ยืม</TableCell>
             <TableCell>วันที่คืน</TableCell>
-            <TableCell >สถานะ</TableCell>
-            <TableCell ></TableCell>
+            <TableCell>สถานะ</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {filteredRows.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
@@ -102,14 +109,15 @@ const MyTable = () => {
                 {row.total_stock}
               </TableCell>
               <TableCell>{row.quantity_data}</TableCell>
-              <TableCell style={getRowStyle_borrowed(row.quantity_borrowed)}
-              >{row.quantity_borrowed}</TableCell>
+              <TableCell style={getRowStyle_borrowed(row.quantity_borrowed)}>
+                {row.quantity_borrowed}
+              </TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
               <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
               <TableCell style={{ backgroundColor: getStatusColor(row.loan_status) }}>
-              {row.loan_status || ''}
+                {row.loan_status || ''}
               </TableCell>
             </TableRow>
           ))}
