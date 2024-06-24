@@ -32,7 +32,6 @@ const MyTable = ({ rows, isMobile, onUpdateQuantity }) => { // Add onUpdateQuant
         ...item,
         desired_quantity: 0,
       }));
-      setRows(updatedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }

@@ -59,7 +59,7 @@ const MyTable = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:4000/api/sport/table"
+        "https://back-end-finals-project-pgow.onrender.com/api/sport/table"
       );
       const formattedData = response.data.map(item => ({
         ...item,
