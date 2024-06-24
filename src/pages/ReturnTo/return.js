@@ -71,9 +71,10 @@ const Return = ({ data }) => {
     displayContent = (
       <div className={containerClass}>
         <h1 className="return-title">ข้อมูลการยืม</h1>
+        <p className="return-text"><strong>ID:</strong> {borrowData.id}</p>
         <p className="return-text"><strong>อุปกรณ์:</strong> {borrowData.equipment_name}</p>
         <p className="return-text"><strong>ชื่อ:</strong> {borrowData.borrower_name}</p>
-        <p className="return-text"><strong>ID:</strong> {borrowData.identification_id}</p>
+        <p className="return-text"><strong>รหัสประจำตัว:</strong> {borrowData.identification_id}</p>
         <p className="return-text"><strong>สถานะ:</strong> {matchingRow.loan_status}</p>
         <p className="return-text"><strong>วันที่ยืม:</strong> {matchingRow.borrow_date}</p>
         <p className="return-text"><strong>วันที่คืน:</strong> {matchingRow.return_date}</p>

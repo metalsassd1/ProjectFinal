@@ -30,13 +30,13 @@ const Submit = () => {
 
   const closePage = () => {
     // Option 1: Go back to the previous page
-    navigate(-1);
+    // navigate(-1);
 
     // Option 2: Navigate to a specific page (e.g., home page)
     // navigate('/');
 
     // Option 3: Close the current window/tab (only works if opened by JavaScript)
-    // window.close();
+    window.close();
   };
 
   return (
