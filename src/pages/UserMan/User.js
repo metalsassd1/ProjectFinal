@@ -10,7 +10,7 @@ function Manage(params) {
     id: "",
     username: "",
     email: "",
-    role: ""
+    is_admin: ""
   });
   
   const handleToggleSidebar = () => {
@@ -52,7 +52,7 @@ function Manage(params) {
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
           
         </div>
-        <br />
+      
         <TableUser isOpen={isSidebarOpen} searchTerms={searchTerms} />
       </div>
     </div>

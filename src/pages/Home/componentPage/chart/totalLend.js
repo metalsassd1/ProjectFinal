@@ -18,7 +18,7 @@ const RectangleBox1 = () => {
   const boxStyle = {
     width: "450px",
     height: "100px",
-    backgroundColor: "#f0f8ff", // Alice blue
+    backgroundColor: "rgb(198, 230, 247)", // Alice blue
     border: "2px solid #4682b4", // Steel blue
     borderRadius: "10px",
     padding: "60px",

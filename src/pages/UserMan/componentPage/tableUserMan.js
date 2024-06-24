@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import ModalAddPage from "../../../components/modalComponent/addPageCustoms";
 import EditModal from "../../../components/modalComponent/EditPageCustom";
+import Grid from '@mui/material/Grid';
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
@@ -24,8 +25,6 @@ const MyTable = () => {
     id: "",
     username: "",
     email: "",
-    registration_date: "",
-    last_update: "",
     is_admin: "",
   });
 
@@ -76,8 +75,6 @@ const MyTable = () => {
       item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
       item.username.toLowerCase().includes(searchTerms.username.toLowerCase()) &&
       item.email.toLowerCase().includes(searchTerms.email.toLowerCase()) &&
-      item.registration_date.toLowerCase().includes(searchTerms.registration_date.toLowerCase()) &&
-      item.last_update.toLowerCase().includes(searchTerms.last_update.toLowerCase()) &&
       getRoleLabel(item.is_admin).toLowerCase().includes(searchTerms.is_admin.toLowerCase())
     );
     setFilteredRows(filtered);
@@ -109,48 +106,48 @@ const MyTable = () => {
   return (
     <>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
-        <TextField
-          label="ค้นหาด้วย ID"
-          variant="outlined"
-          size="small"
-          value={searchTerms.id}
-          onChange={(e) => handleSearch("id", e.target.value)}
-        />
-        <TextField
-          label="ค้นหาด้วยชื่อผู้ใช้"
-          variant="outlined"
-          size="small"
-          value={searchTerms.username}
-          onChange={(e) => handleSearch("username", e.target.value)}
-        />
-        <TextField
-          label="ค้นหาด้วยอีเมล"
-          variant="outlined"
-          size="small"
-          value={searchTerms.email}
-          onChange={(e) => handleSearch("email", e.target.value)}
-        />
-        <TextField
-          label="ค้นหาด้วยวันที่ลงทะเบียน"
-          variant="outlined"
-          size="small"
-          value={searchTerms.registration_date}
-          onChange={(e) => handleSearch("registration_date", e.target.value)}
-        />
-        <TextField
-          label="ค้นหาด้วยวันที่อัพเดทล่าสุด"
-          variant="outlined"
-          size="small"
-          value={searchTerms.last_update}
-          onChange={(e) => handleSearch("last_update", e.target.value)}
-        />
-        <TextField
-          label="ค้นหาด้วยสถานะ Admin"
-          variant="outlined"
-          size="small"
-          value={searchTerms.is_admin}
-          onChange={(e) => handleSearch("is_admin", e.target.value)}
-        />
+      <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วย ID"
+                variant="outlined"
+                size="small"
+                value={searchTerms.id}
+                onChange={(e) => handleSearch("id", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยชื่ออุปกรณ์"
+                variant="outlined"
+                size="small"
+                value={searchTerms.username}
+                onChange={(e) => handleSearch("username", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยประเภท"
+                variant="outlined"
+                size="small"
+                value={searchTerms.email}
+                onChange={(e) => handleSearch("email", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยชื่อผู้ยืม"
+                variant="outlined"
+                size="small"
+                value={searchTerms.is_admin}
+                onChange={(e) => handleSearch("is_admin", e.target.value)}
+              />
+            </Grid>
+          </Grid>
       </div>
       <TableContainer component={Paper}>
         <Table>

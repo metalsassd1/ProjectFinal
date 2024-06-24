@@ -15,6 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import ModalAddPage from "../../../components/modalComponent/addPage";
 import EditModal from "../../../components/modalComponent/EditPage"
+import Grid from '@mui/material/Grid';
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
@@ -110,36 +111,50 @@ const MyTable = () => {
 
   return (
     <>
-      <Box display="flex" flexWrap="wrap" gap={2} mb={2}>
-        <TextField
-          label="ค้นหาด้วย ID"
-          variant="outlined"
-          size="small"
-          value={searchTerms.id}
-          onChange={(e) => handleSearch("id", e.target.value)}
-        />
-        <TextField
-          label="ค้นหาด้วยชื่ออุปกรณ์"
-          variant="outlined"
-          size="small"
-          value={searchTerms.equipment_name}
-          onChange={(e) => handleSearch("equipment_name", e.target.value)}
-        />
-        <TextField
-          label="ค้นหาด้วยวันที่นำเข้า"
-          variant="outlined"
-          size="small"
-          value={searchTerms.import_date}
-          onChange={(e) => handleSearch("import_date", e.target.value)}
-        />
-        <TextField
-          label="ค้นหาด้วยวันที่อัพเดทล่าสุด"
-          variant="outlined"
-          size="small"
-          value={searchTerms.last_update}
-          onChange={(e) => handleSearch("last_update", e.target.value)}
-        />
-      </Box>
+     <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วย ID"
+                variant="outlined"
+                size="small"
+                value={searchTerms.id}
+                onChange={(e) => handleSearch("id", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยชื่ออุปกรณ์"
+                variant="outlined"
+                size="small"
+                value={searchTerms.equipment_name}
+                onChange={(e) => handleSearch("equipment_name", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยประเภท"
+                variant="outlined"
+                size="small"
+                value={searchTerms.import_name}
+                onChange={(e) => handleSearch("import_name", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยชื่อผู้ยืม"
+                variant="outlined"
+                size="small"
+                value={searchTerms.last_update}
+                onChange={(e) => handleSearch("last_update", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} style={{ textAlign: 'right' }}>
+            </Grid>
+          </Grid>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

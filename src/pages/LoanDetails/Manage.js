@@ -3,6 +3,7 @@ import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import TextField from "@mui/material/TextField";
 import TableManage from "./componentPage/tableManage";
+import { Grid } from "@mui/material";
 
 function Manage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -49,37 +50,54 @@ function Manage() {
         }}
       >
         <h1>จัดการข้อมูลการยืม</h1>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
-          <TextField
-            label="ค้นหาด้วย ID"
-            variant="outlined"
-            size="small"
-            value={searchTerms.id}
-            onChange={(e) => handleSearch("id", e.target.value)}
-          />
-          <TextField
-            label="ค้นหาด้วยชื่ออุปกรณ์"
-            variant="outlined"
-            size="small"
-            value={searchTerms.equipment_name}
-            onChange={(e) => handleSearch("equipment_name", e.target.value)}
-          />
-          <TextField
-            label="ค้นหาด้วยวันที่นำเข้า"
-            variant="outlined"
-            size="small"
-            value={searchTerms.import_date}
-            onChange={(e) => handleSearch("import_date", e.target.value)}
-          />
-          <TextField
-            label="ค้นหาด้วยวันที่อัพเดทล่าสุด"
-            variant="outlined"
-            size="small"
-            value={searchTerms.last_update}
-            onChange={(e) => handleSearch("last_update", e.target.value)}
-          />
-        </div>
         <br />
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
+        <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วย ID"
+                variant="outlined"
+                size="small"
+                value={searchTerms.id}
+                onChange={(e) => handleSearch("id", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยชื่ออุปกรณ์"
+                variant="outlined"
+                size="small"
+                value={searchTerms.equipment_name}
+                onChange={(e) => handleSearch("equipment_name", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยประเภท"
+                variant="outlined"
+                size="small"
+                value={searchTerms.equipment_type}
+                onChange={(e) => handleSearch("equipment_type", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยชื่อผู้ยืม"
+                variant="outlined"
+                size="small"
+                value={searchTerms.borrower_name}
+                onChange={(e) => handleSearch("borrower_name", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} style={{ textAlign: 'right' }}>
+            </Grid>
+          </Grid>
+        </div>
+        
         <TableManage isOpen={isSidebarOpen} searchTerms={searchTerms} />
       </div>
     </div>

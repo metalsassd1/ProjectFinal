@@ -27,7 +27,7 @@ function Manage(params) {
   return (
     <div className="m" style={{ background: "#f0f0f0" }}>
       <div
-        className="header"
+        className=""
         style={{
           marginLeft: isSidebarOpen ? 200 : 0,
           transition: "margin 0.3s",

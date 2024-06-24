@@ -4,46 +4,73 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TableMain from "./conponentPage/tableMainPage";
 import SearchFilter from "./conponentPage/SearchFillter";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const MyPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
+  const [filterType, setFilterType] = useState(""); // State to hold selected equipment type filter
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
 
-  // Create a theme with green and white colors
   const theme = createTheme({
     palette: {
       primary: {
-        main: '#4CAF50', // Green
+        main: '#4CAF50',
       },
       background: {
-        default: '#ffffff', // White
+        default: '#ffffff',
       },
     },
   });
 
-  // Use media query to check if the screen is mobile size
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
-    // Fetch data logic here
+    fetchData();
   }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/api/home/eqloan");
+      const updatedData = response.data.map(item => ({
+        ...item,
+        desired_quantity: 0,
+      }));
+      setRows(updatedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    // Filter logic here
   };
 
-  const filterType1 = () => {
-    const filteredRows = rows.filter((row) => row.type === "Type1");
-    setRows(filteredRows);
+  const handleFilterType = (type) => {
+    setFilterType(type);
   };
 
-  const filterType2 = () => {
-    const filteredRows = rows.filter((row) => row.type === "Type2");
-    setRows(filteredRows);
+  const handleUpdateQuantity = (equipmentName, change) => {
+    setRows(currentRows => currentRows.map(row => {
+      if (row.equipment_name === equipmentName) {
+        const newDesiredQuantity = Math.max(0, row.desired_quantity + change);
+        const newMaxQuantity = row.max_quantity_in_stock - change;
+        if (newMaxQuantity >= 0) {
+          return {
+            ...row,
+            desired_quantity: newDesiredQuantity,
+            max_quantity_in_stock: newMaxQuantity
+          };
+        }
+      }
+      return row;
+    }));
   };
+
+  const filteredRows = rows.filter((row) => 
+    row.equipment_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+    (filterType === "" || row.equipment_type === filterType)
+  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -75,11 +102,14 @@ const MyPage = () => {
         >
           <SearchFilter
             onSearch={handleSearch}
-            onTypeFilter1={filterType1}
-            onTypeFilter2={filterType2}
             isMobile={isMobile}
+            onFilterType={handleFilterType} // Pass the filter type handler
           />
-          <TableMain isMobile={isMobile} />
+          <TableMain 
+            isMobile={isMobile} 
+            rows={filteredRows} 
+            onUpdateQuantity={handleUpdateQuantity}
+          />
         </Container>
       </div>
     </ThemeProvider>

@@ -1,53 +1,37 @@
-import React, { useState } from "react";
-import { TextField, Button, Box } from "@mui/material";
+import React from "react";
+import { TextField, Box, Button } from "@mui/material";
 
-const SearchFilter = ({ onSearch, onTypeFilter1, onTypeFilter2, isMobile }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleSearch = () => {
-    if (onSearch) {
-      onSearch(searchTerm);
-    }
+const SearchFilter = ({ onSearch, isMobile, onFilterType }) => {
+  const handleSearch = (event) => {
+    onSearch(event.target.value);
   };
 
   return (
     <Box 
       sx={{
         display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row',
-        alignItems: isMobile ? 'stretch' : 'center',
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 2,
-        gap: 1
+        gap: 1,
+        flexWrap: 'wrap' // Allows buttons to wrap on smaller screens
       }}
     >
       <TextField
-        fullWidth={isMobile}
+        fullWidth
         size={isMobile ? "small" : "medium"}
         variant="outlined"
-        placeholder="Search..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        placeholder="Filter by equipment name..."
+        onChange={handleSearch}
       />
-      <Button 
-        variant="contained" 
-        onClick={handleSearch}
-        fullWidth={isMobile}
-      >
-        Search
+      <Button variant="contained" onClick={() => onFilterType("อุปกรณ์กีฬา")}>
+        อุปกรณ์กีฬา
       </Button>
-      <Button 
-        variant="outlined" 
-        onClick={onTypeFilter1}
-        fullWidth={isMobile}
-      >
-        Type 1
+      <Button variant="contained" onClick={() => onFilterType("อุปกรณ์นันทนาการ")}>
+        อุปกรณ์นันทนาการ
       </Button>
-      <Button 
-        variant="outlined" 
-        onClick={onTypeFilter2}
-        fullWidth={isMobile}
-      >
-        Type 2
+      <Button variant="contained" onClick={() => onFilterType("")}>
+        ทั้งหมด
       </Button>
     </Box>
   );

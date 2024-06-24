@@ -17,11 +17,9 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const MyTable = () => {
-  const [rows, setRows] = useState([]);
+const MyTable = ({ rows, isMobile, onUpdateQuantity }) => { // Add onUpdateQuantity to the props
   const navigate = useNavigate();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchData();
@@ -41,28 +39,11 @@ const MyTable = () => {
   };
 
   const handleIncrement = (equipmentName) => {
-    setRows(currentRows => currentRows.map(row => {
-      if (row.equipment_name === equipmentName && row.desired_quantity >= 0 ) {
-        if(row.max_quantity_in_stock > 0){
-          return {
-            ...row,
-            desired_quantity: row.desired_quantity + 1,
-            max_quantity_in_stock: row.max_quantity_in_stock - 1
-          };
-        }
-      }
-      return row;
-    }));
+    onUpdateQuantity(equipmentName, 1); // Use the passed onUpdateQuantity function
   };
   
   const handleDecrement = (equipmentName) => {
-    setRows(currentRows => currentRows.map(row => {
-      if (row.equipment_name === equipmentName && row.desired_quantity > 0) {
-        return { ...row, desired_quantity: row.desired_quantity - 1,
-          max_quantity_in_stock: row.max_quantity_in_stock + 1 };
-      }
-      return row;
-    }));
+    onUpdateQuantity(equipmentName, -1); // Use the passed onUpdateQuantity function
   };
 
   const renderMobileView = () => (
