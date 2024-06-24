@@ -7,10 +7,7 @@ const Header = ({ username, onLogout }) => {
       <div className="left-section">
         <h1>PIM CAN Take</h1>
       </div>
-      <div className="right-section">
-        <p>{username}</p>
-        <button onClick={onLogout}>Logout</button>
-      </div>
+      
     </header>
   );
 };

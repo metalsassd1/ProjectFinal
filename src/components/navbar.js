@@ -24,14 +24,8 @@ const Navbar = ({ isOpen, onLogout, onToggleSidebar }) => {
           <MenuIcon onClick={onToggleSidebar} />
         </IconButton>
         <div style={{ flexGrow: 1 }}></div>
-        <Avatar
-          alt="User"
-          // src="/path-to-your-avatar-image.jpg"
-          sx={{ width: 24, height: 24,zIndex: 999, ml: 2, mt: -3  }}
-        />
-        <Button color="primary" onClick={onLogout} sx={{ zIndex: 999, ml: 2, mt: -3 }}>
-          ออกจากระบบ
-        </Button>
+        
+        
       </Toolbar>
     </WhiteAppBar>
   );

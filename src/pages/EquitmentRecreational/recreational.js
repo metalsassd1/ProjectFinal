@@ -60,6 +60,8 @@ function Manage(params) {
                 size="small"
                 value={searchTerms.id}
                 onChange={(e) => handleSearch("id", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -70,6 +72,8 @@ function Manage(params) {
                 size="small"
                 value={searchTerms.equipment_name}
                 onChange={(e) => handleSearch("equipment_name", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -80,6 +84,8 @@ function Manage(params) {
                 size="small"
                 value={searchTerms.import_name}
                 onChange={(e) => handleSearch("import_name", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -90,6 +96,8 @@ function Manage(params) {
                 size="small"
                 value={searchTerms.last_update}
                 onChange={(e) => handleSearch("last_update", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
               />
             </Grid>
           </Grid>

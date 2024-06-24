@@ -1,4 +1,3 @@
-// tableHome.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -55,7 +54,8 @@ const MyTable = ({ searchTerms }) => {
       item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
       item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
       item.equipment_type.toLowerCase().includes(searchTerms.equipment_type.toLowerCase()) &&
-      (item.borrower_name || "").toLowerCase().includes(searchTerms.borrower_name.toLowerCase())
+      (item.borrower_name || "").toLowerCase().includes(searchTerms.borrower_name.toLowerCase()) &&
+      item.borrow_date.toLowerCase().includes(searchTerms.borrow_date.toLowerCase()) // เพิ่มเงื่อนไขการกรองตาม borrow_date
     );
     setFilteredRows(filtered);
   };

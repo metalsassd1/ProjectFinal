@@ -115,6 +115,8 @@ const MyTable = () => {
                 size="small"
                 value={searchTerms.id}
                 onChange={(e) => handleSearch("id", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -125,6 +127,8 @@ const MyTable = () => {
                 size="small"
                 value={searchTerms.username}
                 onChange={(e) => handleSearch("username", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -135,6 +139,8 @@ const MyTable = () => {
                 size="small"
                 value={searchTerms.email}
                 onChange={(e) => handleSearch("email", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
               />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -145,6 +151,8 @@ const MyTable = () => {
                 size="small"
                 value={searchTerms.is_admin}
                 onChange={(e) => handleSearch("is_admin", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
               />
             </Grid>
           </Grid>

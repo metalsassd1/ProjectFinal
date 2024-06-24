@@ -65,8 +65,9 @@ const MyTable = ({ searchTerms }) => {
     const filtered = rows.filter(item =>
       item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
       item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
-      item.borrow_date.toLowerCase().includes(searchTerms.import_date.toLowerCase()) &&
-      item.return_date.toLowerCase().includes(searchTerms.last_update.toLowerCase())
+      item.equipment_type.toLowerCase().includes(searchTerms.equipment_type.toLowerCase()) &&
+      item.borrower_name.toLowerCase().includes(searchTerms.borrower_name.toLowerCase()) &&
+      item.borrow_date.toLowerCase().includes(searchTerms.borrow_date.toLowerCase()) // เพิ่มเงื่อนไขสำหรับค้นหาด้วยวันที่ยืม
     );
     setFilteredRows(filtered);
   };
