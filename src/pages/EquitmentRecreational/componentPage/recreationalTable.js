@@ -14,8 +14,9 @@ import { useNavigate } from "react-router-dom";
 import ModalAddPage from "../../../components/modalComponent/addPage";
 import EditModal from "../../../components/modalComponent/EditPage";
 
-const MyTable = () => {
+const MyTable = ({ searchTerms }) => {
   const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
   const [selectedRec, setSelectedRec] = useState(null);
@@ -51,13 +52,29 @@ const MyTable = () => {
         last_update: formatDate(item.last_update),
       }));
       setRows(formattedData);
+      setFilteredRows(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [rows, searchTerms]);
+
+  const filterData = () => {
+    const filtered = rows.filter(item =>
+      item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
+      item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
+      item.import_date.toLowerCase().includes(searchTerms.import_date.toLowerCase()) &&
+      item.last_update.toLowerCase().includes(searchTerms.last_update.toLowerCase())
+    );
+    setFilteredRows(filtered);
+  };
 
   const handleEditOpen = (user) => {
     console.log(user);
@@ -115,7 +132,7 @@ const MyTable = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {filteredRows.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
