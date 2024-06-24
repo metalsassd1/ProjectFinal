@@ -82,7 +82,20 @@ const MyTable = ({ searchTerms }) => {
       return { backgroundColor: "#D3D3D3" }; 
     }
   };
-
+  const handleReturn = async (data) => {
+    const body = {
+      id: data.id,
+      equipment_name: data.equipment_name,
+      quantity_borrowed: data.quantity_borrowed
+    };
+    try {
+      const response = await axios.put('https://back-end-finals-project-pgow.onrender.com/api/Borrowed/return', body);
+      alert('Return processed: ' + response.data.message);
+    } catch (error) {
+      console.error('Error processing return:', body);
+      alert('Failed to process return', error);
+    }
+  };
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -98,6 +111,7 @@ const MyTable = ({ searchTerms }) => {
             <TableCell>วันที่ยืม</TableCell>
             <TableCell>วันที่คืน</TableCell>
             <TableCell>สถานะ</TableCell>
+            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -118,6 +132,11 @@ const MyTable = ({ searchTerms }) => {
               <TableCell>{row.return_date}</TableCell>
               <TableCell style={{ backgroundColor: getStatusColor(row.loan_status) }}>
                 {row.loan_status || ''}
+              </TableCell>
+              <TableCell>
+                {row.loan_status === "ยืม" && (
+                  <button className="qr-button" onClick={() => handleReturn(row)}>คืน</button>
+                )}
               </TableCell>
             </TableRow>
           ))}

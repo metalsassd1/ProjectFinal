@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import QRCode from 'qrcode.react';
 import Return from './return';
@@ -10,6 +10,8 @@ const GenerateQR = () => {
   const data = new URLSearchParams(location.search).get('data');
   const borrowData = JSON.parse(decodeURIComponent(data));
   const qrRef = useRef(null);
+  const [rows, setRows] = useState([]);
+  const [containerClass, setContainerClass] = useState('qr-container');
 
   useEffect(() => {
     // This will ensure the QR code is rendered before trying to access it
@@ -18,49 +20,51 @@ const GenerateQR = () => {
     }
   }, []);
 
-  const handlePrint = () => {
-    const qrCode = qrRef.current;
-    const canvas = qrCode.querySelector('canvas');
-    const body = {
-        id: borrowData.id,
-        equipment_name: borrowData.equipment_name,
-        quantity_borrowed: borrowData.quantity_borrowed
-      };
-    if (canvas) {
-      const image = canvas.toDataURL("image/png");
-      const newWindow = window.open('', '_blank');
-      const html = `
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <img src="${image}" />
-        <p style="margin-top: 10px;">PIM CAN TAKE</p>
-      </div>
-      <script>window.print();window.close();</script>
-    `;
-    newWindow.document.write(html);
-    newWindow.document.close();
-    } else {
-      console.error('QR Code canvas not found');
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (rows.length > 0) {
+      const matchingRow = rows.find(row => row.id === borrowData.id);
+      if (matchingRow) {
+        const isBorrowStatus = matchingRow.loan_status === "ยืม";
+        setContainerClass(isBorrowStatus ? "qr-container" : "qr-container red-theme");
+      }
+      console.log(rows.find(row => row.id),borrowData)
+    }
+  }, [rows, borrowData.id]);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "https://back-end-finals-project-pgow.onrender.com/api/home/management"
+      );
+      const formattedData = response.data.map((item) => ({
+        ...item,
+        borrow_date: formatDate(item.borrow_date),
+        return_date: formatDate(item.return_date),
+      }));
+      setRows(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
-  const handleReturn = async () => {
-    const body = {
-      id: borrowData.id,
-      equipment_name: borrowData.equipment_name,
-      quantity_borrowed: borrowData.quantity_borrowed
-    };
-    try {
-      const response = await axios.put('https://back-end-finals-project-pgow.onrender.com/api/Borrowed/return', body);
-      alert('Return processed: ' + response.data.message);
-    } catch (error) {
-      console.error('Error processing return:', body);
-      alert('Failed to process return', error);
-    }
+  const formatDate = (dateString) => {
+    if (!dateString) return "No date provided";
+    const date = new Date(dateString);
+    if (isNaN(date)) return "Invalid date";
+    return date.toLocaleDateString("TH", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
   };
 
   return (
-    <div className="qr-container">
-      <h1 className="qr-title">QR Code Generator</h1>
+    <div className={containerClass}>
+      <h1 className="qr-title">QR Code การยืม</h1>
       <div id="qrCodeElement" ref={qrRef}>
         <QRCode
           value={data ? decodeURIComponent(data) : 'No data provided'}
@@ -69,10 +73,9 @@ const GenerateQR = () => {
           includeMargin={true}
         />
       </div>
-      <Return data={borrowData} />
+      <Return data={borrowData} response={rows} />
       <div className="qr-buttons">
-        <button className="qr-button" onClick={handlePrint}>Print</button>
-        <button className="qr-button" onClick={handleReturn}>คืน</button>
+        {/* Any buttons or additional components can go here */}
       </div>
     </div>
   );

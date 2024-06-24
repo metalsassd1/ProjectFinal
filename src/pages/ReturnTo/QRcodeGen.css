@@ -31,4 +31,7 @@
   .qr-button:hover {
     background-color: darkgreen;
   }
-  
+  .qr-container.red-theme {
+    background-color: #ffcccc; /* Light red background */
+    color: #ff0000; /* Red text color */
+  }

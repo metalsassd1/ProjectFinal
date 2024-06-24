@@ -9,6 +9,7 @@ import { MuiDateRangePicker } from "../../components/MuiDateRangePicker";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com";
+import swal from 'sweetalert';
 
 const theme = createTheme({
   palette: {
@@ -91,26 +92,35 @@ export default function Borrower() {
       return_date: data.duration.end.toISOString().split("T")[0],
       loan_status: "รออนุมัติ",
       quantity_data: quantity_borrowed,
-      submitEv:`https://back-end-finals-project-pgow.onrender.com/submit/${data.equip_name}/${id}`
+      submitEv: `https://pimcantake.netlify.app/submit/${data.equip_name}/${id}`
     };
-  
-
 
     try {
       // Submit the borrowing request to the backend API
       const response = await axios.post("https://back-end-finals-project-pgow.onrender.com/api/Borrowed/borrow", formattedData);
       console.log("Server response:", response.data);
-      
+
       // Now handle the email submission and wait for its completion
       handleAdminsubmit(formattedData).then(() => {
         if (response) {
-          alert("Form submitted successfully!");
-          navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
+          swal({
+            title: "ดำเนินการสำเร็จ",
+            text: "กรุณารอผู้ดูแลอนุมัติ!",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
+          });
         }
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("An error occurred while submitting the form.");
+      swal({
+        title: "Error",
+        text: "An error occurred while submitting the form.",
+        icon: "error",
+        button: "OK",
+      });
     }
   };
   
