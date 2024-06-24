@@ -50,7 +50,7 @@ const MyTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/user/table");
+      const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/user/table");
       const formattedData = response.data.map(item => ({
         ...item,
         registration_date: formatDate(item.registration_date),

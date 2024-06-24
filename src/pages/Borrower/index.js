@@ -91,14 +91,14 @@ export default function Borrower() {
       return_date: data.duration.end.toISOString().split("T")[0],
       loan_status: "รออนุมัติ",
       quantity_data: quantity_borrowed,
-      submitEv:`http://localhost:3000/submit/${data.equip_name}/${id}`
+      submitEv:`https://back-end-finals-project-pgow.onrender.com/submit/${data.equip_name}/${id}`
     };
   
 
 
     try {
       // Submit the borrowing request to the backend API
-      const response = await axios.post("http://localhost:4000/api/Borrowed/borrow", formattedData);
+      const response = await axios.post("https://back-end-finals-project-pgow.onrender.com/api/Borrowed/borrow", formattedData);
       console.log("Server response:", response.data);
       
       // Now handle the email submission and wait for its completion
