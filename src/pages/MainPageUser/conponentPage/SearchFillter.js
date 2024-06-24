@@ -1,83 +1,56 @@
 import React, { useState } from "react";
+import { TextField, Button, Box } from "@mui/material";
 
-const SearchFilter = ({ onSearch, onFilter1, onFilter2, onTypeFilter1, onTypeFilter2 }) => {
+const SearchFilter = ({ onSearch, onTypeFilter1, onTypeFilter2, isMobile }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Event handler when search button is clicked
   const handleSearch = () => {
     if (onSearch) {
       onSearch(searchTerm);
     }
   };
 
-  // Event handlers for type filter buttons
-  const handleTypeFilter1 = () => {
-    if (onTypeFilter1) {
-      onTypeFilter1(); // This could also take parameters if needed
-    }
-  };
-
-  const handleTypeFilter2 = () => {
-    if (onTypeFilter2) {
-      onTypeFilter2(); // This could also take parameters if needed
-    }
-  };
-
   return (
-    <div style={styles.container}>
-      <input
-        type="text"
+    <Box 
+      sx={{
+        display: 'flex',
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'stretch' : 'center',
+        marginBottom: 2,
+        gap: 1
+      }}
+    >
+      <TextField
+        fullWidth={isMobile}
+        size={isMobile ? "small" : "medium"}
+        variant="outlined"
         placeholder="Search..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={styles.input}
       />
-      <button onClick={handleSearch} style={styles.button}>
+      <Button 
+        variant="contained" 
+        onClick={handleSearch}
+        fullWidth={isMobile}
+      >
         Search
-      </button>
-      {/* Other filter buttons */}
-      <button onClick={handleTypeFilter1} style={styles.filterButton}>
+      </Button>
+      <Button 
+        variant="outlined" 
+        onClick={onTypeFilter1}
+        fullWidth={isMobile}
+      >
         Type 1
-      </button>
-      <button onClick={handleTypeFilter2} style={styles.filterButton}>
+      </Button>
+      <Button 
+        variant="outlined" 
+        onClick={onTypeFilter2}
+        fullWidth={isMobile}
+      >
         Type 2
-      </button>
-    </div>
+      </Button>
+    </Box>
   );
-};
-
-const styles = {
-  container: {
-    display: "flex",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  input: {
-    marginRight: 10,
-    padding: 8,
-    fontSize: 16,
-    borderRadius: 4,
-    border: "1px solid #ccc",
-  },
-  button: {
-    padding: 8,
-    fontSize: 16,
-    backgroundColor: "#4CAF50",
-    color: "#fff",
-    border: "none",
-    borderRadius: 4,
-    cursor: "pointer",
-  },
-  filterButton: {
-    marginLeft: 10,
-    padding: 8,
-    fontSize: 16,
-    backgroundColor: "#2196F3",
-    color: "#fff",
-    border: "none",
-    borderRadius: 4,
-    cursor: "pointer",
-  },
 };
 
 export default SearchFilter;

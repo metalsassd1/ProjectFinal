@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography, TextField, Button } from "@mui/material";
-import { DatePicker } from "@mui/lab";
-import { Search as SearchIcon } from "@mui/icons-material";
+import { AppBar, Toolbar, Typography, Container, CssBaseline, useMediaQuery } from "@mui/material";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TableMain from "./conponentPage/tableMainPage";
 import SearchFilter from "./conponentPage/SearchFillter";
 import { useNavigate } from "react-router-dom";
@@ -12,52 +11,78 @@ const MyPage = () => {
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
 
+  // Create a theme with green and white colors
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: '#4CAF50', // Green
+      },
+      background: {
+        default: '#ffffff', // White
+      },
+    },
+  });
+
+  // Use media query to check if the screen is mobile size
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(() => {
-    // Here, you would fetch your data from the API
-    // For now, we'll simulate with an empty dependency array
-    // fetchYourData().then(data => setFilteredData(data));
+    // Fetch data logic here
   }, []);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
-    // Now, filter your data based on the search term and update `filteredData`
-    // For example:
-    // const newData = yourData.filter(item => item.name.includes(term));
-    // setFilteredData(newData);
+    // Filter logic here
   };
 
-  // Implement the filter logic for Type 1
   const filterType1 = () => {
-    // Filter logic for Type 1
     const filteredRows = rows.filter((row) => row.type === "Type1");
     setRows(filteredRows);
   };
 
-  // Implement the filter logic for Type 2
   const filterType2 = () => {
-    // Filter logic for Type 2
     const filteredRows = rows.filter((row) => row.type === "Type2");
     setRows(filteredRows);
   };
 
   return (
-    <div className="contrainer">
-      <div className="Head-Page" style={{ margin: "20px" }}>
-        <AppBar position="static">
-          <Toolbar textAlign={"center"}>
-            <Typography variant="h6">PIM CAN TAKE</Typography>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <AppBar position="static" color="primary" elevation={0}>
+          <Toolbar>
+            <Typography 
+              variant={isMobile ? "h6" : "h5"} 
+              component="div" 
+              sx={{ 
+                flexGrow: 1, 
+                textAlign: 'center',
+                fontSize: isMobile ? '1.1rem' : '1.5rem',
+                padding: isMobile ? '10px 0' : '15px 0'
+              }}
+            >
+              PIM CAN TAKE
+            </Typography>
           </Toolbar>
         </AppBar>
+        <Container 
+          maxWidth="lg" 
+          style={{ 
+            flexGrow: 1, 
+            marginTop: '20px', 
+            padding: isMobile ? '0 10px' : '0 24px'
+          }}
+        >
+          <SearchFilter
+            onSearch={handleSearch}
+            onTypeFilter1={filterType1}
+            onTypeFilter2={filterType2}
+            isMobile={isMobile}
+          />
+          <TableMain isMobile={isMobile} />
+        </Container>
       </div>
-      <div className="Table-Main">
-        <SearchFilter
-          onSearch={handleSearch}
-          onTypeFilter1={filterType1}
-          onTypeFilter2={filterType2}
-        />
-        <TableMain />
-      </div>
-    </div>
+    </ThemeProvider>
   );
 };
 
