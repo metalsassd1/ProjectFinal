@@ -89,7 +89,7 @@ const MyTable = () => {
     const isConfirmed = window.confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?");
     if (isConfirmed) {
       try {
-        await axios.delete(`http://localhost:4000/api/user/delete/${id}`);
+        await axios.delete(`https://back-end-finals-project-pgow.onrender.com/api/user/delete/${id}`);
         fetchData();
       } catch (error) {
         console.error("Error deleting data:", error);

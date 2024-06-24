@@ -15,7 +15,7 @@ const Submit = () => {
     setLoading(true);
     try {
       const response = await axios.put(
-        `http://localhost:4000/api/Borrowed/adminsubmit/${equipment_name}/${id}`
+        `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${equipment_name}/${id}`
       );
       setApiResponse(JSON.stringify(response.data, null, 2));
       setLoading(false);

@@ -50,7 +50,7 @@ const GenerateQR = () => {
       quantity_borrowed: borrowData.quantity_borrowed
     };
     try {
-      const response = await axios.put('http://localhost:4000/api/Borrowed/return', body);
+      const response = await axios.put('https://back-end-finals-project-pgow.onrender.com/api/Borrowed/return', body);
       alert('Return processed: ' + response.data.message);
     } catch (error) {
       console.error('Error processing return:', body);

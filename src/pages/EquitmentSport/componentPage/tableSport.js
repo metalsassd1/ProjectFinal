@@ -34,8 +34,8 @@ const MyTable = () => {
   const handleClose = () => setModalOpen(false);
   const navigate = useNavigate();
 
-  const addAPI = "http://localhost:4000/api/sport/add"
-  const editAPI = "http://localhost:4000/api/sport/update"
+  const addAPI = "https://back-end-finals-project-pgow.onrender.com/api/sport/add"
+  const editAPI = "https://back-end-finals-project-pgow.onrender.com/api/sport/update"
 
   const formatDate = (dateString) => {
     if (!dateString) return 'No date provided';
