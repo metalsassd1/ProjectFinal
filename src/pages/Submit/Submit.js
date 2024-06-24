@@ -3,6 +3,7 @@ import axios from "axios";
 import { Button, CircularProgress } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import "./Submit.css";
+import Swal from 'sweetalert2';
 
 const Submit = () => {
   const [loading, setLoading] = useState(false);
