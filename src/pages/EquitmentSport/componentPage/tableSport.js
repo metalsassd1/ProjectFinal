@@ -9,6 +9,8 @@ import {
   TableRow,
   Paper,
   Button,
+  TextField,
+  Box,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ModalAddPage from "../../../components/modalComponent/addPage";
@@ -16,9 +18,16 @@ import EditModal from "../../../components/modalComponent/EditPage"
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
   const [selectedSport, setSelectedSport] = useState(null);
+  const [searchTerms, setSearchTerms] = useState({
+    id: "",
+    equipment_name: "",
+    import_date: "",
+    last_update: ""
+  });
 
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
@@ -27,20 +36,25 @@ const MyTable = () => {
   const addAPI = "http://localhost:4000/api/sport/add"
   const editAPI = "http://localhost:4000/api/sport/update"
 
-
   const formatDate = (dateString) => {
-    if (!dateString) return 'No date provided'; // Handles null, undefined, or empty string
-  
+    if (!dateString) return 'No date provided';
     const date = new Date(dateString);
-    if (isNaN(date)) return 'Invalid date'; // Check if the date is invalid
-  
+    if (isNaN(date)) return 'Invalid date';
     return date.toLocaleDateString("TH", {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
   }
-  
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [rows, searchTerms]);
+
   const fetchData = async () => {
     try {
       const response = await axios.get(
@@ -52,114 +66,150 @@ const MyTable = () => {
         last_update: formatDate(item.last_update)
       }));
       setRows(formattedData);
+      setFilteredRows(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  useEffect(() => {
 
-    fetchData();
-  }, []);
+  const filterData = () => {
+    const filtered = rows.filter(item =>
+      item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
+      item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
+      item.import_date.toLowerCase().includes(searchTerms.import_date.toLowerCase()) &&
+      item.last_update.toLowerCase().includes(searchTerms.last_update.toLowerCase())
+    );
+    setFilteredRows(filtered);
+  };
 
   const handleEditOpen = (user) => {
-    console.log(user)
-    setSelectedSport(user); // Set the selected user to edit
-    setModalEditOpen(true); // Open the edit modal
+    setSelectedSport(user);
+    setModalEditOpen(true);
   };
 
   const handleEditClose = () => {
     setModalEditOpen(false);
-    fetchData(); // Refresh data after closing the modal
+    fetchData();
   };
-
 
   const handleDelete = async (id) => {
     const isConfirmed = window.confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?");
-
     if (isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/api/sport/delete/${id}`);
-        // หลังจากลบข้อมูลสำเร็จ สามารถทำการ fetch ข้อมูลใหม่เพื่ออัปเดตหน้าตาราง
-        const response = await axios.get(
-          "http://localhost:4000/api/sport/table"
-        );
-        setRows(response.data);
+        fetchData();
       } catch (error) {
         console.error("Error deleting data:", error);
       }
     }
   };
 
+  const handleSearch = (field, value) => {
+    setSearchTerms(prev => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>ชื่ออุปกรณ์</TableCell>
-            <TableCell>จำนวน</TableCell>
-            <TableCell>ประเภท</TableCell>
-            <TableCell>วันที่นำเข้า</TableCell>
-            <TableCell>อัพเดทล่าสุด</TableCell>
-            <TableCell>หมายเหตุ</TableCell>
-            <TableCell>
-            <Button
-                variant="contained"
-                color="primary"
-                onClick={handleOpen}
-              >
-                เพิ่มข้อมูล
-              </Button>
-              <ModalAddPage 
-              open={modalOpen} 
-              handleClose={handleClose}
-              label={"อุปกรณ์กีฬา"}
-              API={addAPI}
-              />
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.ID}>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.equipment_name}</TableCell>
-              <TableCell>{row.Sp_quantity_in_stock}</TableCell>
-              <TableCell>{row.equipment_type}</TableCell>
-              <TableCell>{row.import_date}</TableCell>
-              <TableCell>{row.last_update}</TableCell>
-              <TableCell>{row.note}</TableCell>
+    <>
+      <Box display="flex" flexWrap="wrap" gap={2} mb={2}>
+        <TextField
+          label="ค้นหาด้วย ID"
+          variant="outlined"
+          size="small"
+          value={searchTerms.id}
+          onChange={(e) => handleSearch("id", e.target.value)}
+        />
+        <TextField
+          label="ค้นหาด้วยชื่ออุปกรณ์"
+          variant="outlined"
+          size="small"
+          value={searchTerms.equipment_name}
+          onChange={(e) => handleSearch("equipment_name", e.target.value)}
+        />
+        <TextField
+          label="ค้นหาด้วยวันที่นำเข้า"
+          variant="outlined"
+          size="small"
+          value={searchTerms.import_date}
+          onChange={(e) => handleSearch("import_date", e.target.value)}
+        />
+        <TextField
+          label="ค้นหาด้วยวันที่อัพเดทล่าสุด"
+          variant="outlined"
+          size="small"
+          value={searchTerms.last_update}
+          onChange={(e) => handleSearch("last_update", e.target.value)}
+        />
+      </Box>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>ID</TableCell>
+              <TableCell>ชื่ออุปกรณ์</TableCell>
+              <TableCell>จำนวน</TableCell>
+              <TableCell>ประเภท</TableCell>
+              <TableCell>วันที่นำเข้า</TableCell>
+              <TableCell>อัพเดทล่าสุด</TableCell>
+              <TableCell>หมายเหตุ</TableCell>
               <TableCell>
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => handleEditOpen(row)}
+                  onClick={handleOpen}
                 >
-                  แก้ไข
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  style={{ marginLeft: 10 }}
-                  onClick={() => handleDelete(row.id)}
-                >
-                  ลบ
+                  เพิ่มข้อมูล
                 </Button>
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {filteredRows.map((row) => (
+              <TableRow key={row.id}>
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{row.equipment_name}</TableCell>
+                <TableCell>{row.Sp_quantity_in_stock}</TableCell>
+                <TableCell>{row.equipment_type}</TableCell>
+                <TableCell>{row.import_date}</TableCell>
+                <TableCell>{row.last_update}</TableCell>
+                <TableCell>{row.note}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleEditOpen(row)}
+                  >
+                    แก้ไข
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    style={{ marginLeft: 10 }}
+                    onClick={() => handleDelete(row.id)}
+                  >
+                    ลบ
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <ModalAddPage 
+        open={modalOpen} 
+        handleClose={handleClose}
+        label={"อุปกรณ์กีฬา"}
+        API={addAPI}
+      />
       {selectedSport && (
         <EditModal
           open={modalEditOpen}
           handleClose={handleEditClose}
-          storeData={(selectedSport)}
+          storeData={selectedSport}
           label={"อุปกรณ์กีฬา"}
           API={editAPI}
         />
       )}
-    </TableContainer>
+    </>
   );
 };
 

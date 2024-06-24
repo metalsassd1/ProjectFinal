@@ -3,10 +3,17 @@ import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import SearchBar from "../../components/SeachBar";
 import TableEquip from "./componentPage/tableSport";
+import { TextField, Box } from "@mui/material";  // เพิ่ม Box ตรงนี้
+
 
 function Manage(params) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");  // State to hold the search term
+  const [searchTerms, setSearchTerms] = useState({
+    id: "",
+    equipment_name: "",
+    import_date: "",
+    last_update: ""
+  });
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -45,13 +52,14 @@ function Manage(params) {
         }}
       >
         <h1>จัดการข้อมูลอุปกรณ์กีฬา</h1>
-        <SearchBar onSearch={handleSearch} />
-        <br />
-        {/* Pass searchTerm as a prop to TableEquip */}
-        <TableEquip searchTerm={searchTerm} isOpen={isSidebarOpen} />
-      </div>
+        <Box display="flex" flexWrap="wrap" gap={2} mb={2}>
+        
+        </Box>
+      <TableEquip searchTerms={searchTerms} isOpen={isSidebarOpen} />
     </div>
-  );
+  </div>
+);
 }
 
 export default Manage;
+
