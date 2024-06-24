@@ -12,30 +12,34 @@ import {
 } from "@mui/material";
 import EditModal from "../../../components/modalComponent/EditPageLoanEdit";
 
-const MyTable = ( data) => {
+const MyTable = ({ searchTerms }) => {
   const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
   const [selectedLoD, setSelectedLoD] = useState(null);
   const [modalEditOpen, setModalEditOpen] = useState(false);
 
-  
-  console.log(data)
-  
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    filterData();
+  }, [rows, searchTerms]);
+
   const handleEditOpen = (row) => {
-    setSelectedLoD(row); // Set the selected user to edit
-    setModalEditOpen(true); // Open the edit modal
+    setSelectedLoD(row);
+    setModalEditOpen(true);
   };
 
   const handleEditClose = () => {
     setModalEditOpen(false);
-    fetchData(); // Refresh data after closing the modal
+    fetchData();
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'No date provided'; // Handles null, undefined, or empty string
-  
+    if (!dateString) return 'No date provided';
     const date = new Date(dateString);
-    if (isNaN(date)) return 'Invalid date'; // Check if the date is invalid
-  
+    if (isNaN(date)) return 'Invalid date';
     return date.toLocaleDateString("TH", {
       year: 'numeric',
       month: 'long',
@@ -43,13 +47,9 @@ const MyTable = ( data) => {
     });
   }
 
-
-  
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:4000/api/home/management"
-      );
+      const response = await axios.get("http://localhost:4000/api/home/management");
       const formattedData = response.data.map(item => ({
         ...item,
         borrow_date: formatDate(item.borrow_date),
@@ -60,65 +60,50 @@ const MyTable = ( data) => {
       console.error("Error fetching data:", error);
     }
   };
-  useEffect(() => {
 
-    fetchData();
-  }, []); // useEffect with [] to fetch data only once when the component mounts
+  const filterData = () => {
+    const filtered = rows.filter(item =>
+      item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
+      item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
+      item.borrow_date.toLowerCase().includes(searchTerms.import_date.toLowerCase()) &&
+      item.return_date.toLowerCase().includes(searchTerms.last_update.toLowerCase())
+    );
+    setFilteredRows(filtered);
+  };
 
-  
-  
   const handleDelete = async (id) => {
     const isConfirmed = window.confirm("คุณต้องการลบข้อมูลนี้ใช่หรือไม่?");
-    
     if (isConfirmed) {
       try {
         await axios.delete(`http://localhost:4000/api/manage/delete/${id}`);
-        // หลังจากลบข้อมูลสำเร็จ สามารถทำการ fetch ข้อมูลใหม่เพื่ออัปเดตหน้าตาราง
-        const response = await axios.get(
-          "http://localhost:4000/api/manage/table"
-        );
-        setRows(response.data);
+        fetchData();
       } catch (error) {
         console.error("Error deleting data:", error);
       }
     }
   };
-  
-  
+
   const getStatusColor = (loan_status) => {
     switch (loan_status) {
-      case "คืน":
-        return "#32CD32"; // Green color for returned items
-      case "ยืม":
-        return "#FFA500"; // Orange color for borrowed items
-      default:
-        return "#D3D3D3"; // Gray color for other statuses
+      case "คืน": return "#32CD32";
+      case "ยืม": return "#FFA500";
+      default: return "#D3D3D3";
     }
   };
-  
+
   const getRowStyle_Stock = (quantityInStock) => {
-    if (quantityInStock > 0 ) {
-      return { backgroundColor: "#D3D3D3" }; 
-    } else if(quantityInStock <= 0) {
-      return { backgroundColor: "#D3D3D3" }; 
-    }
+    return { backgroundColor: "#D3D3D3" };
   };
 
   const getRowStyle_borrowed = (quantity_borrowed) => {
-    if (quantity_borrowed > 0) {
-      return { backgroundColor: "#FFA500" }; 
-    } else {
-      return { backgroundColor: "#D3D3D3" }; 
-    }
+    return quantity_borrowed > 0 ? { backgroundColor: "#FFA500" } : { backgroundColor: "#D3D3D3" };
   };
-
-
 
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-        <TableRow style={{backgroundColor: "#D3D3D3"}}>
+          <TableRow style={{backgroundColor: "#D3D3D3"}}>
             <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
             <TableCell>คลังคงเหลือ</TableCell>
@@ -128,42 +113,28 @@ const MyTable = ( data) => {
             <TableCell>ผู้ยืม</TableCell>
             <TableCell>วันที่ยืม</TableCell>
             <TableCell>วันที่คืน</TableCell>
-            <TableCell >สถานะ</TableCell>
-            <TableCell ></TableCell>
+            <TableCell>สถานะ</TableCell>
+            <TableCell>การดำเนินการ</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row, index) => (
+          {filteredRows.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
-              <TableCell style={getRowStyle_Stock(row.total_stock)}>
-                {row.total_stock}
-              </TableCell>
+              <TableCell style={getRowStyle_Stock(row.total_stock)}>{row.total_stock}</TableCell>
               <TableCell>{row.quantity_data}</TableCell>
-              <TableCell style={getRowStyle_borrowed(row.quantity_borrowed)}
-              >{row.quantity_borrowed}</TableCell>
+              <TableCell style={getRowStyle_borrowed(row.quantity_borrowed)}>{row.quantity_borrowed}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
               <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
-              <TableCell style={{ backgroundColor: getStatusColor(row.loan_status) }}>
-              {row.loan_status || ''}
-              </TableCell>
+              <TableCell style={{ backgroundColor: getStatusColor(row.loan_status) }}>{row.loan_status || ''}</TableCell>
               <TableCell>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleEditOpen(row)}
-                >
+                <Button variant="contained" color="primary" onClick={() => handleEditOpen(row)}>
                   Edit
                 </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  style={{ marginLeft: 10 }}
-                  onClick={() => handleDelete(row.id)}
-                >
+                <Button variant="contained" color="secondary" style={{ marginLeft: 10 }} onClick={() => handleDelete(row.id)}>
                   Delete
                 </Button>
               </TableCell>
@@ -172,7 +143,7 @@ const MyTable = ( data) => {
         </TableBody>
       </Table>
       {selectedLoD && (
-      <EditModal
+        <EditModal
           open={modalEditOpen}
           handleClose={handleEditClose}
           loanData={selectedLoD}
