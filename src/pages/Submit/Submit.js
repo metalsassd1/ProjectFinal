@@ -136,6 +136,7 @@ const Submit = () => {
         });
       } finally {
         setLoading(false);
+        closePage();
       }
     }
   };

@@ -49,8 +49,8 @@ const schema = z.object({
 });
 
 export default function Borrower() {
-  const [quantity_borrowed, setQuantity_borrowed] = useState(1);
   const { Ename, Etype, desired_quantity } = useParams();
+  const [quantity_borrowed, setQuantity_borrowed] = useState(desired_quantity);
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [user, setUser] = useState('');
   const [userEmails, setUserEmails] = useState([]);
