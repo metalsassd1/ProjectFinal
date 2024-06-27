@@ -16,21 +16,8 @@ const Submit = () => {
 
   useEffect(() => {
     emailjs.init("S25g4RkhBGztGOJc_");
-    
-    // Fetch admin user data
-    const fetchAdminUser = async () => {
-      try {
-        const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/user/table");
-        // Assuming the API returns an array of users and you want the first admin user
-        const admin = response.data.find(user => user.role === 'admin');
-        setAdminUser(admin ? admin.name : 'Unknown Admin');
-      } catch (error) {
-        console.error("Failed to fetch admin user:", error);
-        setAdminUser('Unknown Admin');
-      }
-    };
-
-    fetchAdminUser();
+    console.log(borrowData.user.username);
+    setAdminUser(borrowData.user.email)
   }, []);
 
   const sendEmail = async (templateParams) => {
@@ -61,14 +48,14 @@ const Submit = () => {
       setLoading(true);
       try {
         const response = await axios.put(
-          `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${borrowData.equipment_name}/${borrowData.id}`
+          `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${borrowData.borrowData.equipment_name}/${borrowData.borrowData.id}`
         );
         console.log(response);
         
         // Send email
         await sendEmail({
-          to: borrowData.contact.email,
-          equipment_name: borrowData.equipment_name,
+          to: borrowData.borrowData.contact.email,
+          equipment_name: borrowData.borrowData.equipment_name,
           status: "อนุมัติ",
           Approve: adminUser
         });
@@ -116,7 +103,7 @@ const Submit = () => {
       <div className="submit-card">
         <h2 className="submit-title">ยืนยันการคืนอุปกรณ์</h2>
         <p className="submit-text">
-          คุณต้องการยืนยันการคืนอุปกรณ์ {borrowData.equipment_name} หรือไม่?
+          คุณต้องการยืนยันการคืนอุปกรณ์ {borrowData.borrowData.equipment_name} หรือไม่?
         </p>
         <div className="submit-buttons">
           <Button

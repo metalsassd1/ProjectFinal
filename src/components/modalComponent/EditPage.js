@@ -54,60 +54,44 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const DataItem = {
-      equipment_name: formData.field1,
-      quantity_in_stock: formData.field2,
-      equipment_type: type,
-      note: formData.field4,
-      last_update: formData.field6,
-    };
-
-    // Construct the API endpoint with the storeData id
-    const apiEndpoint = `${API}/${storeData.id}`;
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-
-      const DataItem = {
-        equipment_name: formData.field1,
-        quantity_in_stock: formData.field2,
-        equipment_type: type,
-        note: formData.field4,
-        last_update: formData.field6,
-      };
-
-      // Construct the API endpoint with the storeData id
-      const apiEndpoint = `${API}/${storeData.id}`;
-
-      try {
-        const response = await axios.put(apiEndpoint, DataItem);
-        console.log("Data updated successfully:", response.data);
-
-        await Swal.fire({
-          title: "ดำเนินการสำเร็จ!",
-          text: "แก้ไขข้อมูล",
-          icon: "success",
-          confirmButtonText: "ตกลง",
-        });
-
-        handleClose(); // Close the modal after user clicks OK
-      } catch (error) {
-        console.error("Error updating data:", error);
-
-        await Swal.fire({
-          title: "ดำเนินการไม่สำเร็จ!",
-          text:
-            "ไม่สามารถแก้ไขข้อมูลได้: " +
-            (error.response?.data?.message || error.message),
-          icon: "error",
-          confirmButtonText: "ตกลง",
-        });
-      }
-    };
+  const DataItem = {
+    equipment_name: formData.field1,
+    quantity_in_stock: formData.field2,
+    equipment_type: type,
+    note: formData.field4,
+    last_update: formData.field6,
   };
 
+  // Construct the API endpoint with the storeData id
+  const apiEndpoint = `${API}/${storeData.id}`;
+
+  try {
+    const response = await axios.put(apiEndpoint, DataItem);
+    console.log("Data updated successfully:", response.data);
+
+    await Swal.fire({
+      title: "ดำเนินการสำเร็จ!",
+      text: "แก้ไขข้อมูล",
+      icon: "success",
+      confirmButtonText: "ตกลง",
+    });
+
+    handleClose(); // Close the modal after user clicks OK
+  } catch (error) {
+    console.error("Error updating data:", error);
+
+    await Swal.fire({
+      title: "ดำเนินการไม่สำเร็จ!",
+      text:
+        "ไม่สามารถแก้ไขข้อมูลได้: " +
+        (error.response?.data?.message || error.message),
+      icon: "error",
+      confirmButtonText: "ตกลง",
+    });
+  }
+};
   return (
     <Modal
       open={open}

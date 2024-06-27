@@ -52,6 +52,8 @@ export default function Borrower() {
   const [quantity_borrowed, setQuantity_borrowed] = useState(1);
   const { Ename, Etype, desired_quantity } = useParams();
   const [approvalStatus, setApprovalStatus] = useState(null);
+  const [user, setUser] = useState('');
+  const [userEmails, setUserEmails] = useState([]);
   const navigate = useNavigate();
 
   const form = useForm({
@@ -67,9 +69,38 @@ export default function Borrower() {
   });
   const [option, setOption] = useState("");
 
+  useEffect(() => {
+    const fetchAdminUser = async () => {
+      try {
+        const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/user/table");
+        setUser(response.data); // Assuming response.data is an array of users
+      } catch (error) {
+        console.error("Failed to fetch admin user:", error);
+        setUser([]); // Set user state to empty array on error
+      }
+    };
+  
+    fetchAdminUser();
+  }, []);
+  
+  
+  useEffect(() => {
+    if (user.length > 0) {
+      const emailArray = user.map(user => user.email);
+      setUserEmails(emailArray);
+    }
+  }, [user]);
+  
+
+
+  console.log(userEmails);
+  
+  
   const id = Math.floor(Math.random() * 1000000);
   const onSubmit = async (data) => {
     // Formatted data object if needed, or you can directly use `data`
+
+    // const uniqueEmails = Array.from(new Set(userEmails));
     const formattedData = {
       id: id,
       borrower_name: data.borrower_name,
@@ -91,15 +122,16 @@ export default function Borrower() {
       return_date: data.duration.end.toISOString().split("T")[0],
       loan_status: "รออนุมัติ",
       quantity_data: quantity_borrowed,
+      user: userEmails
     };
 
-    const submitEv= `http://localhost:3000/submit/?data=${encodeURIComponent(JSON.stringify(formattedData))}`
+    const submitEv= `http://localhost:3000/admin-login/?data=${encodeURIComponent(JSON.stringify(formattedData))}`
  
     try {
       // Submit the borrowing request to the backend API
       const response = await axios.post("https://back-end-finals-project-pgow.onrender.com/api/Borrowed/borrow", formattedData,submitEv);
       console.log("Server response:", response.data,formattedData);
-
+      
       // Now handle the email submission and wait for its completion
       handleAdminsubmit(formattedData,submitEv).then(() => {
         if (response) {
@@ -128,8 +160,15 @@ export default function Borrower() {
     const service = "service_2kcoyx1";
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_k1dp1dm";
-  
-    const templateParams = { formattedData,submitEv };
+
+    const emailAddresses = formattedData.user.join(', ');
+
+  const templateParams = { 
+    formattedData,
+    to_email: emailAddresses,
+    submitEv 
+  };
+console.log(templateParams)
     try {
       const result = await emailjs.send(service, template, templateParams, publicK);
       console.log("EmailJS result:", result);

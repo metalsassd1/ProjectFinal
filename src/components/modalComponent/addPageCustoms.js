@@ -115,7 +115,7 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
     };
 
     axios
-      .post("http://localhost:4000/api/user/add", data)
+      .post("https://back-end-finals-project-pgow.onrender.com/api/user/add", data)
       .then((response) => {
         console.log("Data added successfully:", response.data);
         Swal.fire({

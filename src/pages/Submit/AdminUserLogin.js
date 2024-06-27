@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import { TextField, Button, Container, Typography, Box,Paper  } from '@mui/material';
 import Swal from 'sweetalert2';
 
@@ -39,6 +39,9 @@ const AdminUserLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const data = new URLSearchParams(location.search).get('data');
+  const borrowData = JSON.parse(decodeURIComponent(data));
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -46,38 +49,42 @@ const AdminUserLogin = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('https://back-end-finals-project-pgow.onrender.com/api/admin/login', {
-        username,
-        password
-      });
+        const response = await axios.get('https://back-end-finals-project-pgow.onrender.com/api/user/table');
 
-      if (response.data.success) {
-        // Store the token in localStorage or in a secure cookie
-        localStorage.setItem('adminToken', response.data.token);
+        if (response.data) {
+            const users = response.data; // Assuming the API returns an array of users
+            const user = users.find(u => u.username === username && u.password === password);
+            console.log(user)
+            if (user) {
+                // User found, login successful
+                localStorage.setItem('adminToken', user.token); // Assuming each user has a token
 
-        Swal.fire({
-          title: 'เข้าสู่ระบบสำเร็จ!',
-          icon: 'success',
-          confirmButtonText: 'ตกลง'
-        }).then(() => {
-          // Redirect to admin dashboard or desired page
-          navigate('/admin-dashboard');
-        });
-      } else {
-        throw new Error(response.data.message || 'Login failed');
-      }
+                Swal.fire({
+                    title: 'เข้าสู่ระบบสำเร็จ!',
+                    icon: 'success',
+                    confirmButtonText: 'ตกลง'
+                }).then(() => {
+                    navigate(`/submit/?data=${encodeURIComponent(JSON.stringify({ borrowData, user }))}`);
+                });
+            } else {
+                // User not found or incorrect credentials
+                throw new Error('Invalid username or password');
+            }
+        } else {
+            throw new Error(response.data.message || 'Login failed');
+        }
     } catch (error) {
-      console.error('Login error:', error);
-      Swal.fire({
-        title: 'เข้าสู่ระบบไม่สำเร็จ',
-        text: error.response?.data?.message || 'กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่าน',
-        icon: 'error',
-        confirmButtonText: 'ตกลง'
-      });
+        console.error('Login error:', error);
+        Swal.fire({
+            title: 'เข้าสู่ระบบไม่สำเร็จ',
+            text: error.message || 'กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่าน',
+            icon: 'error',
+            confirmButtonText: 'ตกลง'
+        });
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   return (
     <Container component="main"  maxWidth={false} // Allow the container to take full width

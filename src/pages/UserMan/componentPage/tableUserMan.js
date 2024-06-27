@@ -87,6 +87,9 @@ const MyTable = () => {
     setModalEditOpen(false);
     fetchData();
   };
+  
+  const addAPI = "https://back-end-finals-project-pgow.onrender.com/api/user/add"
+  const editAPI = "https://back-end-finals-project-pgow.onrender.com/api/user/update"
 
   const handleDelete = async (id) => {
     const { isConfirmed } = await Swal.fire({
@@ -202,6 +205,7 @@ const MyTable = () => {
                   open={modalOpen}
                   handleClose={handleClose}
                   label={"ผู้ใช้"}
+                  API={addAPI}
                 />
               </TableCell>
             </TableRow>
@@ -243,6 +247,7 @@ const MyTable = () => {
             handleClose={handleEditClose}
             user={selectedUser}
             label={"ผู้ใช้"}
+            API={editAPI}
           />
         )}
       </TableContainer>

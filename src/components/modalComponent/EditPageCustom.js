@@ -58,7 +58,7 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `http://localhost:4000/api/user/update/${user.id}`,
+        `https://back-end-finals-project-pgow.onrender.com/api/user/update/${user.id}`,
         formData
       );
       console.log("Data updated successfully:", response.data);
