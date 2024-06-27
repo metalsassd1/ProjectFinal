@@ -122,7 +122,7 @@ export default function Borrower() {
       user: userEmails
     };
 
-    const submitEv= `http://localhost:3000/admin-login/?data=${encodeURIComponent(JSON.stringify(formattedData))}`
+    const submitEv= `http://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(JSON.stringify(formattedData))}`
  
     try {
       // Submit the borrowing request to the backend API

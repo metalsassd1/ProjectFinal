@@ -114,7 +114,7 @@ const Submit = () => {
           equipment_name: borrowData.borrowData.equipment_name,
           status: "อนุมัติ",
           Approve: adminUser,
-          useSubmit: `http://localhost:3000/qr?data=${encodedData}`
+          useSubmit: `http://pimcantake.netlify.app/qr?data=${encodedData}`
         });
 
         await Swal.fire({
