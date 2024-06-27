@@ -14,12 +14,15 @@ import {
   Box,
   useMediaQuery,
   useTheme,
+  Snackbar,
+  Alert
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const MyTable = ({ rows, isMobile, onUpdateQuantity }) => { // Add onUpdateQuantity to the props
+const MyTable = ({ rows, isMobile, onUpdateQuantity }) => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const [openAlert, setOpenAlert] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -38,11 +41,26 @@ const MyTable = ({ rows, isMobile, onUpdateQuantity }) => { // Add onUpdateQuant
   };
 
   const handleIncrement = (equipmentName) => {
-    onUpdateQuantity(equipmentName, 1); // Use the passed onUpdateQuantity function
+    onUpdateQuantity(equipmentName, 1);
   };
   
   const handleDecrement = (equipmentName) => {
-    onUpdateQuantity(equipmentName, -1); // Use the passed onUpdateQuantity function
+    onUpdateQuantity(equipmentName, -1);
+  };
+
+  const handleBorrow = (equipmentName, equipmentType, desiredQuantity) => {
+    if (desiredQuantity === 0) {
+      setOpenAlert(true);
+    } else {
+      navigate(`/borrower/${equipmentName}/${equipmentType}/${desiredQuantity}`);
+    }
+  };
+
+  const handleCloseAlert = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenAlert(false);
   };
 
   const renderMobileView = () => (
@@ -70,9 +88,7 @@ const MyTable = ({ rows, isMobile, onUpdateQuantity }) => { // Add onUpdateQuant
             color="primary"
             fullWidth
             sx={{ mt: 1 }}
-            onClick={() => navigate(
-              `/borrower/${row.equipment_name}/${row.equipment_type}/${row.desired_quantity}`
-            )}
+            onClick={() => handleBorrow(row.equipment_name, row.equipment_type, row.desired_quantity)}
           >
             ยืม
           </Button>
@@ -116,9 +132,7 @@ const MyTable = ({ rows, isMobile, onUpdateQuantity }) => { // Add onUpdateQuant
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={() => navigate(
-                    `/borrower/${row.equipment_name}/${row.equipment_type}/${row.desired_quantity}`
-                  )}
+                  onClick={() => handleBorrow(row.equipment_name, row.equipment_type, row.desired_quantity)}
                 >
                   ยืม
                 </Button>
@@ -134,6 +148,11 @@ const MyTable = ({ rows, isMobile, onUpdateQuantity }) => { // Add onUpdateQuant
     <Box sx={{ mt: 2 }}>
       <Typography variant="h5" sx={{ mb: 2, textAlign: 'center' }}>Equipment Details Table</Typography>
       {isMobile ? renderMobileView() : renderDesktopView()}
+      <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity="warning" sx={{ width: '100%' }}>
+          กรุณาเลือกจำนวนอุปกรณ์ที่ต้องการยืม
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

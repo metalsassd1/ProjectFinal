@@ -8,7 +8,7 @@ import axios from "axios";
 
 const MyPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState(""); // State to hold selected equipment type filter
+  const [filterType, setFilterType] = useState("");
   const [rows, setRows] = useState([]);
   const navigate = useNavigate();
 
@@ -55,7 +55,7 @@ const MyPage = () => {
       if (row.equipment_name === equipmentName) {
         const newDesiredQuantity = Math.max(0, row.desired_quantity + change);
         const newMaxQuantity = row.max_quantity_in_stock - change;
-        if (newMaxQuantity >= 0) {
+        if (newMaxQuantity >= 0 && newDesiredQuantity >= 0) {
           return {
             ...row,
             desired_quantity: newDesiredQuantity,
@@ -103,7 +103,7 @@ const MyPage = () => {
           <SearchFilter
             onSearch={handleSearch}
             isMobile={isMobile}
-            onFilterType={handleFilterType} // Pass the filter type handler
+            onFilterType={handleFilterType}
           />
           <TableMain 
             isMobile={isMobile} 
