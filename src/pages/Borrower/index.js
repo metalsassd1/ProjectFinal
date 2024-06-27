@@ -91,11 +91,8 @@ export default function Borrower() {
     }
   }, [user]);
   
-
-
   console.log(userEmails);
-  
-  
+
   const id = Math.floor(Math.random() * 1000000);
   const onSubmit = async (data) => {
     // Formatted data object if needed, or you can directly use `data`

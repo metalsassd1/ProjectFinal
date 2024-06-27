@@ -11,15 +11,25 @@ const Submit = () => {
   const data = new URLSearchParams(location.search).get('data');
   const borrowData = JSON.parse(decodeURIComponent(data));
   const [loading, setLoading] = useState(false);
-  const [adminUser, setAdminUser] = useState(''); // Add state for adminUser
+  const [adminUser, setAdminUser] = useState('');
   const navigate = useNavigate();
+  const [rows, setRows] = useState([]);
+  const [updatedData, setUpdatedData] = useState(null);
 
   useEffect(() => {
     emailjs.init("S25g4RkhBGztGOJc_");
     console.log(borrowData.user.username);
-    setAdminUser(borrowData.user.email)
+    setAdminUser(borrowData.user.email);
   }, []);
+  
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchDataUpdateStatus();
+    }, 5000);
 
+    return () => clearInterval(intervalId);
+  }, []);
+  
   const sendEmail = async (templateParams) => {
     try {
       const result = await emailjs.send(
@@ -30,6 +40,49 @@ const Submit = () => {
       console.log('Email sent successfully:', result.text);
     } catch (error) {
       console.error('Failed to send email:', error);
+    }
+  };
+
+  const fetchDataUpdateStatus = async () => {
+    try {
+      const response = await axios.get(
+        "https://back-end-finals-project-pgow.onrender.com/api/home/management"
+      );
+
+      const formattedData = response.data.map((item) => ({
+        ...item,
+        borrow_date: formatDate(item.borrow_date),
+        return_date: formatDate(item.return_date),
+      }));
+      setRows(formattedData);
+
+      compareDataAndUpdate(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "No date provided";
+    const date = new Date(dateString);
+    if (isNaN(date)) return "Invalid date";
+    return date.toLocaleDateString("TH", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const compareDataAndUpdate = (formattedData) => {
+    const matchingRow = formattedData.find(row => row.id == borrowData.borrowData.id);
+    if (matchingRow) {
+      const updatedBorrowData = {
+        ...borrowData.borrowData,
+        loan_status: matchingRow.loan_status,
+        borrow_date: matchingRow.borrow_date,
+        return_date: matchingRow.return_date
+      };
+      setUpdatedData(updatedBorrowData);
     }
   };
 
@@ -52,12 +105,16 @@ const Submit = () => {
         );
         console.log(response);
         
+        const dataToEncode = updatedData || borrowData.borrowData;
+        const encodedData = encodeURIComponent(JSON.stringify(dataToEncode));
+        
         // Send email
         await sendEmail({
           to: borrowData.borrowData.contact.email,
           equipment_name: borrowData.borrowData.equipment_name,
           status: "อนุมัติ",
-          Approve: adminUser
+          Approve: adminUser,
+          useSubmit: `http://localhost:3000/qr?data=${encodedData}`
         });
 
         await Swal.fire({
@@ -79,7 +136,6 @@ const Submit = () => {
         });
       } finally {
         setLoading(false);
-        closePage();
       }
     }
   };
