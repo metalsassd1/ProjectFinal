@@ -92,7 +92,7 @@ const MyTable = ({ searchTerms }) => {
     if (quantity_borrowed > 0) {
       return { backgroundColor: "#FFA500" };
     } else {
-      return { backgroundColor: "#D3D3D3" };
+      return ;
     }
   };
   const handleReturn = async (data) => {
@@ -142,10 +142,12 @@ const MyTable = ({ searchTerms }) => {
           <TableRow style={{ backgroundColor: "#D3D3D3" }}>
             <TableCell>ID</TableCell>
             <TableCell>ชื่ออุปกรณ์</TableCell>
+            <TableCell>ประเภท</TableCell>
+            <TableCell>คลังทั้งหมด</TableCell>
+            <TableCell>จำนวนที่ถูกยืม</TableCell>
             <TableCell>คลังคงเหลือ</TableCell>
             <TableCell>จำนวนที่ถูกยืมทั้งหมด</TableCell>
-            <TableCell>จำนวนที่ถูกยืม</TableCell>
-            <TableCell>ประเภท</TableCell>
+            
             <TableCell>ผู้ยืม</TableCell>
             <TableCell>วันที่ยืม</TableCell>
             <TableCell>วันที่คืน</TableCell>
@@ -158,14 +160,16 @@ const MyTable = ({ searchTerms }) => {
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
+              <TableCell>{row.equipment_type}</TableCell>
+              <TableCell style={getRowStyle_Stock(row.total_stock + row.quantity_borrowed)}>{row.total_stock + row.quantity_borrowed}</TableCell> 
+              <TableCell style={getRowStyle_borrowed(row.quantity_borrowed)}>
+              {row.quantity_borrowed}</TableCell>
               <TableCell style={getRowStyle_Stock(row.total_stock)}>
                 {row.total_stock}
               </TableCell>
-              <TableCell>{row.quantity_data}</TableCell>
-              <TableCell style={getRowStyle_borrowed(row.quantity_borrowed)}>
-                {row.quantity_borrowed}
-              </TableCell>
-              <TableCell>{row.equipment_type}</TableCell>
+              <TableCell>
+                {row.quantity_data}
+              </TableCell>  
               <TableCell>{row.borrower_name}</TableCell>
               <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
