@@ -15,6 +15,8 @@ import QRgen from "./pages/ReturnTo/QRcodeGen.js";
 import Adminsubmit from "./pages/Borrower/components/adminEv.js";
 import Submit from "./pages/Submit/Submit.js";
 import SelectMethod from "./pages/SelectMethod/SelecetMethod.js"
+import AdminUserLogin from "./pages/Submit/AdminUserLogin.js"
+
 const App = () => {
   return (
     <Router>
@@ -37,6 +39,7 @@ const App = () => {
         <Route path="/return" element={<ReturnTo />} />
         <Route path="/success" element={<Adminsubmit/>}/>
         <Route path="/submit" element={<Submit />} />
+        <Route path="/admin-login" element={<AdminUserLogin />} />
       </Routes>
     </Router>
   );

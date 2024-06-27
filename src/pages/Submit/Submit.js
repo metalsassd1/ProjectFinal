@@ -1,7 +1,7 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, CircularProgress } from "@mui/material";
-import {useNavigate,useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Submit.css";
 import Swal from 'sweetalert2';
 import emailjs from "emailjs-com";
@@ -11,17 +11,33 @@ const Submit = () => {
   const data = new URLSearchParams(location.search).get('data');
   const borrowData = JSON.parse(decodeURIComponent(data));
   const [loading, setLoading] = useState(false);
+  const [adminUser, setAdminUser] = useState(''); // Add state for adminUser
   const navigate = useNavigate();
 
   useEffect(() => {
-    emailjs.init("YOUR_PUBLIC_KEY");
+    emailjs.init("S25g4RkhBGztGOJc_");
+    
+    // Fetch admin user data
+    const fetchAdminUser = async () => {
+      try {
+        const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/user/table");
+        // Assuming the API returns an array of users and you want the first admin user
+        const admin = response.data.find(user => user.role === 'admin');
+        setAdminUser(admin ? admin.name : 'Unknown Admin');
+      } catch (error) {
+        console.error("Failed to fetch admin user:", error);
+        setAdminUser('Unknown Admin');
+      }
+    };
+
+    fetchAdminUser();
   }, []);
 
   const sendEmail = async (templateParams) => {
     try {
       const result = await emailjs.send(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
+        'service_ql4evuj',
+        'template_7vnhc6g',
         templateParams
       );
       console.log('Email sent successfully:', result.text);
@@ -51,9 +67,10 @@ const Submit = () => {
         
         // Send email
         await sendEmail({
-          to_email: "recipient@example.com",
+          to: borrowData.contact.email,
           equipment_name: borrowData.equipment_name,
-          status: "approved"
+          status: "อนุมัติ",
+          Approve: adminUser
         });
 
         await Swal.fire({
@@ -62,6 +79,7 @@ const Submit = () => {
           icon: "success",
           confirmButtonText: "ตกลง",
         });
+
       } catch (error) {
         console.error("API call failed:", error);
         await Swal.fire({
@@ -78,6 +96,7 @@ const Submit = () => {
       }
     }
   };
+
   const handleCancel = () => {
     Swal.fire({
       title: "ดำเนินการสำเร็จ!",
@@ -89,14 +108,6 @@ const Submit = () => {
   };
 
   const closePage = () => {
-    
-    // Option 1: Go back to the previous page
-    // navigate(-1);
-
-    // Option 2: Navigate to a specific page (e.g., home page)
-    // navigate('/');
-
-    // Option 3: Close the current window/tab (only works if opened by JavaScript)
     window.close();
   };
 

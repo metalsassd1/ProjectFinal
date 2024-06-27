@@ -91,18 +91,17 @@ export default function Borrower() {
       return_date: data.duration.end.toISOString().split("T")[0],
       loan_status: "รออนุมัติ",
       quantity_data: quantity_borrowed,
-      submitEv:''
     };
 
-    formattedData.submitEv= `https://pimcantake.netlify.app/submit/data=${encodeURIComponent(JSON.stringify(formattedData))}`
+    const submitEv= `http://localhost:3000/submit/?data=${encodeURIComponent(JSON.stringify(formattedData))}`
  
     try {
       // Submit the borrowing request to the backend API
-      const response = await axios.post("https://back-end-finals-project-pgow.onrender.com/api/Borrowed/borrow", formattedData);
+      const response = await axios.post("https://back-end-finals-project-pgow.onrender.com/api/Borrowed/borrow", formattedData,submitEv);
       console.log("Server response:", response.data,formattedData);
 
       // Now handle the email submission and wait for its completion
-      handleAdminsubmit(formattedData).then(() => {
+      handleAdminsubmit(formattedData,submitEv).then(() => {
         if (response) {
           swal({
             title: "ดำเนินการสำเร็จ",
@@ -125,12 +124,12 @@ export default function Borrower() {
     }
   };
   
-  const handleAdminsubmit = async (formattedData) => {
+  const handleAdminsubmit = async (formattedData,submitEv) => {
     const service = "service_2kcoyx1";
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_k1dp1dm";
   
-    const templateParams = { formattedData };
+    const templateParams = { formattedData,submitEv };
     try {
       const result = await emailjs.send(service, template, templateParams, publicK);
       console.log("EmailJS result:", result);
