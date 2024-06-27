@@ -14,7 +14,7 @@ import ReturnTo from "./pages/ReturnTo/return.js";
 import QRgen from "./pages/ReturnTo/QRcodeGen.js";
 import Adminsubmit from "./pages/Borrower/components/adminEv.js";
 import Submit from "./pages/Submit/Submit.js";
-
+import SelectMethod from "./pages/SelectMethod/SelecetMethod.js"
 const App = () => {
   return (
     <Router>
@@ -24,6 +24,7 @@ const App = () => {
           path="/borrower/:Ename/:Etype/:desired_quantity"
           element={<Borrower />}
         />
+        <Route path="/SelectMethod" element={<SelectMethod />} />
         <Route path="/1" element={<Manage />} />
         <Route path="/2" element={<EquipmentMan />} />
         <Route path="/2/add" element={<AddpageEq />} />
@@ -35,7 +36,7 @@ const App = () => {
         <Route path="/qr" element={<QRgen />} />
         <Route path="/return" element={<ReturnTo />} />
         <Route path="/success" element={<Adminsubmit/>}/>
-        <Route path="/submit/:equipment_name/:id" element={<Submit />} />
+        <Route path="/submit" element={<Submit />} />
       </Routes>
     </Router>
   );

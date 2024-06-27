@@ -1,0 +1,74 @@
+/* MethodSelection.css */
+.method-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f0f0f0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .method-button_1 {
+    padding: 20px 40px;
+    font-size: 18px;
+    background-color: #1635e9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 200px;
+    max-width: 100%;
+  }
+  
+  .method-button_2 {
+    padding: 20px 40px;
+    font-size: 18px;
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: 200px;
+    max-width: 100%;
+  }
+  
+  .method-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Media query for mobile devices */
+  @media (max-width: 600px) {
+    .button-container {
+      flex-direction: column;
+      width: 100%;
+    }
+  
+    .method-button_1 {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    .method-button_2 {
+        width: 100%;
+        margin-bottom: 15px;
+      }
+  
+    h1 {
+      font-size: 24px;
+    }
+  }

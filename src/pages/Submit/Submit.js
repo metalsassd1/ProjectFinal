@@ -1,14 +1,34 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { Button, CircularProgress } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import {useNavigate,useLocation } from "react-router-dom";
 import "./Submit.css";
 import Swal from 'sweetalert2';
+import emailjs from "emailjs-com";
 
 const Submit = () => {
+  const location = useLocation();
+  const data = new URLSearchParams(location.search).get('data');
+  const borrowData = JSON.parse(decodeURIComponent(data));
   const [loading, setLoading] = useState(false);
-  const { equipment_name, id } = useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    emailjs.init("YOUR_PUBLIC_KEY");
+  }, []);
+
+  const sendEmail = async (templateParams) => {
+    try {
+      const result = await emailjs.send(
+        'YOUR_SERVICE_ID',
+        'YOUR_TEMPLATE_ID',
+        templateParams
+      );
+      console.log('Email sent successfully:', result.text);
+    } catch (error) {
+      console.error('Failed to send email:', error);
+    }
+  };
 
   const handleConfirm = async () => {
     const { isConfirmed } = await Swal.fire({
@@ -25,9 +45,17 @@ const Submit = () => {
       setLoading(true);
       try {
         const response = await axios.put(
-          `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${equipment_name}/${id}`
+          `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${borrowData.equipment_name}/${borrowData.id}`
         );
         console.log(response);
+        
+        // Send email
+        await sendEmail({
+          to_email: "recipient@example.com",
+          equipment_name: borrowData.equipment_name,
+          status: "approved"
+        });
+
         await Swal.fire({
           title: "ดำเนินการสำเร็จ!",
           text: "อนุมัติการยืม",
@@ -50,7 +78,6 @@ const Submit = () => {
       }
     }
   };
-
   const handleCancel = () => {
     Swal.fire({
       title: "ดำเนินการสำเร็จ!",
@@ -78,7 +105,7 @@ const Submit = () => {
       <div className="submit-card">
         <h2 className="submit-title">ยืนยันการคืนอุปกรณ์</h2>
         <p className="submit-text">
-          คุณต้องการยืนยันการคืนอุปกรณ์ {equipment_name} หรือไม่?
+          คุณต้องการยืนยันการคืนอุปกรณ์ {borrowData.equipment_name} หรือไม่?
         </p>
         <div className="submit-buttons">
           <Button

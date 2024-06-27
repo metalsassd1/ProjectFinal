@@ -67,7 +67,6 @@ export default function Borrower() {
   });
   const [option, setOption] = useState("");
 
-
   const id = Math.floor(Math.random() * 1000000);
   const onSubmit = async (data) => {
     // Formatted data object if needed, or you can directly use `data`
@@ -92,13 +91,15 @@ export default function Borrower() {
       return_date: data.duration.end.toISOString().split("T")[0],
       loan_status: "รออนุมัติ",
       quantity_data: quantity_borrowed,
-      submitEv: `https://pimcantake.netlify.app/submit/${data.equip_name}/${id}`
+      submitEv:''
     };
 
+    formattedData.submitEv= `https://pimcantake.netlify.app/submit/data=${encodeURIComponent(JSON.stringify(formattedData))}`
+ 
     try {
       // Submit the borrowing request to the backend API
       const response = await axios.post("https://back-end-finals-project-pgow.onrender.com/api/Borrowed/borrow", formattedData);
-      console.log("Server response:", response.data);
+      console.log("Server response:", response.data,formattedData);
 
       // Now handle the email submission and wait for its completion
       handleAdminsubmit(formattedData).then(() => {
