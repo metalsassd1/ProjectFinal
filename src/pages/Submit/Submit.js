@@ -87,7 +87,7 @@ const Submit = () => {
   };
 
   const handleConfirm = async () => {
-    
+
     if (updatedData && updatedData.loan_status === "ยืม") {
       await Swal.fire({
         title: "ไม่สามารถอนุมัติได้",
@@ -171,7 +171,7 @@ const Submit = () => {
       <div className="submit-card">
         <h2 className="submit-title">ยืนยันการคืนอุปกรณ์</h2>
         <p className="submit-text">
-          คุณต้องการยืนยันการคืนอุปกรณ์ {borrowData.borrowData.equipment_name} หรือไม่?
+          คุณต้องการยืนยันการอนุมัติการยืมอุปกรณ์หรือไม่ {borrowData.borrowData.equipment_name} หรือไม่?
         </p>
         <div className="submit-buttons">
           <Button
