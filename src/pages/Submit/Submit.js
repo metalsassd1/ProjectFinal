@@ -87,6 +87,17 @@ const Submit = () => {
   };
 
   const handleConfirm = async () => {
+    
+    if (updatedData && updatedData.loan_status === "ยืม") {
+      await Swal.fire({
+        title: "ไม่สามารถอนุมัติได้",
+        text: "ไม่สามารถอนุมัติการยืมได้ เนื่องจากมีการอนุมัติไปแล้ว",
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
+      return;
+    }
+
     const { isConfirmed } = await Swal.fire({
       title: "ต้องการดำเนินการหรือไม่?",
       text: "อนุมัติการยืม",
