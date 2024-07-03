@@ -1,4 +1,3 @@
-// Sidebar.js
 import React from "react";
 import { Drawer, List, ListItem, ListItemText } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ const Sidebar = ({ isOpen, onClose }) => {
     navigate(path);
     onClose();
   };
+
   return (
     <Drawer
       variant="temporary"
@@ -17,14 +17,19 @@ const Sidebar = ({ isOpen, onClose }) => {
       open={isOpen}
       onClose={onClose}
       BackdropProps={{ invisible: true }}
-      sx={{ "& .MuiDrawer-paper": { width: 240 } }}
+      sx={{
+        "& .MuiDrawer-paper": {
+          width: 240,
+          background: "#333399", // Set the background color for the drawer
+        },
+      }}
     >
-      <List style={{ background: "#EBECEB" }}>
+      <List>
         <ListItem
           style={{
-            borderBottom: "1px #ccc",
-            background: "#1CA82A",
-            width: "200%",
+            borderBottom: "1px solid #ccc", // Change to solid border
+            background: "#333399",
+            color: "#fff", // Set text color to white
             fontSize: "large",
             padding: "10px",
             marginBottom: "10px",
@@ -35,22 +40,22 @@ const Sidebar = ({ isOpen, onClose }) => {
         </ListItem>
 
         <ListItem button onClick={() => handleRedirect("/")}>
-          <ListItemText primary="หน้าหลัก" />
+          <ListItemText primary="หน้าหลัก" primaryTypographyProps={{ style: { color: "#fff" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/2")}>
-          <ListItemText primary="จัดการข้อมูลอุปกรณ์กีฬา" />
+          <ListItemText primary="จัดการข้อมูลอุปกรณ์กีฬา" primaryTypographyProps={{ style: { color: "#fff" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/3")}>
-          <ListItemText primary="จัดการข้อมูลอุปกรณ์นันทนาการ" />
+          <ListItemText primary="จัดการข้อมูลอุปกรณ์นันทนาการ" primaryTypographyProps={{ style: { color: "#fff" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/4")}>
-          <ListItemText primary="จัดการข้อมูลผู้ใช้" />
+          <ListItemText primary="จัดการข้อมูลผู้ใช้" primaryTypographyProps={{ style: { color: "#fff" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/1")}>
-          <ListItemText primary="จัดการข้อมูลการยืม" />
+          <ListItemText primary="จัดการข้อมูลการยืม" primaryTypographyProps={{ style: { color: "#fff" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/5")}>
-          <ListItemText primary="รายงายสรุปผล" />
+          <ListItemText primary="รายงายสรุปผล" primaryTypographyProps={{ style: { color: "#fff" } }} />
         </ListItem>
       </List>
     </Drawer>
