@@ -10,6 +10,7 @@ import {
   Paper,
 } from "@mui/material";
 import Swal from "sweetalert2";
+import "./TableStyles.css"; // Ensure this import is correct
 
 const MyTable = ({ searchTerms }) => {
   const [rows, setRows] = useState([]);
@@ -73,28 +74,17 @@ const MyTable = ({ searchTerms }) => {
     setFilteredRows(filtered);
   };
 
-  const getStatusColor = (loan_status) => {
+  const getStatusStyle = (loan_status) => {
     switch (loan_status) {
       case "คืน":
-        return "#32CD32";
+        return { backgroundColor: "#556cca", color: "#ffffff" };
       case "ยืม":
-        return "#FFA500";
+        return { backgroundColor: "#32CD32", color: "#ffffff" };
       default:
-        return "#D3D3D3";
+        return { backgroundColor: "#FF4500", color: "#ffffff" };
     }
   };
 
-  const getRowStyle_Stock = (quantityInStock) => {
-    return { backgroundColor: "#D3D3D3" };
-  };
-
-  const getRowStyle_borrowed = (quantity_borrowed) => {
-    if (quantity_borrowed > 0) {
-      return { backgroundColor: "#FFA500" };
-    } else {
-      return ;
-    }
-  };
   const handleReturn = async (data) => {
     const { isConfirmed } = await Swal.fire({
       title: "ต้องการดำเนินการหรือไม่?",
@@ -124,6 +114,7 @@ const MyTable = ({ searchTerms }) => {
           icon: "success",
           confirmButtonText: "OK",
         });
+        fetchData(); // Fetch data again after a successful return
       } catch (error) {
         console.error("Error processing return:", error);
         Swal.fire({
@@ -135,23 +126,23 @@ const MyTable = ({ searchTerms }) => {
       }
     }
   };
+
   return (
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow style={{ backgroundColor: "#D3D3D3" }}>
-            <TableCell>ID</TableCell>
-            <TableCell>ชื่ออุปกรณ์</TableCell>
-            <TableCell>ประเภท</TableCell>
-            <TableCell>คลังทั้งหมด</TableCell>
-            <TableCell>จำนวนที่ถูกยืม</TableCell>
-            <TableCell>คลังคงเหลือ</TableCell>
-            <TableCell>จำนวนที่ถูกยืมทั้งหมด</TableCell>
-            
-            <TableCell>ผู้ยืม</TableCell>
-            <TableCell>วันที่ยืม</TableCell>
-            <TableCell>วันที่คืน</TableCell>
-            <TableCell>สถานะ</TableCell>
+          <TableRow style={{ backgroundColor: "#556cca" }}>
+            <TableCell style={{ color: "#ffffff" }}>ID</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>ชื่ออุปกรณ์</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>ประเภท</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>คลังทั้งหมด</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>จำนวนที่ถูกยืม</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>คลังคงเหลือ</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>จำนวนที่ถูกยืมทั้งหมด</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>ผู้ยืม</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>วันที่ยืม</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>วันที่คืน</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>สถานะ</TableCell>
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
@@ -161,10 +152,10 @@ const MyTable = ({ searchTerms }) => {
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
-              <TableCell style={getRowStyle_Stock(row.total_stock + row.quantity_borrowed)}>{row.total_stock + row.quantity_borrowed}</TableCell> 
-              <TableCell style={getRowStyle_borrowed(row.quantity_borrowed)}>
-              {row.quantity_borrowed}</TableCell>
-              <TableCell style={getRowStyle_Stock(row.total_stock)}>
+              <TableCell>{row.total_stock + row.quantity_borrowed}</TableCell> 
+              <TableCell >
+                {row.quantity_borrowed}</TableCell>
+              <TableCell>
                 {row.total_stock}
               </TableCell>
               <TableCell>
@@ -174,14 +165,14 @@ const MyTable = ({ searchTerms }) => {
               <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
               <TableCell
-                style={{ backgroundColor: getStatusColor(row.loan_status) }}
+                style={getStatusStyle(row.loan_status)}
               >
                 {row.loan_status || ""}
               </TableCell>
               <TableCell>
                 {row.loan_status === "ยืม" && (
                   <button
-                    className="qr-button"
+                    className="return-button"
                     onClick={() => handleReturn(row)}
                   >
                     คืน

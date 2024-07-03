@@ -1,0 +1,16 @@
+.return-button {
+  background-color: #556cca;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.return-button:hover {
+  background-color: #4458a0; /* Darker shade for hover effect */
+}
