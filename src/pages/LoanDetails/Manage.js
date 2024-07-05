@@ -5,23 +5,15 @@ import TextField from "@mui/material/TextField";
 import TableManage from "./componentPage/tableManage";
 import { Grid } from "@mui/material";
 
-function Manage() {
+function Manage(searchTerms) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
-    id: "",
-    equipment_name: "",
-    equipment_type: "",
-    borrower_name: "",
-    borrow_date: "", // เพิ่มตัวแปรสำหรับค้นหาด้วยวันที่ยืม
-  });
+  
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleSearch = (field, value) => {
-    setSearchTerms(prev => ({ ...prev, [field]: value }));
-  };
+  
 
   return (
     <div className="m" style={{ background: "#e0e6fc" }}>
