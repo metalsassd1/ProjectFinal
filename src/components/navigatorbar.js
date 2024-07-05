@@ -23,8 +23,9 @@ const Sidebar = ({ isOpen, onClose }) => {
           background: "#bec6e5", // Set the background color for the drawer
         },
       }}
+      
     >
-      <List>
+      <List >
         <ListItem
           style={{
             borderBottom: "1px solid #ccc", // Change to solid border
@@ -34,12 +35,13 @@ const Sidebar = ({ isOpen, onClose }) => {
             padding: "10px",
             marginBottom: "10px",
             marginTop: "-8px",
+            border : "1px solid black"
           }}
         >
           PIM CAN TAKE
         </ListItem>
 
-        <ListItem button onClick={() => handleRedirect("/")}>
+        <ListItem button onClick={() => handleRedirect("/")} >
           <ListItemText primary="หน้าหลัก" primaryTypographyProps={{ style: { color: "#000" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/2")}>

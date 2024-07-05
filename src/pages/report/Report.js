@@ -36,7 +36,7 @@ function ReportPage(params) {
   };
 
   return (
-    <div className="m" style={{ background: "#f0f0f0" }}>
+    <div className="m" style={{ background: "#e0e6fc" }}>
       <div
         className="header"
         style={{
@@ -44,6 +44,15 @@ function ReportPage(params) {
           transition: "margin 0.3s",
         }}
       >
+        <div
+        className="content-container"
+        style={{
+          marginLeft: isSidebarOpen ? 300 : 100,
+          marginRight: isSidebarOpen ? 70 : 100,
+          transition: "margin 0.3s",
+        }}
+      >
+      </div>
         <div className="Navbar">
           <Navbar onToggleSidebar={handleToggleSidebar} />
         </div>

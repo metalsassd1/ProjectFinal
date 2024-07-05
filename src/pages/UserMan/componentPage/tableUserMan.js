@@ -135,7 +135,7 @@ const MyTable = () => {
 
   return (
     <>
-      <Box component="form" className="search-container" noValidate autoComplete="off">
+      <Box component="form" className="search-container" noValidate autoComplete="off" style={{border:"1px solid black"}}>
         <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={3}>
               <TextField
@@ -190,7 +190,7 @@ const MyTable = () => {
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow style={{ backgroundColor: "#556cca" }}>
+            <TableRow style={{ backgroundColor: "#556cca" , border:"1px solid black"}}>
               <TableCell style={{ color: "#fff" }}>ID</TableCell>
               <TableCell style={{ color: "#fff" }}>ชื่อผู้ใช้</TableCell>
               <TableCell style={{ color: "#fff" }}>อีเมล</TableCell>
@@ -199,7 +199,7 @@ const MyTable = () => {
               <TableCell style={{ color: "#fff" }}>วันที่อัพเดตล่าสุด</TableCell>
               <TableCell style={{ color: "#fff" }}>Admin</TableCell>
               <TableCell>
-                <Button variant="contained"                   style={{ backgroundColor: "#33CC66" }}
+                <Button variant="contained" style={{ backgroundColor: "#33CC66", border:"1px solid black" }}
  onClick={handleOpen}>
                   เพิ่มข้อมูล
                 </Button>
@@ -225,7 +225,7 @@ const MyTable = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    style={{ backgroundColor: "#990099" }}
+                    style={{ backgroundColor: "#990099", border:"1px solid black" }}
                     onClick={() => handleEditOpen(row)}
                   >
                     แก้ไข
@@ -233,7 +233,7 @@ const MyTable = () => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    style={{ backgroundColor: "#CC0033" , marginLeft: 10 }}
+                    style={{ backgroundColor: "#CC0033" , marginLeft: 10, border:"1px solid black" }}
                     onClick={() => handleDelete(row.id)}
                   >
                     ลบ

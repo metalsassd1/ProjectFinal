@@ -207,7 +207,7 @@ const MyTable = ({  }) => {
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow style={{backgroundColor: "#556cca"}}>
+          <TableRow style={{backgroundColor: "#556cca", border:"1px solid black", width: "100%" }}>
             <TableCell style={{ color: "#fff" }}>ID</TableCell>
             <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
             <TableCell style={{ color: "#fff" }}>คลังคงเหลือ</TableCell>
@@ -240,11 +240,11 @@ const MyTable = ({  }) => {
               </TableCell>
               
                           <TableCell>
-                <Button variant="contained"                     style={{ backgroundColor: "#990099" }}
+                <Button variant="contained" style={{ backgroundColor: "#990099", border:"1px solid black"}}
  onClick={() => handleEditOpen(row)}>
                   แก้ไข
                 </Button>
-                <Button variant="contained"  style={{ backgroundColor: "#CC0033" , marginLeft: 10 }} onClick={() => handleDelete(row.id)}>
+                <Button variant="contained"  style={{ backgroundColor: "#CC0033" , marginLeft: 10, border:"1px solid black" }} onClick={() => handleDelete(row.id)}>
                   ลบ
                 </Button>
               </TableCell>

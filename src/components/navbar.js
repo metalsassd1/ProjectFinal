@@ -13,7 +13,8 @@ const CustomAppBar = styled(AppBar)(({ open }) => ({
   top: 0, // Ensure it is at the top
   left: 0, // Ensure it stretches from the left
   transform: open ? 'translateX(240px)' : 'translateX(0)', // Adjust this value based on the width of your sidebar
-  transition: 'transform 0.3s ease', // Smooth transition for the slide effect
+  transition: 'transform 0.3s ease',
+  border : "1px solid black" // Smooth transition for the slide effect
 }));
 
 const Navbar = ({ isOpen, onLogout, onToggleSidebar }) => {

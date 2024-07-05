@@ -202,7 +202,7 @@ const MyTable = ({  }) => {
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow style={{ backgroundColor: "#556cca" }}>
+          <TableRow style={{ backgroundColor: "#556cca" , border:"1px solid black"}}>
             <TableCell style={{ color: "#fff" }}>ID</TableCell>
             <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
             <TableCell style={{ color: "#fff" }}>จำนวน</TableCell>
@@ -211,7 +211,7 @@ const MyTable = ({  }) => {
             <TableCell style={{ color: "#fff" }}>อัพเดทล่าสุด</TableCell>
             <TableCell style={{ color: "#fff" }}>หมายเหตุ</TableCell>
             <TableCell>
-              <Button variant="contained" color="primary" onClick={handleOpen} style={{ backgroundColor: "#33CC66" }}>
+              <Button variant="contained" color="primary" onClick={handleOpen} style={{ backgroundColor: "#33CC66" , border:"1px solid black"}}>
                 เพิ่มข้อมูล
               </Button>
               <ModalAddPage
@@ -236,14 +236,14 @@ const MyTable = ({  }) => {
               <TableCell>
                 <Button
                   variant="contained"
-                  style={{ backgroundColor: "#990099" }}
+                  style={{ backgroundColor: "#990099" , border:"1px solid black"}}
                   onClick={() => handleEditOpen(row)}
                 >
                   แก้ไข
                 </Button>
                 <Button
                   variant="contained"
-                  style={{ backgroundColor: "#CC0033" , marginLeft: 10 }}
+                  style={{ backgroundColor: "#CC0033" , marginLeft: 10 , border:"1px solid black"}}
                   onClick={() => handleDelete(row.id)}
                 >
                   ลบ

@@ -29,7 +29,8 @@ const RectangleBox1 = () => {
     alignItems: 'center',
     justifyContent: 'center',
     fontSize: '16px',
-    transition: 'all 0.3s ease-in-out'
+    transition: 'all 0.3s ease-in-out',
+    border : "1px solid black"
   };
 
   const iconStyle = {

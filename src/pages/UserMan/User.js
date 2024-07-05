@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
-import TextField from "@mui/material/TextField";
 import TableUser from "./componentPage/tableUserMan";
 
 function Manage(params) {
