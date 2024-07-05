@@ -134,7 +134,8 @@ const MyTable = () => {
 
   return (
     <>
-     <Grid container spacing={2}>
+      <Box component="form" className="search-container" noValidate autoComplete="off">
+        <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 fullWidth
@@ -186,22 +187,23 @@ const MyTable = () => {
             <Grid item xs={12} style={{ textAlign: 'right' }}>
             </Grid>
           </Grid>
+          </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>ชื่ออุปกรณ์</TableCell>
-              <TableCell>จำนวน</TableCell>
-              <TableCell>ประเภท</TableCell>
-              <TableCell>วันที่นำเข้า</TableCell>
-              <TableCell>อัพเดทล่าสุด</TableCell>
-              <TableCell>หมายเหตุ</TableCell>
+            <TableRow style={{ backgroundColor: "#556cca" }}>
+              <TableCell style={{ color: "#fff" }}>ID</TableCell>
+              <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
+              <TableCell style={{ color: "#fff" }}>จำนวน</TableCell>
+              <TableCell style={{ color: "#fff" }}>ประเภท</TableCell>
+              <TableCell style={{ color: "#ffffff" }}>วันที่นำเข้า</TableCell>
+              <TableCell style={{ color: "#ffffff" }}>อัพเดทล่าสุด</TableCell>
+              <TableCell style={{ color: "#ffffff" }}>หมายเหตุ</TableCell>
               <TableCell>
                 <Button
                   variant="contained"
-                  color="primary"
                   onClick={handleOpen}
+                  style={{ backgroundColor: "#33CC66" }}
                 >
                   เพิ่มข้อมูล
                 </Button>
@@ -221,15 +223,14 @@ const MyTable = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    color="primary"
+                    style={{ backgroundColor: "#990099" }}
                     onClick={() => handleEditOpen(row)}
                   >
                     แก้ไข
                   </Button>
                   <Button
                     variant="contained"
-                    color="secondary"
-                    style={{ marginLeft: 10 }}
+                    style={{ backgroundColor: "#CC0033" , marginLeft: 10 }}
                     onClick={() => handleDelete(row.id)}
                   >
                     ลบ

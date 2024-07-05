@@ -25,11 +25,12 @@ function Manage(params) {
   };
 
   return (
-    <div className="m" style={{ background: "#f0f0f0" }}>
+    <div className="m" style={{ background: "#e0e6fc" }}>
       <div
-        className=""
+        className="content-container"
         style={{
-          marginLeft: isSidebarOpen ? 200 : 0,
+          marginLeft: isSidebarOpen ? 300 : 100,
+          marginRight: isSidebarOpen ? 70 : 100,
           transition: "margin 0.3s",
         }}
       >

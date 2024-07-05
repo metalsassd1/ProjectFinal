@@ -9,6 +9,9 @@ import {
   TableRow,
   Paper,
   Button,
+  Grid,
+  TextField,
+  Box
 } from "@mui/material";
 import EditModal from "../../../components/modalComponent/EditPageLoanEdit";
 import Swal from 'sweetalert2';
@@ -125,21 +128,84 @@ const MyTable = ({ searchTerms }) => {
   };
 
   return (
+    <>
+          <Box component="form" className="search-container" noValidate autoComplete="off">
+    <Grid container spacing={2}>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วย ID"
+                variant="outlined"
+                size="small"
+                value={searchTerms.id}
+                onChange={(e) => handleSearch("id", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
+            />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยชื่ออุปกรณ์"
+                variant="outlined"
+                size="small"
+                value={searchTerms.equipment_name}
+                onChange={(e) => handleSearch("equipment_name", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยประเภท"
+                variant="outlined"
+                size="small"
+                value={searchTerms.equipment_type}
+                onChange={(e) => handleSearch("equipment_type", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยชื่อผู้ยืม"
+                variant="outlined"
+                size="small"
+                value={searchTerms.borrower_name}
+                onChange={(e) => handleSearch("borrower_name", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6} md={3}>
+              <TextField
+                fullWidth
+                label="ค้นหาด้วยวันที่ยืม"
+                variant="outlined"
+                size="small"
+                value={searchTerms.borrow_date}
+                onChange={(e) => handleSearch("borrow_date", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+          </Grid>
+          </Box>
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow style={{backgroundColor: "#D3D3D3"}}>
-            <TableCell>ID</TableCell>
-            <TableCell>ชื่ออุปกรณ์</TableCell>
-            <TableCell>คลังคงเหลือ</TableCell>
-            <TableCell>จำนวนที่ถูกยืมทั้งหมด</TableCell>
-            <TableCell>จำนวนที่ถูกยืม</TableCell>
-            <TableCell>ประเภท</TableCell>
-            <TableCell>ผู้ยืม</TableCell>
-            <TableCell>วันที่ยืม</TableCell>
-            <TableCell>วันที่คืน</TableCell>
-            <TableCell>สถานะ</TableCell>
-            <TableCell>การดำเนินการ</TableCell>
+          <TableRow style={{backgroundColor: "#556cca"}}>
+            <TableCell style={{ color: "#fff" }}>ID</TableCell>
+            <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
+            <TableCell style={{ color: "#fff" }}>คลังคงเหลือ</TableCell>
+            <TableCell style={{ color: "#fff" }}>จำนวนที่ถูกยืมทั้งหมด</TableCell>
+            <TableCell style={{ color: "#fff" }}>จำนวนที่ถูกยืม</TableCell>
+            <TableCell style={{ color: "#fff" }}>ประเภท</TableCell>
+            <TableCell style={{ color: "#fff" }}>ผู้ยืม</TableCell>
+            <TableCell style={{ color: "#fff" }}>วันที่ยืม</TableCell>
+            <TableCell style={{ color: "#fff" }}>วันที่คืน</TableCell>
+            <TableCell style={{ color: "#fff" }}>สถานะ</TableCell>
+            <TableCell style={{ color: "#fff" }}>การดำเนินการ</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -147,9 +213,9 @@ const MyTable = ({ searchTerms }) => {
             <TableRow key={row.id}>
               <TableCell>{row.id}</TableCell>
               <TableCell>{row.equipment_name}</TableCell>
-              <TableCell style={getRowStyle_Stock(row.total_stock)}>{row.total_stock}</TableCell>
+              <TableCell>{row.total_stock}</TableCell>
               <TableCell>{row.quantity_data}</TableCell>
-              <TableCell style={getRowStyle_borrowed(row.quantity_borrowed)}>{row.quantity_borrowed}</TableCell>
+              <TableCell>{row.quantity_borrowed}</TableCell>
               <TableCell>{row.equipment_type}</TableCell>
               <TableCell>{row.borrower_name}</TableCell>
               <TableCell>{row.borrow_date}</TableCell>
@@ -176,6 +242,7 @@ const MyTable = ({ searchTerms }) => {
         />
       )}
     </TableContainer>
+    </>
   );
 };
 
