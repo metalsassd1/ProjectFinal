@@ -108,15 +108,21 @@ const Submit = () => {
       confirmButtonText: "ตกลง",
       cancelButtonText: "ยกเลิก",
     });
+
+    const reqBody ={
+      quantity_data:borrowData.quantity_data, 
+      quantity_borrowed:borrowData.quantity_borrowed
+    }
+
     if (isConfirmed) {
       setLoading(true);
       try {
         const response = await axios.put(
-          `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${borrowData.borrowData.equipment_name}/${borrowData.borrowData.id}`
+          `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${borrowData.borrowData.equipment_name}/${borrowData.borrowData.id}`,reqBody
         );
         console.log(response);
         
-        const dataToEncode = updatedData || borrowData.borrowData;
+        const dataToEncode = borrowData || borrowData.borrowData;
         const encodedData = encodeURIComponent(JSON.stringify(dataToEncode));
         
         // Send email
@@ -125,7 +131,7 @@ const Submit = () => {
           equipment_name: borrowData.borrowData.equipment_name,
           status: "อนุมัติ",
           Approve: adminUser,
-          useSubmit: `http://pimcantake.netlify.app/qr?data=${encodedData}`
+          useSubmit: `http://localhost:3000/qr?data=${encodedData}`
         });
 
         await Swal.fire({

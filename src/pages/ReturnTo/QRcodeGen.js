@@ -28,10 +28,10 @@ const GenerateQR = () => {
     if (rows.length > 0) {
       const matchingRow = rows.find(row => row.id === borrowData.id);
       if (matchingRow) {
-        const isBorrowStatus = matchingRow.loan_status === "ยืม";
+        const isBorrowStatus = matchingRow.loan_status == "ยืม";
         setContainerClass(isBorrowStatus ? "qr-container" : "qr-container red-theme");
       }
-      console.log(rows.find(row => row.id),borrowData)
+      console.log(rows.find(row => row.id == borrowData.id),borrowData)
     }
   }, [rows, borrowData.id]);
 

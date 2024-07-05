@@ -131,6 +131,20 @@ const MyTable = ({ searchTerms }) => {
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
+<<<<<<< HEAD
+          <TableRow style={{ backgroundColor: "#D3D3D3" }}>
+            <TableCell>ID</TableCell>
+            <TableCell>ชื่ออุปกรณ์</TableCell>
+            <TableCell>ประเภท</TableCell>
+            <TableCell>คลังทั้งหมด</TableCell>
+            <TableCell>จำนวนที่ถูกยืม</TableCell>
+            <TableCell>คลังคงเหลือ</TableCell>
+            <TableCell>จำนวนที่ถูกยืมทั้งหมด</TableCell>
+            <TableCell>ผู้ยืม</TableCell>
+            <TableCell>วันที่ยืม</TableCell>
+            <TableCell>วันที่คืน</TableCell>
+            <TableCell>สถานะ</TableCell>
+=======
           <TableRow style={{ backgroundColor: "#556cca" }}>
             <TableCell style={{ color: "#ffffff" }}>ID</TableCell>
             <TableCell style={{ color: "#ffffff" }}>ชื่ออุปกรณ์</TableCell>
@@ -143,6 +157,7 @@ const MyTable = ({ searchTerms }) => {
             <TableCell style={{ color: "#ffffff" }}>วันที่ยืม</TableCell>
             <TableCell style={{ color: "#ffffff" }}>วันที่คืน</TableCell>
             <TableCell style={{ color: "#ffffff" }}>สถานะ</TableCell>
+>>>>>>> 1670f0f4114f912ce6203dd4b31110e146b35198
             <TableCell></TableCell>
           </TableRow>
         </TableHead>
