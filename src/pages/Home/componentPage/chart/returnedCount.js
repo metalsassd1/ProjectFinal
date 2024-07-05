@@ -18,14 +18,13 @@ const RectangleBox1 = () => {
   const boxStyle = {
     width: "450px",
     height: "100px",
-    backgroundColor: "rgb(198, 230, 247)", // Alice blue
-    border: "2px solid #4682b4", // Steel blue
+    backgroundColor: "#556cca", // Alice blue
     borderRadius: "10px",
     padding: "60px",
     textAlign: "center",
     boxShadow: "5px 5px 10px #888888",
     fontFamily: "'Arial', sans-serif",
-    color: "#333333",
+    color: "#fff",
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

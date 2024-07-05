@@ -46,7 +46,7 @@ const App = () => {
   };
 
   return (
-    <div style={{ background: "#f0f0f0", fontFamily: "'Arial', sans-serif" }}>
+    <div style={{ background: "#e0e6fc", fontFamily: "'Arial', sans-serif" }}>
       <div
         className="header"
         style={{

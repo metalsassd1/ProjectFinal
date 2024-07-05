@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       sx={{
         "& .MuiDrawer-paper": {
           width: 240,
-          background: "#333399", // Set the background color for the drawer
+          background: "#bec6e5", // Set the background color for the drawer
         },
       }}
     >
@@ -28,7 +28,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <ListItem
           style={{
             borderBottom: "1px solid #ccc", // Change to solid border
-            background: "#333399",
+            background: "#556cca",
             color: "#fff", // Set text color to white
             fontSize: "large",
             padding: "10px",
@@ -40,22 +40,22 @@ const Sidebar = ({ isOpen, onClose }) => {
         </ListItem>
 
         <ListItem button onClick={() => handleRedirect("/")}>
-          <ListItemText primary="หน้าหลัก" primaryTypographyProps={{ style: { color: "#fff" } }} />
+          <ListItemText primary="หน้าหลัก" primaryTypographyProps={{ style: { color: "#000" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/2")}>
-          <ListItemText primary="จัดการข้อมูลอุปกรณ์กีฬา" primaryTypographyProps={{ style: { color: "#fff" } }} />
+          <ListItemText primary="จัดการข้อมูลอุปกรณ์กีฬา" primaryTypographyProps={{ style: { color: "#000" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/3")}>
-          <ListItemText primary="จัดการข้อมูลอุปกรณ์นันทนาการ" primaryTypographyProps={{ style: { color: "#fff" } }} />
+          <ListItemText primary="จัดการข้อมูลอุปกรณ์นันทนาการ" primaryTypographyProps={{ style: { color: "#000" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/4")}>
-          <ListItemText primary="จัดการข้อมูลผู้ใช้" primaryTypographyProps={{ style: { color: "#fff" } }} />
+          <ListItemText primary="จัดการข้อมูลผู้ใช้" primaryTypographyProps={{ style: { color: "#000" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/1")}>
-          <ListItemText primary="จัดการข้อมูลการยืม" primaryTypographyProps={{ style: { color: "#fff" } }} />
+          <ListItemText primary="จัดการข้อมูลการยืม" primaryTypographyProps={{ style: { color: "#000" } }} />
         </ListItem>
         <ListItem button onClick={() => handleRedirect("/5")}>
-          <ListItemText primary="รายงายสรุปผล" primaryTypographyProps={{ style: { color: "#fff" } }} />
+          <ListItemText primary="รายงายสรุปผล" primaryTypographyProps={{ style: { color: "#000" } }} />
         </ListItem>
       </List>
     </Drawer>
