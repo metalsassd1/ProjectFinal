@@ -16,11 +16,18 @@ import {
 import EditModal from "../../../components/modalComponent/EditPageLoanEdit";
 import Swal from 'sweetalert2';
 
-const MyTable = ({ searchTerms }) => {
+const MyTable = ({  }) => {
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [selectedLoD, setSelectedLoD] = useState(null);
   const [modalEditOpen, setModalEditOpen] = useState(false);
+  const [searchTerms, setSearchTerms] = useState({
+    id: "",
+    equipment_name: "",
+    equipment_type: "",
+    borrower_name: "",
+    borrow_date: "", // เพิ่มตัวแปรสำหรับค้นหาด้วยวันที่ยืม
+  });
 
   useEffect(() => {
     fetchData();
@@ -130,6 +137,9 @@ const MyTable = ({ searchTerms }) => {
     return quantity_borrowed > 0 ? { backgroundColor: "#FFA500" } : { backgroundColor: "#D3D3D3" };
   };
 
+  const handleSearch = (field, value) => {
+    setSearchTerms(prev => ({ ...prev, [field]: value }));
+  };
   return (
     <>
           <Box component="form" className="search-container" noValidate autoComplete="off">
