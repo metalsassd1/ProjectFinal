@@ -113,9 +113,12 @@ const MyTable = ({ searchTerms }) => {
 
   const getStatusColor = (loan_status) => {
     switch (loan_status) {
-      case "คืน": return "#32CD32";
-      case "ยืม": return "#FFA500";
-      default: return "#D3D3D3";
+      case "คืน":
+        return { backgroundColor: "#556cca", color: "#ffffff" };
+      case "ยืม":
+        return { backgroundColor: "#32CD32", color: "#ffffff" };
+      default:
+        return { backgroundColor: "#FF4500", color: "#ffffff" };
     }
   };
 
@@ -220,12 +223,18 @@ const MyTable = ({ searchTerms }) => {
               <TableCell>{row.borrower_name}</TableCell>
               <TableCell>{row.borrow_date}</TableCell>
               <TableCell>{row.return_date}</TableCell>
-              <TableCell style={{ backgroundColor: getStatusColor(row.loan_status) }}>{row.loan_status || ''}</TableCell>
-              <TableCell>
-                <Button variant="contained" color="primary" onClick={() => handleEditOpen(row)}>
+              <TableCell
+                style={getStatusColor(row.loan_status)}
+              >
+                {row.loan_status || ""}
+              </TableCell>
+              
+                          <TableCell>
+                <Button variant="contained"                     style={{ backgroundColor: "#990099" }}
+ onClick={() => handleEditOpen(row)}>
                   แก้ไข
                 </Button>
-                <Button variant="contained" color="secondary" style={{ marginLeft: 10 }} onClick={() => handleDelete(row.id)}>
+                <Button variant="contained"  style={{ backgroundColor: "#CC0033" , marginLeft: 10 }} onClick={() => handleDelete(row.id)}>
                   ลบ
                 </Button>
               </TableCell>

@@ -10,6 +10,7 @@ import {
   Paper,
   Button,
   TextField,
+  Box
 } from "@mui/material";
 import ModalAddPage from "../../../components/modalComponent/addPageCustoms";
 import EditModal from "../../../components/modalComponent/EditPageCustom";
@@ -134,8 +135,8 @@ const MyTable = () => {
 
   return (
     <>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
-      <Grid container spacing={2}>
+      <Box component="form" className="search-container" noValidate autoComplete="off">
+        <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 fullWidth
@@ -185,20 +186,21 @@ const MyTable = () => {
               />
             </Grid>
           </Grid>
-      </div>
+          </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>ชื่อผู้ใช้</TableCell>
-              <TableCell>อีเมล</TableCell>
-              <TableCell>password</TableCell>
-              <TableCell>วันที่นำเข้า</TableCell>
-              <TableCell>วันที่อัพเดตล่าสุด</TableCell>
-              <TableCell>Admin</TableCell>
+            <TableRow style={{ backgroundColor: "#556cca" }}>
+              <TableCell style={{ color: "#fff" }}>ID</TableCell>
+              <TableCell style={{ color: "#fff" }}>ชื่อผู้ใช้</TableCell>
+              <TableCell style={{ color: "#fff" }}>อีเมล</TableCell>
+              <TableCell style={{ color: "#fff" }}>password</TableCell>
+              <TableCell style={{ color: "#fff" }}>วันที่นำเข้า</TableCell>
+              <TableCell style={{ color: "#fff" }}>วันที่อัพเดตล่าสุด</TableCell>
+              <TableCell style={{ color: "#fff" }}>Admin</TableCell>
               <TableCell>
-                <Button variant="contained" color="primary" onClick={handleOpen}>
+                <Button variant="contained"                   style={{ backgroundColor: "#33CC66" }}
+ onClick={handleOpen}>
                   เพิ่มข้อมูล
                 </Button>
                 <ModalAddPage
@@ -223,7 +225,7 @@ const MyTable = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    color="primary"
+                    style={{ backgroundColor: "#990099" }}
                     onClick={() => handleEditOpen(row)}
                   >
                     แก้ไข
@@ -231,7 +233,7 @@ const MyTable = () => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    style={{ marginLeft: 10 }}
+                    style={{ backgroundColor: "#CC0033" , marginLeft: 10 }}
                     onClick={() => handleDelete(row.id)}
                   >
                     ลบ

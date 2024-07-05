@@ -22,11 +22,20 @@ function Manage(params) {
   };
 
   return (
-    <div className="m" style={{ background: "#f0f0f0" }}>
+    <div className="m" style={{ background: "#e0e6fc" }}>
+      
       <div
         className="header"
         style={{
           marginLeft: isSidebarOpen ? 200 : 0,
+          transition: "margin 0.3s",
+        }}
+      >
+        <div
+        className="content-container"
+        style={{
+          marginLeft: isSidebarOpen ? 300 : 100,
+          marginRight: isSidebarOpen ? 70 : 100,
           transition: "margin 0.3s",
         }}
       >
@@ -55,6 +64,7 @@ function Manage(params) {
       
         <TableUser isOpen={isSidebarOpen} searchTerms={searchTerms} />
       </div>
+    </div>
     </div>
   );
 }
