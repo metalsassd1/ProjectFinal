@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       sx={{
         "& .MuiDrawer-paper": {
           width: 240,
-          background: "#D3D3D3", // Set the background color for the drawer
+          background: "#bec6e5", // Set the background color for the drawer
         },
       }}
     >
