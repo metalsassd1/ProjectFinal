@@ -3,18 +3,16 @@ import axios from 'axios';
 import './Return.css';
 import Swal from 'sweetalert2';
 
-const Return = ({ data }) => {
+const Return = ({ data, response }) => {
   const borrowData = data;
   const [rows, setRows] = useState([]);
   const [containerClass, setContainerClass] = useState('return-container');
-  const [previousStatus, setPreviousStatus] = useState(null);
   const [currentStatus, setCurrentStatus] = useState(borrowData.loan_status);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       fetchDataUpdateStatus();
     }, 5000);
-
     return () => clearInterval(intervalId);
   }, []);
 
@@ -22,11 +20,11 @@ const Return = ({ data }) => {
     if (rows.length > 0) {
       const matchingRow = rows.find(row => row.id == borrowData.id);
       if (matchingRow) {
-        const isBorrowStatus = matchingRow.loan_status === "ยืม";
+        const isBorrowStatus = matchingRow.loan_status == "ยืม";
         setContainerClass(isBorrowStatus ? "return-container" : "return-container red-theme");
 
         // Check if status has changed
-        if (previousStatus !== null && previousStatus !== matchingRow.loan_status) {
+        if (matchingRow.loan_status !== currentStatus) {
           setCurrentStatus(matchingRow.loan_status);
           Swal.fire({
             title: 'สถานะถูกอนุมัติ',
@@ -34,10 +32,9 @@ const Return = ({ data }) => {
             confirmButtonText: 'ตกลง'
           });
         }
-        setPreviousStatus(matchingRow.loan_status);
       }
     }
-  }, [rows, borrowData.id, previousStatus]);
+  }, [rows, borrowData.id, currentStatus]);
 
   const fetchDataUpdateStatus = async () => {
     try {
@@ -70,7 +67,6 @@ const Return = ({ data }) => {
 
   try {
     const matchingRow = rows.find(row => row.id == borrowData.id);
-    const statusToDisplay = currentStatus || borrowData.loan_status;
     const borrowDateToDisplay = matchingRow ? matchingRow.borrow_date : formatDate(borrowData.borrow_date);
     const returnDateToDisplay = matchingRow ? matchingRow.return_date : formatDate(borrowData.return_date);
 
@@ -81,7 +77,7 @@ const Return = ({ data }) => {
         <p className="return-text"><strong>อุปกรณ์:</strong> {borrowData.equipment_name}</p>
         <p className="return-text"><strong>ชื่อ:</strong> {borrowData.borrower_name}</p>
         <p className="return-text"><strong>รหัสประจำตัว:</strong> {borrowData.identification_id}</p>
-        <p className="return-text"><strong>สถานะ:</strong> {statusToDisplay}</p>
+        <p className="return-text"><strong>สถานะ:</strong> {currentStatus}</p>
         <p className="return-text"><strong>วันที่ยืม:</strong> {borrowDateToDisplay}</p>
         <p className="return-text"><strong>วันที่คืน:</strong> {returnDateToDisplay}</p>
         <p className="return-text"><strong>จำนวน:</strong> {borrowData.quantity_borrowed}</p>

@@ -147,7 +147,6 @@ const MyTable = ({ searchTerms }) => {
             <TableCell>จำนวนที่ถูกยืม</TableCell>
             <TableCell>คลังคงเหลือ</TableCell>
             <TableCell>จำนวนที่ถูกยืมทั้งหมด</TableCell>
-            
             <TableCell>ผู้ยืม</TableCell>
             <TableCell>วันที่ยืม</TableCell>
             <TableCell>วันที่คืน</TableCell>

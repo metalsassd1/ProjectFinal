@@ -9,16 +9,17 @@ import { MuiDateRangePicker } from "../../components/MuiDateRangePicker";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com";
-import swal from 'sweetalert';
+import swal from "sweetalert";
+import dayjs from "dayjs";
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#4CAF50', // Green
+      main: "#4CAF50", // Green
     },
     background: {
-      default: '#ffffff', // White
-      paper: '#f1f5f9', // Light gray for form background
+      default: "#ffffff", // White
+      paper: "#f1f5f9", // Light gray for form background
     },
   },
 });
@@ -52,7 +53,7 @@ export default function Borrower() {
   const { Ename, Etype, desired_quantity } = useParams();
   const [quantity_borrowed, setQuantity_borrowed] = useState(desired_quantity);
   const [approvalStatus, setApprovalStatus] = useState(null);
-  const [user, setUser] = useState('');
+  const [user, setUser] = useState("");
   const [userEmails, setUserEmails] = useState([]);
   const navigate = useNavigate();
 
@@ -72,28 +73,28 @@ export default function Borrower() {
   useEffect(() => {
     const fetchAdminUser = async () => {
       try {
-        const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/user/table");
+        const response = await axios.get(
+          "https://back-end-finals-project-pgow.onrender.com/api/user/table"
+        );
         setUser(response.data); // Assuming response.data is an array of users
       } catch (error) {
         console.error("Failed to fetch admin user:", error);
         setUser([]); // Set user state to empty array on error
       }
     };
-  
+
     fetchAdminUser();
   }, []);
-  
-  
+
   useEffect(() => {
     if (user.length > 0) {
-      const emailArray = user.map(user => user.email);
+      const emailArray = user.map((user) => user.email);
       setUserEmails(emailArray);
     }
   }, [user]);
-  
-  console.log(userEmails);
 
   const id = Math.floor(Math.random() * 1000000);
+
   const onSubmit = async (data) => {
     // Formatted data object if needed, or you can directly use `data`
 
@@ -102,35 +103,44 @@ export default function Borrower() {
       id: id,
       borrower_name: data.borrower_name,
       equipment_name: data.equip_name,
-      identification_id: data.identify_id,
-      quantity_borrowed: quantity_borrowed,
-      contact: {
-        phone: data.phone,
-        email: data.email,
-        backup_phone: data.backup_phone,
-        backup_email: data.backup_email,
-      },
       equipment_type: Etype,
-      department: data.department,
-      branch: data.branch,
-      faculty: data.faculty,
-      options: data.options,
-      borrow_date: data.duration.start.toISOString().split("T")[0],
-      return_date: data.duration.end.toISOString().split("T")[0],
+      quantity_borrowed: quantity_borrowed,
+      borrower_name: data.borrower_name,
+      borrow_date: formatDate(data.duration.start, true),
+      return_date: formatDate(data.duration.end, true), // Add one day to return_date
       loan_status: "รออนุมัติ",
-      quantity_data: quantity_borrowed,
-      user: userEmails
+      quantity_data: quantity_borrowed
     };
+    
+    function formatDate(date) {
+      // ตรวจสอบว่าเป็น Date object
+      const dateObject = date instanceof Date ? date : new Date(date);
+      
+      // สร้างสตริงวันที่ในรูปแบบ YYYY-MM-DD ในเขตเวลาท้องถิ่น
+      const year = dateObject.getFullYear();
+      const month = String(dateObject.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObject.getDate()).padStart(2, '0');
+      
+      return `${year}-${month}-${day}`;
+    }
 
-    const submitEv= `http://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(JSON.stringify(formattedData))}`
- 
+    const submitEv = `http://localhost:3000/admin-login/?data=${encodeURIComponent(
+      JSON.stringify(formattedData)
+    )}`;
+
+    console.log(formattedData.borrow_date, formattedData.return_date);
     try {
       // Submit the borrowing request to the backend API
-      const response = await axios.post("https://back-end-finals-project-pgow.onrender.com/api/Borrowed/borrow", formattedData,submitEv);
-      console.log("Server response:", response.data,formattedData);
-      
+      const response = await axios.post(
+        "http://localhost:3000/api/Borrowed/borrow",
+        formattedData,
+        submitEv
+      );
+      console.log("Server response:", response.data, formattedData);
+
       // Now handle the email submission and wait for its completion
-      handleAdminsubmit(formattedData,submitEv).then(() => {
+      handleAdminsubmit(formattedData,submitEv)
+      .then(() => {
         if (response) {
           swal({
             title: "ดำเนินการสำเร็จ",
@@ -138,7 +148,9 @@ export default function Borrower() {
             icon: "success",
             button: "OK",
           }).then(() => {
-            navigate(`/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`);
+            navigate(
+              `/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`
+            );
           });
         }
       });
@@ -152,22 +164,27 @@ export default function Borrower() {
       });
     }
   };
-  
-  const handleAdminsubmit = async (formattedData,submitEv) => {
+
+  const handleAdminsubmit = async (formattedData, submitEv) => {
     const service = "service_2kcoyx1";
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_k1dp1dm";
 
-    const emailAddresses = formattedData.user.join(', ');
+    const emailAddresses = formattedData.user.join(", ");
 
-  const templateParams = { 
-    formattedData,
-    to_email: emailAddresses,
-    submitEv 
-  };
-console.log(templateParams)
+    const templateParams = {
+      formattedData,
+      to_email: emailAddresses,
+      submitEv,
+    };
+    console.log(templateParams);
     try {
-      const result = await emailjs.send(service, template, templateParams, publicK);
+      const result = await emailjs.send(
+        service,
+        template,
+        templateParams,
+        publicK
+      );
       console.log("EmailJS result:", result);
       setApprovalStatus(result.text === "OK" ? "success" : "failure"); // Assuming 'OK' is success
       return Promise.resolve();
@@ -177,7 +194,6 @@ console.log(templateParams)
       return Promise.reject();
     }
   };
-  
 
   function renderOrganize() {
     switch (option) {
@@ -299,84 +315,23 @@ console.log(templateParams)
   }, [form.formState.errors]);
   return (
     <ThemeProvider theme={theme}>
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh" // Changed height to minHeight for responsiveness
-    >
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        style={{ width: "100%", maxWidth: "600px", padding: "0 10px" }} // Adjusted form width and added padding
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh" // Changed height to minHeight for responsiveness
       >
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          width="100%"
-          gap="1rem" // Changed sx gap to shorthand
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          style={{ width: "100%", maxWidth: "600px", padding: "0 10px" }} // Adjusted form width and added padding
         >
           <Box
-            display={"flex"}
-            flexDirection={{ xs: "column", sm: "row" }} // Flex direction changes on small screens
-            gap={{ xs: 1, sm: 1 }} // No gap on small screens, 1rem gap on larger screens
-            width={"100%"}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            width="100%"
+            gap="1rem" // Changed sx gap to shorthand
           >
-            <MuiInput
-              control={form.control}
-              name={"equip_name"}
-              label={"ชื่ออุปกรณ์"}
-              fullWidth
-              required={true}
-              disabled={true}
-            />
-            <MuiInput
-              control={form.control}
-              name="quantity_borrowed"
-              type="number"
-              label="จำนวน"
-              fullWidth
-              required={true}
-              disabled={true}
-            />
-          </Box>
-          <MuiDateRangePicker
-            control={form.control}
-            name={"duration"}
-            alert={
-              form.formState.isSubmitted &&
-              (!form.getValues("duration.start") ||
-                !form.getValues("duration.end"))
-                ? true
-                : false
-            }
-          />
-          <Box
-            width={"95%"}
-            bgcolor={"#f1f5f9"}
-            sx={{ padding: 2 }}
-            display={"grid"}
-            gap={"1rem"}
-          >
-            <Box width="100%">
-              <MuiInput
-                control={form.control}
-                name={"borrower_name"}
-                label={"ชื่อ - นามสกุล"}
-                fullWidth
-                required={true}
-              />
-            </Box>
-            <FormOptions
-              control={form.control}
-              name={"options"}
-              alert={
-                form.formState.isSubmitted && !form.getValues("options")
-                  ? true
-                  : false
-              }
-            />
-            {option && renderOrganize()}
             <Box
               display={"flex"}
               flexDirection={{ xs: "column", sm: "row" }} // Flex direction changes on small screens
@@ -385,41 +340,102 @@ console.log(templateParams)
             >
               <MuiInput
                 control={form.control}
-                name={"email"}
-                label={"อีเมล"}
+                name={"equip_name"}
+                label={"ชื่ออุปกรณ์"}
+                fullWidth
                 required={true}
+                disabled={true}
               />
               <MuiInput
                 control={form.control}
-                name={"phone"}
-                label={"เบอร์โทรศัพท์"}
+                name="quantity_borrowed"
+                type="number"
+                label="จำนวน"
+                fullWidth
                 required={true}
+                disabled={true}
               />
             </Box>
-          </Box>
-          <Box
-            display={"flex"}
-            flexDirection={{ xs: "column", sm: "row" }} // Flex direction changes on small screens
-            gap={{ xs: 1, sm: 1 }} // No gap on small screens, 1rem gap on larger screens
-            width={"100%"}
-          >
-            <MuiInput
+            <MuiDateRangePicker
               control={form.control}
-              name={"backup_email"}
-              label={"อีเมลสำรอง (ไม่บังคับ)"}
+              name={"duration"}
+              alert={
+                form.formState.isSubmitted &&
+                (!form.getValues("duration.start") ||
+                  !form.getValues("duration.end"))
+                  ? true
+                  : false
+              }
             />
-            <MuiInput
-              control={form.control}
-              name={"backup_phone"}
-              label={"เบอร์โทรศัพท์สำรอง (ไม่บังคับ)"}
-            />
+            <Box
+              width={"95%"}
+              bgcolor={"#f1f5f9"}
+              sx={{ padding: 2 }}
+              display={"grid"}
+              gap={"1rem"}
+            >
+              <Box width="100%">
+                <MuiInput
+                  control={form.control}
+                  name={"borrower_name"}
+                  label={"ชื่อ - นามสกุล"}
+                  fullWidth
+                  required={true}
+                />
+              </Box>
+              <FormOptions
+                control={form.control}
+                name={"options"}
+                alert={
+                  form.formState.isSubmitted && !form.getValues("options")
+                    ? true
+                    : false
+                }
+              />
+              {option && renderOrganize()}
+              <Box
+                display={"flex"}
+                flexDirection={{ xs: "column", sm: "row" }} // Flex direction changes on small screens
+                gap={{ xs: 1, sm: 1 }} // No gap on small screens, 1rem gap on larger screens
+                width={"100%"}
+              >
+                <MuiInput
+                  control={form.control}
+                  name={"email"}
+                  label={"อีเมล"}
+                  required={true}
+                />
+                <MuiInput
+                  control={form.control}
+                  name={"phone"}
+                  label={"เบอร์โทรศัพท์"}
+                  required={true}
+                />
+              </Box>
+            </Box>
+            <Box
+              display={"flex"}
+              flexDirection={{ xs: "column", sm: "row" }} // Flex direction changes on small screens
+              gap={{ xs: 1, sm: 1 }} // No gap on small screens, 1rem gap on larger screens
+              width={"100%"}
+            >
+              <MuiInput
+                control={form.control}
+                name={"backup_email"}
+                label={"อีเมลสำรอง (ไม่บังคับ)"}
+              />
+              <MuiInput
+                control={form.control}
+                name={"backup_phone"}
+                label={"เบอร์โทรศัพท์สำรอง (ไม่บังคับ)"}
+              />
+            </Box>
+            <Button variant="contained" type="submit" fullWidth>
+              ส่งคำขอ
+            </Button>
           </Box>
-          <Button variant="contained" type="submit" fullWidth>
-            ส่งคำขอ
-          </Button>
-        </Box>
-      </form>
-    </Box>
+        </form>
+      </Box>
     </ThemeProvider>
   );
 }
