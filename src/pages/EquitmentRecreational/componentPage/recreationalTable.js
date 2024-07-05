@@ -18,12 +18,18 @@ import ModalAddPage from "../../../components/modalComponent/addPage";
 import EditModal from "../../../components/modalComponent/EditPage";
 import Swal from 'sweetalert2';
 
-const MyTable = ({ searchTerms }) => {
+const MyTable = ({  }) => {
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
   const [selectedRec, setSelectedRec] = useState(null);
+  const [searchTerms, setSearchTerms] = useState({
+    id: "",
+    equipment_name: "",
+    import_date: "",
+    last_update: ""
+  });
 
   const handleOpen = () => setModalOpen(true);
   const handleClose = () => setModalOpen(false);
@@ -131,6 +137,10 @@ const MyTable = ({ searchTerms }) => {
         });
       }
     }
+  };
+
+  const handleSearch = (field, value) => {
+    setSearchTerms(prev => ({ ...prev, [field]: value }));
   };
 
   return (

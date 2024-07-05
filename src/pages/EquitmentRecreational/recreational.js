@@ -1,26 +1,16 @@
 import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
-import TextField from "@mui/material/TextField"; // เพิ่มการ import TextField
 import TableEnter from "./componentPage/recreationalTable";
-import { Box, Grid} from "@mui/material";
 
-function Manage(params) {
+function Manage(searchTerms ) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
-    id: "",
-    equipment_name: "",
-    import_date: "",
-    last_update: ""
-  });
-
+  
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleSearch = (field, value) => {
-    setSearchTerms(prev => ({ ...prev, [field]: value }));
-  };
+  
 
   return (
     <div className="m" style={{ background: "#e0e6fc" }}>
