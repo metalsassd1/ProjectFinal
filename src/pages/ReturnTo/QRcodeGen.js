@@ -29,7 +29,7 @@ const GenerateQR = () => {
       const matchingRow = rows.find(row => row.id === borrowData.id);
       if (matchingRow) {
         const isBorrowStatus = matchingRow.loan_status == "ยืม";
-        setContainerClass(isBorrowStatus ? "qr-container" : "qr-container red-theme");
+        setContainerClass(isBorrowStatus ? "qr-container" : "qr-constainer red-theme");
       }
       console.log(rows.find(row => row.id == borrowData.id),borrowData)
     }

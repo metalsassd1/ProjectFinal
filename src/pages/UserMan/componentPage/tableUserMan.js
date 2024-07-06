@@ -191,8 +191,10 @@ const MyTable = () => {
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell>ชื่อผู้ใช้</TableCell>
               <TableCell>อีเมล</TableCell>
+              <TableCell>ชื่อผู้ใช้</TableCell>
+              <TableCell>เบอร์โทรศัพท์</TableCell>
+              <TableCell>username</TableCell>
               <TableCell>password</TableCell>
               <TableCell>วันที่นำเข้า</TableCell>
               <TableCell>วันที่อัพเดตล่าสุด</TableCell>
@@ -214,8 +216,10 @@ const MyTable = () => {
             {filteredRows.map((row) => (
               <TableRow key={row.id}>
                 <TableCell>{row.id}</TableCell>
-                <TableCell>{row.username}</TableCell>
                 <TableCell>{row.email}</TableCell>
+                <TableCell>{row.full_name}</TableCell>
+                <TableCell>{row.cellNum}</TableCell>
+                <TableCell>{row.username}</TableCell>
                 <TableCell>{row.password}</TableCell>
                 <TableCell>{row.registration_date}</TableCell>
                 <TableCell>{row.last_update}</TableCell>

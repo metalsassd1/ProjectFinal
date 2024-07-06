@@ -13,16 +13,10 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { format, parse } from 'date-fns';
+import { th } from 'date-fns/locale'; // Import Thai locale
 
-const CustomEdirModal = ({ open, handleClose, user, label }) => {
-  const getCurrentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
+const CustomEditModal = ({ open, handleClose, user, label }) => {
 
   const [formData, setFormData] = useState({
     id: user?.id || "",
@@ -30,23 +24,61 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
     password: user?.password || "",
     full_name: user?.full_name || "",
     email: user?.email || "",
-    registration_date: user?.registration_date
-      ? new Date(user.registration_date)
-      : getCurrentDate(),
+    registration_date: user?.registration_date,
     is_admin: user?.is_admin || "",
+    cellNum: user?.cellNum || "",
   });
 
+  useEffect(() => {
+    if (user) {
+      const thaiDateString = user.registration_date;
+      
+      // Parse the Thai date string with date-fns
+      const parsedDate = parse(thaiDateString, 'd MMMM yyyy', new Date(), { locale: th });
+      
+      // Handle invalid parsing
+      if (isNaN(parsedDate)) {
+        console.error("Error parsing registration date:", thaiDateString);
+        // You can set a default date or display an error message to the user
+        return; 
+      }
+  
+      const formattedRegistrationDate = format(parsedDate, 'yyyy-MM-dd');
+      setFormData({
+        id: user.id,
+        username: user.username,
+        password: user.password,
+        full_name: user.full_name,
+        email: user.email,
+        registration_date: formattedRegistrationDate, 
+        is_admin: user.is_admin,
+        cellNum: user.cellNum,
+      });
+    }
+  }, [user]);
+
+  const resetForm = () => {
+    setFormData({
+      id: "",
+      username: "",
+      password: "",
+      full_name: "",
+      email: "",
+      registration_date: "",
+      is_admin: "",
+      cellNum: "",
+    });
+  };
+
   const handleRoleChange = (event) => {
-    // Assuming value is passed as a string from the dropdown, convert to number
     const isAdminValue = event.target.value;
-    console.log(isAdminValue);
     setFormData((prevState) => ({
       ...prevState,
       is_admin: isAdminValue,
     }));
   };
 
-  const handleChangeinput = (e) => {
+  const handleChangeInput = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
       ...prevState,
@@ -63,14 +95,15 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
       );
       console.log("Data updated successfully:", response.data);
 
-        await Swal.fire({
-          title: "ดำเนินการสำเร็จ!",
-          text: "แก้ไขข้อมูล",
-          icon: "success",
-          confirmButtonText: "ตกลง",
-        });
+      await Swal.fire({
+        title: "ดำเนินการสำเร็จ!",
+        text: "แก้ไขข้อมูล",
+        icon: "success",
+        confirmButtonText: "ตกลง",
+      });
 
-        handleClose(); // Close the modal after user clicks OK
+      resetForm();
+      handleClose();
     } catch (error) {
       console.error("Error updating data:", error);
 
@@ -82,13 +115,17 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
         icon: "error",
         confirmButtonText: "ตกลง",
       });
+      resetForm();
     }
   };
 
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose();
+        resetForm();
+      }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -115,7 +152,7 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
               name="full_name"
               value={formData.full_name}
               placeholder={user.full_name} // Use user data as placeholder
-              onChange={handleChangeinput}
+              onChange={handleChangeInput}
               style={{ margin: "0.5rem" }}
               fullWidth
             />
@@ -125,7 +162,7 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
               name="username"
               value={formData.username}
               placeholder={user.username} // Use user data as placeholder
-              onChange={handleChangeinput}
+              onChange={handleChangeInput}
               style={{ margin: "0.5rem" }}
               fullWidth
             />
@@ -135,7 +172,7 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
               name="password"
               value={formData.password}
               placeholder={user.password} // Use user data as placeholder
-              onChange={handleChangeinput}
+              onChange={handleChangeInput}
               style={{ margin: "0.5rem" }}
               fullWidth
             />
@@ -145,7 +182,17 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
               name="email"
               value={formData.email}
               placeholder={user.email} // Use user data as placeholder
-              onChange={handleChangeinput}
+              onChange={handleChangeInput}
+              style={{ margin: "0.5rem" }}
+              fullWidth
+            />
+            <TextField
+              label="เบอร์โทรศัพท์"
+              variant="outlined"
+              name="cellNum"
+              value={formData.cellNum}
+              placeholder={user.cellNum} // Use user data as placeholder
+              onChange={handleChangeInput}
               style={{ margin: "0.5rem" }}
               fullWidth
             />
@@ -156,7 +203,7 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
                 id="is-admin-select"
                 value={formData.is_admin.toString()}
                 label="Role"
-                onChange={(e) => handleRoleChange(e)}
+                onChange={handleRoleChange}
               >
                 <MenuItem value={"Admin"}>Admin</MenuItem>
                 <MenuItem value={"User"}>User</MenuItem>
@@ -175,4 +222,4 @@ const CustomEdirModal = ({ open, handleClose, user, label }) => {
   );
 };
 
-export default CustomEdirModal;
+export default CustomEditModal;

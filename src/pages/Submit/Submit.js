@@ -12,6 +12,7 @@ const Submit = () => {
   const borrowData = JSON.parse(decodeURIComponent(data));
   const [loading, setLoading] = useState(false);
   const [adminUser, setAdminUser] = useState('');
+  const [admin, setAdmin] = useState('');
   const navigate = useNavigate();
   const [rows, setRows] = useState([]);
   const [updatedData, setUpdatedData] = useState(null);
@@ -19,7 +20,8 @@ const Submit = () => {
   useEffect(() => {
     emailjs.init("S25g4RkhBGztGOJc_");
     console.log(borrowData.user.username);
-    setAdminUser(borrowData.user.email);
+    setAdminUser(borrowData.user.full_name);
+    setAdmin(borrowData.user.email);
   }, []);
   
   useEffect(() => {
@@ -46,21 +48,19 @@ const Submit = () => {
   const fetchDataUpdateStatus = async () => {
     try {
       const response = await axios.get(
-        "https://back-end-finals-project-pgow.onrender.com/api/home/management"
+        `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/loan/${borrowData.data.id}`
       );
-
-      const formattedData = response.data.map((item) => ({
-        ...item,
-        borrow_date: formatDate(item.borrow_date),
-        return_date: formatDate(item.return_date),
-      }));
-      setRows(formattedData);
-
-      compareDataAndUpdate(formattedData);
+      const formattedData = {
+        ...response.data,
+        borrow_date: formatDate(response.data.borrow_date),
+        return_date: formatDate(response.data.return_date),
+      };
+      setUpdatedData(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
 
   const formatDate = (dateString) => {
     if (!dateString) return "No date provided";
@@ -71,19 +71,6 @@ const Submit = () => {
       month: "long",
       day: "numeric",
     });
-  };
-
-  const compareDataAndUpdate = (formattedData) => {
-    const matchingRow = formattedData.find(row => row.id == borrowData.borrowData.id);
-    if (matchingRow) {
-      const updatedBorrowData = {
-        ...borrowData.borrowData,
-        loan_status: matchingRow.loan_status,
-        borrow_date: matchingRow.borrow_date,
-        return_date: matchingRow.return_date
-      };
-      setUpdatedData(updatedBorrowData);
-    }
   };
 
   const handleConfirm = async () => {
@@ -122,7 +109,7 @@ const Submit = () => {
         );
         console.log(response);
         
-        const dataToEncode = borrowData || borrowData.borrowData;
+        const dataToEncode = updatedData || borrowData.borrowData;
         const encodedData = encodeURIComponent(JSON.stringify(dataToEncode));
         
         // Send email

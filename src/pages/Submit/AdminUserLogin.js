@@ -53,7 +53,7 @@ const AdminUserLogin = () => {
 
         if (response.data) {
             const users = response.data; // Assuming the API returns an array of users
-            const user = users.find(u => u.username === username && u.password === password);
+            const user = users.find(u => u.username === username && u.password === password && u.is_admin === 1);
             console.log(user)
             if (user) {
                 // User found, login successful
@@ -68,7 +68,7 @@ const AdminUserLogin = () => {
                 });
             } else {
                 // User not found or incorrect credentials
-                throw new Error('Invalid username or password');
+                throw new Error('กรุณาตรวจสอบชื่อผู้ใช้ รหัสผ่าน และสถานะ');
             }
         } else {
             throw new Error(response.data.message || 'Login failed');
@@ -77,7 +77,7 @@ const AdminUserLogin = () => {
         console.error('Login error:', error);
         Swal.fire({
             title: 'เข้าสู่ระบบไม่สำเร็จ',
-            text: error.message || 'กรุณาตรวจสอบชื่อผู้ใช้และรหัสผ่าน',
+            text: error.message || 'เข้าสู่ระบบไม่สำเร็จ',
             icon: 'error',
             confirmButtonText: 'ตกลง'
         });

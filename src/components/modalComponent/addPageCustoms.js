@@ -27,8 +27,13 @@ const style = {
 };
 
 export default function CustomAddModal({ open, handleClose, label, user }) {
-  const nameType = ["Admin", "not_Admin"];
-  const [type, setType] = useState("");
+ 
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,17 +70,13 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
         field2: user.password || "",
         field3: user.full_name || "",
         field4: user.email || "",
-        registration_date:
-          user.registration_date || new Date().toISOString().split("T")[0], // Adjusted to directly use ISO string split
+        // registration_date: getCurrentDate(),
         field5: user.is_admin || 0,
+        field6: user.cellNum
       });
     }
   }, [user]);
 
-  const handleChangeType = (selectedValues) => {
-    console.log("Selected values:", selectedValues);
-    setType(selectedValues);
-  };
 
   const handleRoleChange = (event) => {
     // Assuming value is passed as a string from the dropdown, convert to number
@@ -95,12 +96,17 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
     }));
   };
 
-  // Handle photo upload
-  const handlePhotoChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      photo: e.target.files[0],
-    }));
+  const resetForm = () => {
+    setFormData({
+      id: "",
+      username: "",
+      password: "",
+      full_name: "",
+      email: "",
+      registration_date: "",
+      is_admin: "",
+      cellNum: "",
+    });
   };
 
   // Handle form submit
@@ -112,6 +118,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
       full_name: formData.field3,
       email: formData.field4,
       is_admin: formData.field5,
+      cellNum:formData.field6,
+      registration_date:getCurrentDate()
     };
 
     axios
@@ -126,6 +134,7 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
         }).then((result) => {
           if (result.isConfirmed) {
             handleClose(); // Close the modal after user clicks OK
+            resetForm();
           }
         });
       })
@@ -137,6 +146,7 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
           icon: 'error',
           confirmButtonText: 'ตกลง'
         });
+        resetForm();
       });
     console.log(data);
   };
@@ -144,7 +154,10 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose();
+        resetForm();
+      }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -184,6 +197,15 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
               variant="outlined"
               name="field4"
               value={formData.field4}
+              onChange={handleChangeinput}
+              style={{ margin: "0.5rem" }}
+              fullWidth
+            />
+             <TextField
+              label="เบอร์โทรศัพท์"
+              variant="outlined"
+              name="field6"
+              value={formData.field6}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth

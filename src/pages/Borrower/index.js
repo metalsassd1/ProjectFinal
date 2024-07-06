@@ -103,9 +103,19 @@ export default function Borrower() {
       id: id,
       borrower_name: data.borrower_name,
       equipment_name: data.equip_name,
-      equipment_type: Etype,
+      identification_id: data.identify_id,
       quantity_borrowed: quantity_borrowed,
-      borrower_name: data.borrower_name,
+      contact: {
+        phone: data.phone,
+        email: data.email,
+        backup_phone: data.backup_phone,
+        backup_email: data.backup_email,
+      },
+      equipment_type: Etype,
+      department: data.department,
+      branch: data.branch,
+      faculty: data.faculty,
+      options: data.options,
       borrow_date: formatDate(data.duration.start, true),
       return_date: formatDate(data.duration.end, true), // Add one day to return_date
       loan_status: "รออนุมัติ",
@@ -169,9 +179,9 @@ export default function Borrower() {
     const service = "service_2kcoyx1";
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_k1dp1dm";
-
-    const emailAddresses = formattedData.user.join(", ");
-
+  
+    const emailAddresses = userEmails.join(", ");
+  
     const templateParams = {
       formattedData,
       to_email: emailAddresses,
@@ -186,14 +196,15 @@ export default function Borrower() {
         publicK
       );
       console.log("EmailJS result:", result);
-      setApprovalStatus(result.text === "OK" ? "success" : "failure"); // Assuming 'OK' is success
+      setApprovalStatus(result.text === "OK" ? "success" : "failure");
       return Promise.resolve();
     } catch (error) {
       console.log("EmailJS error:", error.text);
       setApprovalStatus("failure");
-      return Promise.reject();
+      return Promise.reject(error);
     }
   };
+
 
   function renderOrganize() {
     switch (option) {
