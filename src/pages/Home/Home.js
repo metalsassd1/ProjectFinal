@@ -87,7 +87,7 @@ const App = () => {
           </div>
         </div>
         <br />
-        <Box component="form" className="search-container" noValidate autoComplete="off">
+        <Box component="form" className="search-container" noValidate autoComplete="off" >
         <Grid container spacing={2}>
   <Grid item xs={12} sm={6} md={3}>
     <TextField

@@ -131,7 +131,7 @@ const MyTable = ({ searchTerms }) => {
     <TableContainer component={Paper}>
       <Table>
         <TableHead>
-          <TableRow style={{ backgroundColor: "#556cca" }}>
+          <TableRow style={{ backgroundColor: "#556cca" , border : "1px solid black" }}>
             <TableCell style={{ color: "#ffffff" }}>ID</TableCell>
             <TableCell style={{ color: "#ffffff" }}>ชื่ออุปกรณ์</TableCell>
             <TableCell style={{ color: "#ffffff" }}>ประเภท</TableCell>
@@ -174,6 +174,7 @@ const MyTable = ({ searchTerms }) => {
                   <button
                     className="return-button"
                     onClick={() => handleReturn(row)}
+                    style={{border:"1px solid black"}}
                   >
                     คืน
                   </button>

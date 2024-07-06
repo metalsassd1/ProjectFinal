@@ -75,22 +75,30 @@ const MyTable = ({exportToExcel}) => {
   
   return (
     <TableContainer component={Paper}>
-      <h2 style={{ textAlign: "center" }}>
-        ตารางแสดงรายละเอียดอุปกรณ์ที่มีการยืมล่าสุด
-      </h2>
+  <h2 style={{ 
+    textAlign: "center", 
+    backgroundColor: "#556cca",
+    color: "#fff",
+    margin: 0,
+    padding: "15px",
+    width: "100%",
+    border: "1px solid black"
+  }}>
+    ตารางแสดงรายละเอียดอุปกรณ์ที่มีการยืมล่าสุด
+  </h2>
       <Table>
         <TableHead>
-        <TableRow style={{backgroundColor: "#D3D3D3"}}>
-            <TableCell>ID</TableCell>
-            <TableCell>ชื่ออุปกรณ์</TableCell>
-            <TableCell>คลังคงเหลือ</TableCell>
-            <TableCell>จำนวนที่ถูกยืมทั้งหมด</TableCell>
-            <TableCell>จำนวนที่ถูกยืม</TableCell>
-            <TableCell>ประเภท</TableCell>
-            <TableCell>ผู้ยืม</TableCell>
-            <TableCell>วันที่ยืม</TableCell>
-            <TableCell>วันที่คืน</TableCell>
-            <TableCell>สถานะ</TableCell>
+        <TableRow style={{ backgroundColor: "#556cca" , border: "1px solid black" }}>
+            <TableCell style={{ color: "#fff" }}>ID</TableCell>
+            <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
+            <TableCell style={{ color: "#fff" }}>คลังคงเหลือ</TableCell>
+            <TableCell style={{ color: "#fff" }}>จำนวนที่ถูกยืมทั้งหมด</TableCell>
+            <TableCell style={{ color: "#fff" }}>จำนวนที่ถูกยืม</TableCell>
+            <TableCell style={{ color: "#fff" }}>ประเภท</TableCell>
+            <TableCell style={{ color: "#fff" }}>ผู้ยืม</TableCell>
+            <TableCell style={{ color: "#fff" }}>วันที่ยืม</TableCell>
+            <TableCell style={{ color: "#fff" }}>วันที่คืน</TableCell>
+            <TableCell style={{ color: "#fff" }}>สถานะ</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

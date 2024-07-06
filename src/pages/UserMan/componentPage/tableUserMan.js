@@ -10,11 +10,12 @@ import {
   Paper,
   Button,
   TextField,
+  Box,
 } from "@mui/material";
 import ModalAddPage from "../../../components/modalComponent/addPageCustoms";
 import EditModal from "../../../components/modalComponent/EditPageCustom";
-import Grid from '@mui/material/Grid';
-import Swal from 'sweetalert2';
+import Grid from "@mui/material/Grid";
+import Swal from "sweetalert2";
 
 const MyTable = () => {
   const [rows, setRows] = useState([]);
@@ -50,18 +51,18 @@ const MyTable = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/user/table");
-      const formattedData = response.data.map(item => ({
+      const response = await axios.get(
+        "https://back-end-finals-project-pgow.onrender.com/api/user/table"
+      );
+      const formattedData = response.data.map((item) => ({
         ...item,
         registration_date: formatDate(item.registration_date),
-        last_update: formatDate(item.last_update)
+        last_update: formatDate(item.last_update),
       }));
       setRows(formattedData);
       setFilteredRows(formattedData);
-      
     } catch (error) {
       console.error("Error fetching data:", error);
-     
     }
   };
 
@@ -74,11 +75,19 @@ const MyTable = () => {
   }, [rows, searchTerms]);
 
   const filterData = () => {
-    const filtered = rows.filter(item =>
-      item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
-      item.username.toLowerCase().includes(searchTerms.username.toLowerCase()) &&
-      item.email.toLowerCase().includes(searchTerms.email.toLowerCase()) &&
-      getRoleLabel(item.is_admin).toLowerCase().includes(searchTerms.is_admin.toLowerCase())
+    const filtered = rows.filter(
+      (item) =>
+        item.id
+          .toString()
+          .toLowerCase()
+          .includes(searchTerms.id.toLowerCase()) &&
+        item.username
+          .toLowerCase()
+          .includes(searchTerms.username.toLowerCase()) &&
+        item.email.toLowerCase().includes(searchTerms.email.toLowerCase()) &&
+        getRoleLabel(item.is_admin)
+          .toLowerCase()
+          .includes(searchTerms.is_admin.toLowerCase())
     );
     setFilteredRows(filtered);
   };
@@ -87,9 +96,11 @@ const MyTable = () => {
     setModalEditOpen(false);
     fetchData();
   };
-  
-  const addAPI = "https://back-end-finals-project-pgow.onrender.com/api/user/add"
-  const editAPI = "https://back-end-finals-project-pgow.onrender.com/api/user/update"
+
+  const addAPI =
+    "https://back-end-finals-project-pgow.onrender.com/api/user/add";
+  const editAPI =
+    "https://back-end-finals-project-pgow.onrender.com/api/user/update";
 
   const handleDelete = async (id) => {
     const { isConfirmed } = await Swal.fire({
@@ -100,11 +111,13 @@ const MyTable = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "ตกลง",
-      cancelButtonText: "ยกเลิก"
+      cancelButtonText: "ยกเลิก",
     });
     if (isConfirmed) {
       try {
-        await axios.delete(`https://back-end-finals-project-pgow.onrender.com/api/user/delete/${id}`);
+        await axios.delete(
+          `https://back-end-finals-project-pgow.onrender.com/api/user/delete/${id}`
+        );
         fetchData();
         await Swal.fire({
           title: "ดำเนินการสำเร็จ!",
@@ -126,81 +139,94 @@ const MyTable = () => {
     }
   };
 
-  const getRoleLabel = (is_admin) => is_admin === 1 ? "Admin" : "User";
+  const getRoleLabel = (is_admin) => (is_admin === 1 ? "Admin" : "User");
 
   const handleSearch = (field, value) => {
-    setSearchTerms(prev => ({ ...prev, [field]: value }));
+    setSearchTerms((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
     <>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
-      <Grid container spacing={2}>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                label="ค้นหาด้วย ID"
-                variant="outlined"
-                size="small"
-                value={searchTerms.id}
-                onChange={(e) => handleSearch("id", e.target.value)}
-                InputLabelProps={{ shrink: true }}
-
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                label="ค้นหาด้วยชื่ออุปกรณ์"
-                variant="outlined"
-                size="small"
-                value={searchTerms.username}
-                onChange={(e) => handleSearch("username", e.target.value)}
-                InputLabelProps={{ shrink: true }}
-
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                label="ค้นหาด้วยประเภท"
-                variant="outlined"
-                size="small"
-                value={searchTerms.email}
-                onChange={(e) => handleSearch("email", e.target.value)}
-                InputLabelProps={{ shrink: true }}
-
-              />
-            </Grid>
-            <Grid item xs={12} sm={6} md={3}>
-              <TextField
-                fullWidth
-                label="ค้นหาด้วยชื่อผู้ยืม"
-                variant="outlined"
-                size="small"
-                value={searchTerms.is_admin}
-                onChange={(e) => handleSearch("is_admin", e.target.value)}
-                InputLabelProps={{ shrink: true }}
-
-              />
-            </Grid>
+      <Box
+        component="form"
+        className="search-container"
+        noValidate
+        autoComplete="off"
+        style={{ border: "1px solid black" }}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              fullWidth
+              label="ค้นหาด้วย ID"
+              variant="outlined"
+              size="small"
+              value={searchTerms.id}
+              onChange={(e) => handleSearch("id", e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
           </Grid>
-      </div>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              fullWidth
+              label="ค้นหาด้วยชื่ออุปกรณ์"
+              variant="outlined"
+              size="small"
+              value={searchTerms.username}
+              onChange={(e) => handleSearch("username", e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              fullWidth
+              label="ค้นหาด้วยประเภท"
+              variant="outlined"
+              size="small"
+              value={searchTerms.email}
+              onChange={(e) => handleSearch("email", e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              fullWidth
+              label="ค้นหาด้วยชื่อผู้ยืม"
+              variant="outlined"
+              size="small"
+              value={searchTerms.is_admin}
+              onChange={(e) => handleSearch("is_admin", e.target.value)}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+        </Grid>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>อีเมล</TableCell>
-              <TableCell>ชื่อผู้ใช้</TableCell>
-              <TableCell>เบอร์โทรศัพท์</TableCell>
-              <TableCell>username</TableCell>
-              <TableCell>password</TableCell>
-              <TableCell>วันที่นำเข้า</TableCell>
-              <TableCell>วันที่อัพเดตล่าสุด</TableCell>
-              <TableCell>Admin</TableCell>
+            <TableRow
+              style={{ backgroundColor: "#556cca", border: "1px solid black" }}
+            >
+              <TableCell style={{ color: "#fff" }}>ID</TableCell>
+              <TableCell style={{ color: "#fff" }}>อีเมล</TableCell>
+              <TableCell style={{ color: "#fff" }}>ชื่อผู้ใช้</TableCell>
+              <TableCell style={{ color: "#fff" }}>เบอร์โทรศัพท์</TableCell>
+              <TableCell style={{ color: "#fff" }}>username</TableCell>
+              <TableCell style={{ color: "#fff" }}>password</TableCell>
+              <TableCell style={{ color: "#fff" }}>วันที่นำเข้า</TableCell>
+              <TableCell style={{ color: "#fff" }}>
+                วันที่อัพเดตล่าสุด
+              </TableCell>
+              <TableCell style={{ color: "#fff" }}>Admin</TableCell>
               <TableCell>
-                <Button variant="contained" color="primary" onClick={handleOpen}>
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: "#33CC66",
+                    border: "1px solid black",
+                  }}
+                  onClick={handleOpen}
+                >
                   เพิ่มข้อมูล
                 </Button>
                 <ModalAddPage
@@ -227,7 +253,10 @@ const MyTable = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    color="primary"
+                    style={{
+                      backgroundColor: "#990099",
+                      border: "1px solid black",
+                    }}
                     onClick={() => handleEditOpen(row)}
                   >
                     แก้ไข
@@ -235,7 +264,11 @@ const MyTable = () => {
                   <Button
                     variant="contained"
                     color="secondary"
-                    style={{ marginLeft: 10 }}
+                    style={{
+                      backgroundColor: "#CC0033",
+                      marginLeft: 10,
+                      border: "1px solid black",
+                    }}
                     onClick={() => handleDelete(row.id)}
                   >
                     ลบ
