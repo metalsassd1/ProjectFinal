@@ -134,7 +134,7 @@ export default function Borrower() {
       return `${year}-${month}-${day}`;
     }
 
-    const submitEv = `http://localhost:3000/admin-login/?data=${encodeURIComponent(
+    const submitEv = `https://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(
       JSON.stringify(formattedData)
     )}`;
 
