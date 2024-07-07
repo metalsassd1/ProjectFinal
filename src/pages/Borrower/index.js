@@ -134,7 +134,7 @@ export default function Borrower() {
       return `${year}-${month}-${day}`;
     }
 
-    const submitEv = `https://back-end-finals-project-vibo.onrender.com/admin-login/?data=${encodeURIComponent(
+    const submitEv = `https://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(
       JSON.stringify(formattedData)
     )}`;
 
