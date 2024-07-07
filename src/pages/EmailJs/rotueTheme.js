@@ -1,38 +1,71 @@
 import React from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { green, grey } from '@mui/material/colors';
 import ContactForm from './Email';
 
 const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#4CAF50',
-      },
-      secondary: {
-        main: '#ffffff',
-      },
-      // ถ้าต้องการกำหนดสีอื่นๆ
+  palette: {
+    primary: {
+      main: '#4CAF50',
     },
-    typography: {
-      // กำหนด font ที่ต้องการใช้
+    secondary: {
+      main: '#ffffff',
     },
-    components: {
-      // Override สไตล์ของ components เฉพาะที่ต้องการ
-      MuiButton: {
-        styleOverrides: {
-          root: {
-            color: '#ffffff', // ตัวอักษรปุ่มเป็นสีขาว
-            '&:hover': {
-              backgroundColor: '#45a049', // เมื่อ hover จะเปลี่ยนเป็นสีเขียวที่อ่อนกว่า
+    background: {
+      default: '#1a2a4f',
+      paper: '#2c3e75',
+    },
+    text: {
+      primary: '#ffffff',
+      secondary: '#f4f4f9',
+    },
+  },
+  typography: {
+    fontFamily: 'Arial, sans-serif',
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          color: '#ffffff',
+          '&:hover': {
+            backgroundColor: '#45a049',
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& label': {
+            color: '#f4f4f9',
+          },
+          '& label.Mui-focused': {
+            color: '#ffffff',
+          },
+          '& .MuiInput-underline:after': {
+            borderBottomColor: '#ffffff',
+          },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: '#4a5d8f',
+            },
+            '&:hover fieldset': {
+              borderColor: '#ffffff',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: '#ffffff',
+            },
+            '& input': {
+              color: '#ffffff',
             },
           },
         },
       },
-      // สามารถทำเช่นเดียวกันกับ TextField, Checkbox หรือ components อื่นๆ
     },
-  });
+  },
+});
 
-export default function routeTheme() {
+export default function RouteTheme() {
   return (
     <ThemeProvider theme={theme}>
       <ContactForm />

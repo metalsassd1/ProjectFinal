@@ -60,7 +60,7 @@ const MyTable = ({  }) => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/home/management");
+      const response = await axios.get("https://back-end-finals-project-vibo.onrender.com/api/home/management");
       const formattedData = response.data.map(item => ({
         ...item,
         borrow_date: formatDate(item.borrow_date),
@@ -96,7 +96,7 @@ const MyTable = ({  }) => {
     });
     if (isConfirmed) {
       try {
-        await axios.delete(`https://back-end-finals-project-pgow.onrender.com/api/manage/delete/${id}`);
+        await axios.delete(`https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${id}`);
         fetchData();
         await Swal.fire({
           title: "ดำเนินการสำเร็จ!",

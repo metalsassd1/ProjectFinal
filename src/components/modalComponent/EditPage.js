@@ -15,34 +15,59 @@ import axios from "axios";
 import MultipleSelectCheckmarks from "../dropdown";
 import Swal from "sweetalert2";
 
+const getCurrentDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
 const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
   const nameType = ["อุปกรณ์นันทนาการ", "อุปกรณ์กีฬา"];
   const [type, setType] = useState("");
 
-  const getCurrentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
 
   const [formData, setFormData] = useState({
+    field1:  "",
+      field2: "",
+      field3:  "",
+      field4:  "",
+      field5:  "",
+      field6: "",
+  });
+
+  useEffect(() => {
+    setFormData({
     field1: storeData?.equipment_name || "",
     field2: storeData?.quantity_in_stock || "",
     field3: storeData?.equipment_type || "",
     field4: storeData?.note || "",
     field5: storeData?.import_date || "",
     field6: getCurrentDate(),
-  });
+    });
+  }, [storeData])
 
-  const handleChange = (selectedValues) => {
-    console.log("Accessing storeData data:", storeData);
-    setType(selectedValues);
-    console.log(formData.field6);
+  const resetForm = () => {
+    setFormData({
+      field1:  "",
+      field2: "",
+      field3:  "",
+      field4:  "",
+      field5:  "",
+      field6: "",
+    });
+    setType(storeData?.equipment_type || "");
   };
 
+  const handleChange = (selectedValues) => {
+    setType(selectedValues);
+    setFormData(prevState => ({
+      ...prevState,
+      field3: selectedValues
+    }));
+  };
   const handleChangeinput = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -79,6 +104,7 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
     });
 
     handleClose(); // Close the modal after user clicks OK
+    resetForm();
   } catch (error) {
     console.error("Error updating data:", error);
 
@@ -90,12 +116,16 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
       icon: "error",
       confirmButtonText: "ตกลง",
     });
+    resetForm();
   }
 };
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose();
+        resetForm();
+      }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >

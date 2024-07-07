@@ -1,65 +1,68 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import emailjs from "emailjs-com";
 import { TextField, Button, Box, Container, Grid } from "@mui/material";
-import MultipleSelectCheckmarks from "../../components/dropdown";
-import "./Css.css"; // ตรวจสอบให้แน่ใจว่าชื่อไฟล์ CSS ถูกต้อง
-import { Person, Subject } from "@mui/icons-material";
+import Swal from 'sweetalert2';
+import "./Css.css";
 
 const ContactForm = () => {
-  const names = ["อุบัติเหตุ", "ปัญหาการใช้สนาม", "อื่นๆ"];
-
   const [name, setName] = useState("");
-  const [senderID, setsenderID] = useState("");
+  const [senderID, setSenderID] = useState("");
   const [status, setStatus] = useState("");
   const [message, setMessage] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [to, setTo] = useState("metharaengein@gmail.com");
-  const [subject, setSubject] = useState("");
+  const [to,setTo] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const service = "service_2vntdka";
+    const service = "service_2kcoyx1";
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_jyc9mx3";
 
     const templateParams = {
-      senderID: senderID,
-      name: name,
-      status: status,
-      message: message,
-      phoneNumber: phoneNumber,
-      to: to,
+      senderID,
+      name,
+      status,
+      message,
+      phoneNumber,
+      to,
     };
+
     emailjs.send(service, template, templateParams, publicK).then(
       (result) => {
         console.log(result.text);
-        // ส่วนโค้ดเพื่อจัดการหลังจากส่งอีเมลสำเร็จ
+        Swal.fire({
+          icon: 'success',
+          title: 'ส่งข้อมูลสำเร็จ',
+          text: 'รับแจ้งปัญหา',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#4CAF50',
+        });
+        // Reset form fields after successful submission
+        setName("");
+        setSenderID("");
+        setStatus("");
+        setMessage("");
+        setPhoneNumber("");
+        setTo("");
       },
       (error) => {
         console.log(error.text);
-        // ส่วนโค้ดเพื่อจัดการหากเกิดข้อผิดพลาด
+        Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#4CAF50',
+        });
       }
     );
   };
 
-  // console.log({
-  //   senderID,
-  //   status,
-  //   message,
-  //   phoneNumber,
-  //   to,
-  // });
-
-  const handleChange = (selectedValues) => {
-    console.log("Selected values:", selectedValues);
-    setSubject(selectedValues);
-  };
   return (
     <Container className="contact-form">
+      <h1>แบบฟอร์มการแจ้งปัญหา</h1>
       <Grid container justifyContent="center">
-        <h1>แบบฟอร์มการแจ้งปัญหา</h1>
-        
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <form onSubmit={handleSubmit}>
             <TextField
               label="ชื่อผู้ส่ง"
@@ -68,16 +71,25 @@ const ContactForm = () => {
               onChange={(e) => setName(e.target.value)}
               fullWidth
               margin="normal"
-              required={true}
+              required
             />
             <TextField
               label="รหัสประจำตัว"
               name="senderID"
               value={senderID}
-              onChange={(e) => setsenderID(e.target.value)}
+              onChange={(e) => setSenderID(e.target.value)}
               fullWidth
               margin="normal"
-              required={true}
+              required
+            />
+            <TextField
+              label="อีเมล"
+              name="to"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              fullWidth
+              margin="normal"
+              required
             />
             <TextField
               label="สถานะ"
@@ -86,7 +98,7 @@ const ContactForm = () => {
               onChange={(e) => setStatus(e.target.value)}
               fullWidth
               margin="normal"
-              required={true}
+              required
             />
             <TextField
               label="ข้อความ"
@@ -97,7 +109,7 @@ const ContactForm = () => {
               margin="normal"
               multiline
               rows={4}
-              required={true}
+              required
             />
             <TextField
               label="เบอร์โทรศัพท์"
@@ -106,7 +118,7 @@ const ContactForm = () => {
               onChange={(e) => setPhoneNumber(e.target.value)}
               fullWidth
               margin="normal"
-              required={true}
+              required
             />
             <Box textAlign="center" my={2}>
               <Button type="submit" variant="contained" color="primary">

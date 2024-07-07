@@ -38,7 +38,7 @@ const MyTable = ({ searchTerms }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "https://back-end-finals-project-pgow.onrender.com/api/home/management"
+        "https://back-end-finals-project-vibo.onrender.com/api/home/management"
       );
       const formattedData = response.data.map((item) => ({
         ...item,
@@ -105,7 +105,7 @@ const MyTable = ({ searchTerms }) => {
     if (isConfirmed) {
       try {
         const response = await axios.put(
-          "https://back-end-finals-project-pgow.onrender.com/api/Borrowed/return",
+          "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/return",
           body
         );
         Swal.fire({

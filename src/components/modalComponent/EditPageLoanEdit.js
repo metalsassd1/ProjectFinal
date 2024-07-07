@@ -21,14 +21,14 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
 
   // Initial state setup with default values from loanData
   const [formData, setFormData] = useState({
-    id: loanData?.id || "",
-    equipment_name: loanData?.equipment_name || "",
-    equipment_type: loanData?.equipment_type || "",
-    new_quantity_borrowed: loanData?.quantity_borrowed || "",
-    borrower_name: loanData?.borrower_name || "",
-    borrow_date: loanData?.borrow_date || "",
-    return_date: loanData?.return_date || "",
-    loan_status: loanData?.loan_status || "",
+    id:  "",
+    equipment_name:  "",
+    equipment_type:  "",
+    new_quantity_borrowed:  "",
+    borrower_name:  "",
+    borrow_date:  "",
+    return_date:  "",
+    loan_status:  "",
   });
 
   const handleDateChange = (newValue, field) => {
@@ -74,7 +74,7 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
     };
     try {
       const response = await axios.put(
-        `http://localhost:4000/api/manage/update/${loanData.id}`,
+        `https://back-end-finals-project-vibo.onrender.com/api/manage/update/${loanData.id}`,
         formattedData
       );
       console.log(response.data);

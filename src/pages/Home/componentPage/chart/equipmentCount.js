@@ -7,7 +7,7 @@ const RectangleBox3 = () => {
 
   useEffect(() => {
     axios
-      .get("https://back-end-finals-project-pgow.onrender.com/api/home/equipmentCount")
+      .get("https://back-end-finals-project-vibo.onrender.com/api/home/equipmentCount")
       .then((response) => {
         setData(response.data);
       })

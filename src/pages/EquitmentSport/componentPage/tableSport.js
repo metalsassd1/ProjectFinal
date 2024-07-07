@@ -35,8 +35,8 @@ const MyTable = () => {
   const handleClose = () => setModalOpen(false);
   const navigate = useNavigate();
 
-  const addAPI = "https://back-end-finals-project-pgow.onrender.com/api/sport/add"
-  const editAPI = "https://back-end-finals-project-pgow.onrender.com/api/sport/update"
+  const addAPI = "https://back-end-finals-project-vibo.onrender.com/api/sport/add"
+  const editAPI = "https://back-end-finals-project-vibo.onrender.com/api/sport/update"
 
   const formatDate = (dateString) => {
     if (!dateString) return 'No date provided';
@@ -60,7 +60,7 @@ const MyTable = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "https://back-end-finals-project-pgow.onrender.com/api/sport/table"
+        "https://back-end-finals-project-vibo.onrender.com/api/sport/table"
       );
       const formattedData = response.data.map(item => ({
         ...item,
@@ -107,7 +107,7 @@ const MyTable = () => {
     });
     if (isConfirmed) {
       try {
-        await axios.delete(`https://back-end-finals-project-pgow.onrender.com/api/sport/delete/${id}`);
+        await axios.delete(`https://back-end-finals-project-vibo.onrender.com/api/sport/delete/${id}`);
         fetchData();
         await Swal.fire({
           title: "ดำเนินการสำเร็จ!",

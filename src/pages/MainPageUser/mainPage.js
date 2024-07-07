@@ -31,7 +31,7 @@ const MyPage = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/home/eqloan");
+      const response = await axios.get("https://back-end-finals-project-vibo.onrender.com/api/home/eqloan");
       const updatedData = response.data.map(item => ({
         ...item,
         desired_quantity: 0,

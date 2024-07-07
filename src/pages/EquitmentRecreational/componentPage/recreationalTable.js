@@ -35,8 +35,8 @@ const MyTable = ({  }) => {
   const handleClose = () => setModalOpen(false);
   const navigate = useNavigate();
 
-  const addAPI = "https://back-end-finals-project-pgow.onrender.com/api/recreational/add";
-  const editAPI = "https://back-end-finals-project-pgow.onrender.com/api/recreational/update";
+  const addAPI = "https://back-end-finals-project-vibo.onrender.com/api/recreational/add";
+  const editAPI = "https://back-end-finals-project-vibo.onrender.com/api/recreational/update";
 
   const formatDate = (dateString) => {
     if (!dateString) return "No date provided"; // Handles null, undefined, or empty string
@@ -54,7 +54,7 @@ const MyTable = ({  }) => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "https://back-end-finals-project-pgow.onrender.com/api/recreational/table"
+        "https://back-end-finals-project-vibo.onrender.com/api/recreational/table"
       );
       const formattedData = response.data.map((item) => ({
         ...item,
@@ -112,11 +112,11 @@ const MyTable = ({  }) => {
     if (isConfirmed) {
       try {
         await axios.delete(
-          `https://back-end-finals-project-pgow.onrender.com/api/recreational/delete/${id}`
+          `https://back-end-finals-project-vibo.onrender.com/api/recreational/delete/${id}`
         );
         // หลังจากลบข้อมูลสำเร็จ สามารถทำการ fetch ข้อมูลใหม่เพื่ออัปเดตหน้าตาราง
         const response = await axios.get(
-          "https://back-end-finals-project-pgow.onrender.com/api/recreational/table"
+          "https://back-end-finals-project-vibo.onrender.com/api/recreational/table"
         );
         setRows(response.data);
         await Swal.fire({

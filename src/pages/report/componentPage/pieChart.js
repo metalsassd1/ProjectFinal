@@ -8,7 +8,7 @@ const CustomPieChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/home/management");
+        const response = await axios.get("https://back-end-finals-project-vibo.onrender.com/api/home/management");
         console.log("Equipment Data:", response.data); // Debugging line
         setEquipmentData(response.data);
       } catch (error) {
@@ -32,8 +32,8 @@ const CustomPieChart = () => {
       statusCounts['พร้อมใช้งาน'].count += 1;
     } else if (item.loan_status === "ยืม") {
       statusCounts['ถูกยืม'].count += 1;
-    } else if (item.loan_status === "") {
-      statusCounts['ไม่ได้ถูกใช้งาน'].count += 1;
+    } else if (item.loan_status === "รออนุมัติ") {
+      statusCounts['รออนุมัติ'].count += 1;
     }
   });
 

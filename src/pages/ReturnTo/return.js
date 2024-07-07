@@ -39,7 +39,7 @@ const Return = ({ data, response }) => {
   const fetchDataUpdateStatus = async () => {
     try {
       const response = await axios.get(
-        "https://back-end-finals-project-pgow.onrender.com/api/home/management"
+        "https://back-end-finals-project-vibo.onrender.com/api/home/management"
       );
       const formattedData = response.data.map((item) => ({
         ...item,

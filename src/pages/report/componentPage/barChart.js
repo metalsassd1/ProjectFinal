@@ -8,58 +8,36 @@ const CustomBarChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://back-end-finals-project-pgow.onrender.com/api/home/management");
+        const response = await axios.get("https://back-end-finals-project-vibo.onrender.com/api/home/management");
         setRows(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("เกิดข้อผิดพลาดในการดึงข้อมูล:", error);
       }
     };
 
     fetchData();
   }, []);
 
-  // Transform data to have quantities summed by equipment_name and loan_status
-  const equipmentStatusData = rows.reduce((acc, item) => {
-    const { equipment_name, loan_status, quantity_data } = item;
-    acc[equipment_name] = acc[equipment_name] || {};
-    acc[equipment_name][loan_status] = (acc[equipment_name][loan_status] || 0) + quantity_data;
-    return acc;
-  }, {});
 
-  // Format data for rendering in BarChart
-  const barData = Object.entries(equipmentStatusData).map(([name, statuses]) => ({
-    name,
-    ...statuses
+  const barData = rows.map((item) => ({
+    name: item.equipment_name,
+    จำนวน: item.quantity_data
   }));
 
   console.log(barData);
+
   return (
-    <ResponsiveContainer width="50%" height={400}>
+    <ResponsiveContainer width="100%" height={400}>
       <BarChart data={barData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" />
-        <YAxis />
+        <XAxis dataKey="name" label={{ value: 'ชื่ออุปกรณ์', position: 'insideBottomRight', offset: -10 }} />
+        <YAxis label={{ value: 'จำนวน', angle: -90, position: 'insideLeft' }} />
         <Tooltip />
         <Legend />
-        {Object.keys(rows.reduce((acc, item) => {
-          acc[item.loan_status] = 1; // Collect unique statuses
-          return acc;
-        }, {})).map(status => (
-          <Bar key={status} dataKey={status} stackId="a" fill={getRandomColor()} />
-        ))}
+        <Bar dataKey="จำนวน" fill="#8884d8" name="จำนวนการยืม" />
       </BarChart>
     </ResponsiveContainer>
   );
-};
-
-// Function to generate random colors for each bar
-const getRandomColor = () => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
 };
 
 export default CustomBarChart;

@@ -13,44 +13,49 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { format, parse } from 'date-fns';
+import { format, parse, addYears } from 'date-fns';
 import { th } from 'date-fns/locale'; // Import Thai locale
 
 const CustomEditModal = ({ open, handleClose, user, label }) => {
-
   const [formData, setFormData] = useState({
-    id: user?.id || "",
-    username: user?.username || "",
-    password: user?.password || "",
-    full_name: user?.full_name || "",
-    email: user?.email || "",
-    registration_date: user?.registration_date,
-    is_admin: user?.is_admin || "",
-    cellNum: user?.cellNum || "",
+    id: "",
+    username: "",
+    password: "",
+    full_name: "",
+    email: "",
+    registration_date: "",
+    is_admin: "",
+    cellNum: "",
   });
 
   useEffect(() => {
     if (user) {
-      const thaiDateString = user.registration_date;
-      
-      // Parse the Thai date string with date-fns
-      const parsedDate = parse(thaiDateString, 'd MMMM yyyy', new Date(), { locale: th });
-      
-      // Handle invalid parsing
-      if (isNaN(parsedDate)) {
-        console.error("Error parsing registration date:", thaiDateString);
-        // You can set a default date or display an error message to the user
-        return; 
+      let formattedDate = "";
+
+      // Parse the Thai date string and adjust the year
+      try {
+        const thaiDateString = user.registration_date;
+        const parsedDate = parse(thaiDateString, 'd MMMM yyyy', new Date(), { locale: th });
+        
+        // Adjust for Thai Buddhist year
+        const gregorianDate = addYears(parsedDate, -543);
+        
+        if (isNaN(gregorianDate)) {
+          throw new Error("Invalid date");
+        }
+        
+        formattedDate = format(gregorianDate, 'yyyy-MM-dd');
+      } catch (error) {
+        console.error("Invalid date format:", user.registration_date);
       }
-  
-      const formattedRegistrationDate = format(parsedDate, 'yyyy-MM-dd');
+
       setFormData({
         id: user.id,
         username: user.username,
         password: user.password,
         full_name: user.full_name,
         email: user.email,
-        registration_date: formattedRegistrationDate, 
+        registration_date: formattedDate,
         is_admin: user.is_admin,
         cellNum: user.cellNum,
       });
@@ -86,27 +91,33 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
     }));
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `https://back-end-finals-project-pgow.onrender.com/api/user/update/${user.id}`,
-        formData
+        `https://back-end-finals-project-vibo.onrender.com/api/user/update/${user.id}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
       console.log("Data updated successfully:", response.data);
-
+  
       await Swal.fire({
         title: "ดำเนินการสำเร็จ!",
         text: "แก้ไขข้อมูล",
         icon: "success",
         confirmButtonText: "ตกลง",
       });
-
+  
       resetForm();
       handleClose();
     } catch (error) {
       console.error("Error updating data:", error);
-
+  
       await Swal.fire({
         title: "ดำเนินการไม่สำเร็จ!",
         text:
@@ -118,7 +129,7 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
       resetForm();
     }
   };
-
+  
   return (
     <Modal
       open={open}

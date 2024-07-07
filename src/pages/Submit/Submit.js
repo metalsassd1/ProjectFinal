@@ -48,7 +48,7 @@ const Submit = () => {
   const fetchDataUpdateStatus = async () => {
     try {
       const response = await axios.get(
-        `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/loan/${borrowData.data.id}`
+        `https://back-end-finals-project-vibo.onrender.com/api/Borrowed/loan/${borrowData.id}`
       );
       const formattedData = {
         ...response.data,
@@ -97,15 +97,15 @@ const Submit = () => {
     });
 
     const reqBody ={
-      quantity_data:borrowData.quantity_data, 
-      quantity_borrowed:borrowData.quantity_borrowed
+      quantity_data:borrowData.borrowData.quantity_data, 
+      quantity_borrowed:borrowData.borrowData.quantity_borrowed
     }
 
     if (isConfirmed) {
       setLoading(true);
       try {
         const response = await axios.put(
-          `https://back-end-finals-project-pgow.onrender.com/api/Borrowed/adminsubmit/${borrowData.borrowData.equipment_name}/${borrowData.borrowData.id}`,reqBody
+          `https://back-end-finals-project-vibo.onrender.com/api/Borrowed/adminsubmit/${borrowData.borrowData.equipment_name}/${borrowData.borrowData.id}`,reqBody
         );
         console.log(response);
         
@@ -118,7 +118,8 @@ const Submit = () => {
           equipment_name: borrowData.borrowData.equipment_name,
           status: "อนุมัติ",
           Approve: adminUser,
-          useSubmit: `http://localhost:3000/qr?data=${encodedData}`
+          useSubmit: `https://pimcantake.netlify.app/qr?data=${encodedData}`,
+          cellNum: borrowData.user.cellNum
         });
 
         await Swal.fire({

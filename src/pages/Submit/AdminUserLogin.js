@@ -49,7 +49,7 @@ const AdminUserLogin = () => {
     setLoading(true);
 
     try {
-        const response = await axios.get('https://back-end-finals-project-pgow.onrender.com/api/user/table');
+        const response = await axios.get('https://back-end-finals-project-vibo.onrender.com/api/user/table');
 
         if (response.data) {
             const users = response.data; // Assuming the API returns an array of users

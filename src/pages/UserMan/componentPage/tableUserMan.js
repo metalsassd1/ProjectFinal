@@ -52,7 +52,7 @@ const MyTable = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "https://back-end-finals-project-pgow.onrender.com/api/user/table"
+        "https://back-end-finals-project-vibo.onrender.com/api/user/table"
       );
       const formattedData = response.data.map((item) => ({
         ...item,
@@ -77,17 +77,10 @@ const MyTable = () => {
   const filterData = () => {
     const filtered = rows.filter(
       (item) =>
-        item.id
-          .toString()
-          .toLowerCase()
-          .includes(searchTerms.id.toLowerCase()) &&
-        item.username
-          .toLowerCase()
-          .includes(searchTerms.username.toLowerCase()) &&
-        item.email.toLowerCase().includes(searchTerms.email.toLowerCase()) &&
-        getRoleLabel(item.is_admin)
-          .toLowerCase()
-          .includes(searchTerms.is_admin.toLowerCase())
+        (item.id?.toString().toLowerCase().includes(searchTerms.id.toLowerCase() || "")) &&
+        (item.username?.toLowerCase().includes(searchTerms.username.toLowerCase() || "")) &&
+        (item.email?.toLowerCase().includes(searchTerms.email.toLowerCase() || "")) &&
+        (getRoleLabel(item.is_admin)?.toLowerCase().includes(searchTerms.is_admin.toLowerCase() || ""))
     );
     setFilteredRows(filtered);
   };
@@ -98,9 +91,9 @@ const MyTable = () => {
   };
 
   const addAPI =
-    "https://back-end-finals-project-pgow.onrender.com/api/user/add";
+    "https://back-end-finals-project-vibo.onrender.com/api/user/add";
   const editAPI =
-    "https://back-end-finals-project-pgow.onrender.com/api/user/update";
+    "https://back-end-finals-project-vibo.onrender.com/api/user/update";
 
   const handleDelete = async (id) => {
     const { isConfirmed } = await Swal.fire({
@@ -116,7 +109,7 @@ const MyTable = () => {
     if (isConfirmed) {
       try {
         await axios.delete(
-          `https://back-end-finals-project-pgow.onrender.com/api/user/delete/${id}`
+          `https://back-end-finals-project-vibo.onrender.com/api/user/delete/${id}`
         );
         fetchData();
         await Swal.fire({

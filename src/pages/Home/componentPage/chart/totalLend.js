@@ -6,7 +6,7 @@ const RectangleBox1 = () => {
   const [data, setData] = useState(null);
   useEffect(() => {
     axios
-      .get("https://back-end-finals-project-pgow.onrender.com/api/home/totalLend")
+      .get("https://back-end-finals-project-vibo.onrender.com/api/home/totalLend")
       .then((response) => {
         setData(response.data);
       })

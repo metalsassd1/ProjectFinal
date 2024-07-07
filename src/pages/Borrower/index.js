@@ -74,7 +74,7 @@ export default function Borrower() {
     const fetchAdminUser = async () => {
       try {
         const response = await axios.get(
-          "https://back-end-finals-project-pgow.onrender.com/api/user/table"
+          "https://back-end-finals-project-vibo.onrender.com/api/user/table"
         );
         setUser(response.data); // Assuming response.data is an array of users
       } catch (error) {
@@ -134,7 +134,7 @@ export default function Borrower() {
       return `${year}-${month}-${day}`;
     }
 
-    const submitEv = `http://localhost:3000/admin-login/?data=${encodeURIComponent(
+    const submitEv = `https://back-end-finals-project-vibo.onrender.com/admin-login/?data=${encodeURIComponent(
       JSON.stringify(formattedData)
     )}`;
 
@@ -142,7 +142,7 @@ export default function Borrower() {
     try {
       // Submit the borrowing request to the backend API
       const response = await axios.post(
-        "http://localhost:3000/api/Borrowed/borrow",
+        "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/borrow",
         formattedData,
         submitEv
       );
