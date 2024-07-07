@@ -28,7 +28,7 @@ const schema = z.object({
   borrower_name: z.string().min(1, { message: "โปรดกรอกชื่อผู้ยืม" }),
   equip_name: z.string().min(1, { message: "โปรดกรอกชื่อผู้ยืม" }),
   options: z.enum(["inside", "outside", "student"]),
-  identify_id: z
+  identifier_number: z
     .string()
     .min(1, { message: "โปรดกรอกหมายเลขบัตรประชาชน / รหัสนักศึกษา" }),
   department: z.string().min(1, { message: "โปรดกรอกสาขา" }).nullable(),
@@ -56,25 +56,26 @@ export default function Borrower() {
   const [user, setUser] = useState("");
   const [userEmails, setUserEmails] = useState([]);
   const navigate = useNavigate();
+  const [option, setOption] = useState("");
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       borrower_name: "",
       equip_name: Ename,
-      identify_id: "",
+      identifier_number: "",
       phone: "",
       quantity_borrowed: desired_quantity,
       duration: "",
     },
   });
-  const [option, setOption] = useState("");
+  const id = Math.floor(Math.random() * 1000000);
 
   useEffect(() => {
     const fetchAdminUser = async () => {
       try {
         const response = await axios.get(
-          "https://back-end-finals-project-vibo.onrender.com/api/user/table"
+          "http://localhost:4000/api/user/table"
         );
         setUser(response.data); // Assuming response.data is an array of users
       } catch (error) {
@@ -93,17 +94,13 @@ export default function Borrower() {
     }
   }, [user]);
 
-  const id = Math.floor(Math.random() * 1000000);
 
   const onSubmit = async (data) => {
-    // Formatted data object if needed, or you can directly use `data`
-
-    // const uniqueEmails = Array.from(new Set(userEmails));
     const formattedData = {
       id: id,
       borrower_name: data.borrower_name,
       equipment_name: data.equip_name,
-      identification_id: data.identify_id,
+      identifier_number: data.identifier_number.length > 10 ? null : data.identifier_number,
       quantity_borrowed: quantity_borrowed,
       contact: {
         phone: data.phone,
@@ -117,53 +114,49 @@ export default function Borrower() {
       faculty: data.faculty,
       options: data.options,
       borrow_date: formatDate(data.duration.start, true),
-      return_date: formatDate(data.duration.end, true), // Add one day to return_date
+      return_date: formatDate(data.duration.end, true),
       loan_status: "รออนุมัติ",
       quantity_data: quantity_borrowed
     };
     
     function formatDate(date) {
-      // ตรวจสอบว่าเป็น Date object
       const dateObject = date instanceof Date ? date : new Date(date);
-      
-      // สร้างสตริงวันที่ในรูปแบบ YYYY-MM-DD ในเขตเวลาท้องถิ่น
       const year = dateObject.getFullYear();
       const month = String(dateObject.getMonth() + 1).padStart(2, '0');
       const day = String(dateObject.getDate()).padStart(2, '0');
       
       return `${year}-${month}-${day}`;
     }
-
+  
     const submitEv = `https://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(
       JSON.stringify(formattedData)
     )}`;
-
+  
     console.log(formattedData.borrow_date, formattedData.return_date);
     try {
-      // Submit the borrowing request to the backend API
       const response = await axios.post(
-        "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/borrow",
+        "http://localhost:4000/api/Borrowed/borrow",
         formattedData,
         submitEv
       );
-      console.log("Server response:", response.data, formattedData);
-
-      // Now handle the email submission and wait for its completion
-      handleAdminsubmit(formattedData,submitEv)
-      .then(() => {
-        if (response) {
-          swal({
-            title: "ดำเนินการสำเร็จ",
-            text: "กรุณารอผู้ดูแลอนุมัติ!",
-            icon: "success",
-            button: "OK",
-          }).then(() => {
-            navigate(
-              `/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`
-            );
-          });
-        }
-      });
+      console.log("Server response:", response.data);
+      console.log("Formatted Data:", formattedData);
+  
+      handleAdminsubmit(formattedData, submitEv)
+        .then(() => {
+          if (response) {
+            swal({
+              title: "ดำเนินการสำเร็จ",
+              text: "กรุณารอผู้ดูแลอนุมัติ!",
+              icon: "success",
+              button: "OK",
+            }).then(() => {
+              navigate(
+                `/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`
+              );
+            });
+          }
+        });
     } catch (error) {
       console.error("Error submitting form:", error);
       swal({
@@ -217,7 +210,7 @@ export default function Borrower() {
           >
             <MuiInput
               control={form.control}
-              name={"identify_id"}
+              name={"identifier_number"}
               label={"รหัสพนักงาน / รหัสบัตรประชาชน"}
               required={true}
             />
@@ -238,7 +231,7 @@ export default function Borrower() {
           >
             <MuiInput
               control={form.control}
-              name={"identify_id"}
+              name={"identifier_number"}
               label={"รหัสบัตรประชาชน"}
               required={true}
             />
@@ -255,7 +248,7 @@ export default function Borrower() {
           <>
             <MuiInput
               control={form.control}
-              name={"identify_id"}
+              name={"identifier_number"}
               label={"รหัสนักศึกษา / รหัสบัตรประชาชน"}
               required={true}
             />
@@ -284,7 +277,7 @@ export default function Borrower() {
           <Box display={"flex"} gap={1}>
             <MuiInput
               control={form.control}
-              name={"identify_id"}
+              name={"identifier_number"}
               label={"รหัสบัตรประชาชน"}
               required={true}
             />

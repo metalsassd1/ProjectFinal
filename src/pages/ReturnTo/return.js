@@ -76,7 +76,7 @@ const Return = ({ data, response }) => {
         <p className="return-text"><strong>ID:</strong> {borrowData.id}</p>
         <p className="return-text"><strong>อุปกรณ์:</strong> {borrowData.equipment_name}</p>
         <p className="return-text"><strong>ชื่อ:</strong> {borrowData.borrower_name}</p>
-        <p className="return-text"><strong>รหัสประจำตัว:</strong> {borrowData.identification_id}</p>
+        <p className="return-text"><strong>รหัสประจำตัว:</strong> {borrowData.identifier_number}</p>
         <p className="return-text"><strong>สถานะ:</strong> {currentStatus}</p>
         <p className="return-text"><strong>วันที่ยืม:</strong> {borrowDateToDisplay}</p>
         <p className="return-text"><strong>วันที่คืน:</strong> {returnDateToDisplay}</p>
