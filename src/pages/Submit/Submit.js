@@ -19,7 +19,7 @@ const Submit = () => {
 
   useEffect(() => {
     emailjs.init("S25g4RkhBGztGOJc_");
-    console.log(borrowData.user.username);
+    console.log(borrowData.borrowData);
     setAdminUser(borrowData.user.full_name);
     setAdmin(borrowData.user.email);
   }, []);
@@ -73,6 +73,7 @@ const Submit = () => {
     });
   };
 
+
   const handleConfirm = async () => {
 
     if (updatedData && updatedData.loan_status === "ยืม") {
@@ -100,6 +101,41 @@ const Submit = () => {
       quantity_data:borrowData.borrowData.quantity_data, 
       quantity_borrowed:borrowData.borrowData.quantity_borrowed
     }
+
+    const handleDelete = async (id) => {
+      const { isConfirmed } = await Swal.fire({
+        title: "ต้องการดำเนินการหรือไม่?",
+        text: "ลบข้อมูล",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ตกลง",
+        cancelButtonText: "ยกเลิก"
+      });
+      if (isConfirmed) {
+        try {
+          await axios.delete(`https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${id}`);
+          fetchDataUpdateStatus();
+          await Swal.fire({
+            title: "ดำเนินการสำเร็จ!",
+            text: "ลบข้อมูล",
+            icon: "success",
+            confirmButtonText: "ตกลง",
+          });
+        } catch (error) {
+          console.error("Error deleting data:", error);
+          await Swal.fire({
+            title: "ดำเนินการไม่สำเร็จ!",
+            text:
+              "ไม่สามารถลบข้อมูลมูลได้: " +
+              (error.response?.data?.message || error.message),
+            icon: "error",
+            confirmButtonText: "ตกลง",
+          });
+        }
+      }
+    };
 
     if (isConfirmed) {
       setLoading(true);
@@ -130,17 +166,29 @@ const Submit = () => {
         });
 
       } catch (error) {
+        const dataToEncode = updatedData || borrowData.borrowData;
+        const encodedData = encodeURIComponent(JSON.stringify(dataToEncode));
         console.error("API call failed:", error);
+        // handleDelete(borrowData.borrowData.id)
+        // Send email
+        await sendEmail({
+          to: borrowData.borrowData.contact.email,
+          equipment_name: borrowData.borrowData.equipment_name,
+          status: "ไม่ถูกอนุมัติ",
+          Approve: adminUser,
+          useSubmit: `https://pimcantake.netlify.app/qr?data=${encodedData}`,
+          cellNum: borrowData.user.cellNum
+        });
         await Swal.fire({
           title: "ดำเนินการไม่สำเร็จ!",
           text:
-            "สถานะถูกอนุมัติการยืมถูกดำเนินการไปแล้ว",
+            "อุปกรณ์ไม่เพียงพอ",
           icon: "error",
           confirmButtonText: "ตกลง",
         });
       } finally {
         setLoading(false);
-        closePage();
+        // closePage();
       }
     }
   };
