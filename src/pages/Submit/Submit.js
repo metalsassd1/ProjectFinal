@@ -48,7 +48,7 @@ const Submit = () => {
   const fetchDataUpdateStatus = async () => {
     try {
       const response = await axios.get(
-        `https://back-end-finals-project-vibo.onrender.com/api/Borrowed/loan/${borrowData.id}`
+        `https://back-end-finals-project-vibo.onrender.com/api/Borrowed/loan/${borrowData.borrowData.id}`
       );
       const formattedData = {
         ...response.data,
@@ -134,8 +134,7 @@ const Submit = () => {
         await Swal.fire({
           title: "ดำเนินการไม่สำเร็จ!",
           text:
-            "ไม่สามารถอนุมัติการยืมได้: " +
-            (error.response?.data?.message || error.message),
+            "สถานะถูกอนุมัติการยืมถูกดำเนินการไปแล้ว",
           icon: "error",
           confirmButtonText: "ตกลง",
         });
