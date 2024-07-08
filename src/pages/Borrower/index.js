@@ -204,10 +204,11 @@ export default function Borrower() {
       );
       console.log("EmailJS result:", result);
       setApprovalStatus(result.text === "OK" ? "success" : "failure");
+      return Promise.resolve();
     } catch (error) {
-      console.error("EmailJS error:", error);
+      console.log("EmailJS error:", error.text);
       setApprovalStatus("failure");
-      throw error;
+      return Promise.reject(error);
     }
   };
 
