@@ -173,8 +173,13 @@ export default function Borrower() {
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_k1dp1dm";
   
-    const emailAddresses = userEmails.join(", ");
-  
+    const emailAddresses = userEmails.length > 0 ? userEmails.join(", ") : "";
+
+    if (!emailAddresses) {
+      console.error("No recipient email addresses found");
+      return Promise.reject(new Error("No recipient email addresses"));
+    }
+
     const templateParams = {
       formattedData,
       to_email: emailAddresses,
