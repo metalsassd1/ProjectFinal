@@ -77,20 +77,27 @@ export default function Borrower() {
         const response = await axios.get(
           "http://localhost:4000/api/user/table"
         );
-        setUser(response.data); // Assuming response.data is an array of users
+        if (response.data && Array.isArray(response.data)) {
+          setUser(response.data);
+        } else {
+          console.error("Invalid data format received for admin users");
+          setUser([]);
+        }
       } catch (error) {
         console.error("Failed to fetch admin user:", error);
-        setUser([]); // Set user state to empty array on error
+        setUser([]);
       }
     };
-
+  
     fetchAdminUser();
   }, []);
 
   useEffect(() => {
-    if (user.length > 0) {
-      const emailArray = user.map((user) => user.email);
+    if (Array.isArray(user) && user.length > 0) {
+      const emailArray = user.filter(u => u.email).map(u => u.email);
       setUserEmails(emailArray);
+    } else {
+      setUserEmails([]);
     }
   }, [user]);
 
@@ -173,19 +180,21 @@ export default function Borrower() {
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_k1dp1dm";
   
-    const emailAddresses = userEmails.length > 0 ? userEmails.join(", ") : "";
-
-    if (!emailAddresses) {
+    if (userEmails.length === 0) {
       console.error("No recipient email addresses found");
-      return Promise.reject(new Error("No recipient email addresses"));
+      throw new Error("No recipient email addresses");
     }
-
+  
+    const emailAddresses = userEmails.join(", ");
+  
     const templateParams = {
-      formattedData,
+      formattedData: JSON.stringify(formattedData),
       to_email: emailAddresses,
       submitEv,
     };
-    console.log(templateParams);
+  
+    console.log("Template Params:", templateParams);
+  
     try {
       const result = await emailjs.send(
         service,
@@ -195,11 +204,10 @@ export default function Borrower() {
       );
       console.log("EmailJS result:", result);
       setApprovalStatus(result.text === "OK" ? "success" : "failure");
-      return Promise.resolve();
     } catch (error) {
-      console.log("EmailJS error:", error.text);
+      console.error("EmailJS error:", error);
       setApprovalStatus("failure");
-      return Promise.reject(error);
+      throw error;
     }
   };
 
