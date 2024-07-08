@@ -75,7 +75,7 @@ export default function Borrower() {
     const fetchAdminUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/user/table"
+          "https://back-end-finals-project-vibo.onrender.com/api/user/table"
         );
         if (response.data && Array.isArray(response.data)) {
           setUser(response.data);
@@ -142,7 +142,7 @@ export default function Borrower() {
     console.log(formattedData.borrow_date, formattedData.return_date);
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/Borrowed/borrow",
+        "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/borrow",
         formattedData,
         submitEv
       );
@@ -188,7 +188,7 @@ export default function Borrower() {
     const emailAddresses = userEmails.join(", ");
   
     const templateParams = {
-      formattedData: JSON.stringify(formattedData),
+      formattedData,
       to_email: emailAddresses,
       submitEv,
     };
