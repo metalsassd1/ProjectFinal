@@ -15,6 +15,12 @@ import axios from "axios";
 import MultipleSelectCheckmarks from "../dropdown";
 import Swal from "sweetalert2";
 
+const swalStyles = `
+  .swal2-container {
+    z-index: 9999;
+  }
+`;
+
 const getCurrentDate = () => {
   const today = new Date();
   const year = today.getFullYear();
@@ -25,7 +31,7 @@ const getCurrentDate = () => {
 };
 
 const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
-  const nameType = ["อุปกรณ์นันทนาการ", "อุปกรณ์กีฬา"];
+  const nameType = [label];
   const [type, setType] = useState("");
 
 
@@ -84,7 +90,7 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
   const DataItem = {
     equipment_name: formData.field1,
     quantity_in_stock: formData.field2,
-    equipment_type: type,
+    equipment_type: nameType[0],
     note: formData.field4,
     last_update: formData.field6,
   };
@@ -96,6 +102,12 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
     const response = await axios.put(apiEndpoint, DataItem);
     console.log("Data updated successfully:", response.data);
 
+    handleClose(); // Close the modal after user clicks OK
+
+    const style = document.createElement('style');
+    style.textContent = swalStyles;
+    document.head.appendChild(style);
+
     await Swal.fire({
       title: "ดำเนินการสำเร็จ!",
       text: "แก้ไขข้อมูล",
@@ -103,9 +115,13 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
       confirmButtonText: "ตกลง",
     });
 
-    handleClose(); // Close the modal after user clicks OK
+    document.head.removeChild(style);
     resetForm();
   } catch (error) {
+    const style = document.createElement('style');
+    style.textContent = swalStyles;
+    document.head.appendChild(style);
+    
     console.error("Error updating data:", error);
 
     await Swal.fire({
@@ -116,7 +132,7 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
       icon: "error",
       confirmButtonText: "ตกลง",
     });
-    resetForm();
+    document.head.removeChild(style);
   }
 };
   return (
@@ -176,17 +192,22 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
               style={{ margin: "0.5rem" }}
               fullWidth
             />
+              <TextField
+                label={"ประเภท"}
+                name={"field2"}
+                names={nameType}
+                value={nameType}
+                variant="outlined"
+                onSelectionChange={handleChange}
+                style={{ margin: "0.5rem" }}
+                fullWidth
+              />
             <TextField
-              label={"วันอัพเดตล่าสุด :" + storeData.last_update}
+              label={"วันอัพเดตล่าสุด : " + storeData.last_update}
+              variant="outlined"
+              tyle={{ margin: "0.5rem" }}
               fullWidth
               disabled
-            />
-            <MultipleSelectCheckmarks
-              name={"field3"}
-              names={nameType}
-              value={formData.field3}
-              onSelectionChange={handleChange}
-              label={"ประเภท"}
             />
             <Box textAlign="center" my={2}>
               <Button type="submit" variant="contained" color="success">

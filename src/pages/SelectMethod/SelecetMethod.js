@@ -16,7 +16,7 @@ function SelectMethod() {
   return (
     <div className="method-selection-container">
       <div className="method-selection">
-        <h1>กรุณาเลือกวิธีการดำเนินการ</h1>
+        <h1 className='HeadSender'>กรุณาเลือกวิธีการดำเนินการ</h1>
         <div className="button-container">
           <button 
             className="method-button_1"

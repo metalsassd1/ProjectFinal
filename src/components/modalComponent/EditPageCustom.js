@@ -16,6 +16,13 @@ import Swal from "sweetalert2";
 import { format, parse, addYears } from 'date-fns';
 import { th } from 'date-fns/locale'; // Import Thai locale
 
+const swalStyles = `
+  .swal2-container {
+    z-index: 9999;
+  }
+`;
+
+
 const CustomEditModal = ({ open, handleClose, user, label }) => {
   const [formData, setFormData] = useState({
     id: "",
@@ -104,7 +111,13 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
           }
         }
       );
-      console.log("Data updated successfully:", response.data);
+  
+      handleClose();
+      
+      // Add custom styles to Swal
+      const style = document.createElement('style');
+      style.textContent = swalStyles;
+      document.head.appendChild(style);
   
       await Swal.fire({
         title: "ดำเนินการสำเร็จ!",
@@ -113,10 +126,16 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
         confirmButtonText: "ตกลง",
       });
   
+      // Remove the custom styles after Swal is closed
+      document.head.removeChild(style);
+  
       resetForm();
-      handleClose();
     } catch (error) {
       console.error("Error updating data:", error);
+      // console.log("Data updated successfully:", formData);
+      const style = document.createElement('style');
+      style.textContent = swalStyles;
+      document.head.appendChild(style);
   
       await Swal.fire({
         title: "ดำเนินการไม่สำเร็จ!",
@@ -126,7 +145,9 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
         icon: "error",
         confirmButtonText: "ตกลง",
       });
-      resetForm();
+  
+      // Remove the custom styles after Swal is closed
+      document.head.removeChild(style);
     }
   };
   

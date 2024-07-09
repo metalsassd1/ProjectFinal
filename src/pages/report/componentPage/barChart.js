@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
 
 const CustomBarChart = () => {
   const [rows, setRows] = useState([]);
@@ -18,23 +18,47 @@ const CustomBarChart = () => {
     fetchData();
   }, []);
 
+  // Process and group the data
+  const processData = () => {
+    const groupedData = rows.reduce((acc, item) => {
+      const name = item.equipment_name;
+      const quantity = parseInt(item.quantity_data, 10) || 0;
+      
+      if (!acc[name]) {
+        acc[name] = 0;
+      }
+      acc[name] += quantity;
+      
+      return acc;
+    }, {});
 
-  const barData = rows.map((item) => ({
-    name: item.equipment_name,
-    จำนวน: item.quantity_data
-  }));
+    return Object.entries(groupedData)
+      .map(([name, จำนวน]) => ({ name, จำนวน }))
+      .sort((a, b) => b.จำนวน - a.จำนวน)
+      .slice(0, 10);  // Take only top 10 items
+  };
+
+  const barData = processData();
 
   console.log(barData);
 
   return (
     <ResponsiveContainer width="100%" height={400}>
-      <BarChart data={barData}>
+      <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" label={{ value: 'ชื่ออุปกรณ์', position: 'insideBottomRight', offset: -10 }} />
-        <YAxis label={{ value: 'จำนวน', angle: -90, position: 'insideLeft' }} />
+        <XAxis 
+          dataKey="name" 
+          interval={0}
+          textAnchor="end"
+          height={100}
+          tick={{fontSize: 16}}
+        />
+        <YAxis label={{ value: 'จำนวนการยืม', angle: -90, position: 'insideLeft' }} />
         <Tooltip />
         <Legend />
-        <Bar dataKey="จำนวน" fill="#8884d8" name="จำนวนการยืม" />
+        <Bar dataKey="จำนวน" fill="#8884d8" name="จำนวนการยืม">
+          <LabelList dataKey="จำนวน" position="top" />
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
   );

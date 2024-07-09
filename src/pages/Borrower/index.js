@@ -101,6 +101,15 @@ export default function Borrower() {
     }
   }, [user]);
 
+  
+const translateOptionToThai = (option) => {
+  const optionMap = {
+    "inside": "บุคลากรภายใน",
+    "outside": "บุคคลภายนอก",
+    "student": "นักศึกษา"
+  };
+  return optionMap[option] || option;
+};
 
   const onSubmit = async (data) => {
     const formattedData = {
@@ -119,7 +128,7 @@ export default function Borrower() {
       department: data.department,
       branch: data.branch,
       faculty: data.faculty,
-      options: data.options,
+      options: translateOptionToThai(data.options),
       borrow_date: formatDate(data.duration.start, true),
       return_date: formatDate(data.duration.end, true),
       loan_status: "รออนุมัติ",

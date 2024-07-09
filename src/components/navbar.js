@@ -4,7 +4,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { styled } from "@mui/system";
 
 const CustomAppBar = styled(AppBar)(({ open }) => ({
-  backgroundColor: "#556cca", // Change the background color to #333399
+  backgroundColor: "#2c3e75", // Change the background color to #333399
   boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
   height: 42,
   padding: "15px", // Increase the padding

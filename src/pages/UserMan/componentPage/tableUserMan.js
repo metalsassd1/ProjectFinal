@@ -195,10 +195,21 @@ const MyTable = () => {
         </Grid>
       </Box>
       <TableContainer component={Paper}>
+      <h2 style={{ 
+        textAlign: "center", 
+        backgroundColor: "#2c3e75",
+        color: "#fff",
+        margin: 0,
+        padding: "15px",
+        width: "100%",
+        border: "1px solid black"
+      }}>
+        ตารางแสดงรายละเอียดข้อมูลผู้ใช้
+      </h2>
         <Table>
           <TableHead>
             <TableRow
-              style={{ backgroundColor: "#556cca", border: "1px solid black" }}
+              style={{ backgroundColor: "#2c3e75", border: "1px solid black" }}
             >
               <TableCell style={{ color: "#fff" }}>ID</TableCell>
               <TableCell style={{ color: "#fff" }}>อีเมล</TableCell>
@@ -247,7 +258,7 @@ const MyTable = () => {
                   <Button
                     variant="contained"
                     style={{
-                      backgroundColor: "#990099",
+                      backgroundColor: "#2c3e75",
                       border: "1px solid black",
                     }}
                     onClick={() => handleEditOpen(row)}

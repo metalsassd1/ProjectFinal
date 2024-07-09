@@ -129,9 +129,20 @@ const MyTable = ({ searchTerms }) => {
 
   return (
     <TableContainer component={Paper}>
+      <h2 style={{ 
+        textAlign: "center", 
+        backgroundColor: "#2c3e75",
+        color: "#fff",
+        margin: 0,
+        padding: "15px",
+        width: "100%",
+        border: "1px solid black"
+      }}>
+        ตารางแสดงรายละเอียดการยืมอุปกรณ์
+      </h2>
       <Table>
         <TableHead>
-          <TableRow style={{ backgroundColor: "#556cca" , border : "1px solid black" }}>
+          <TableRow style={{ backgroundColor: "#2c3e75" , border : "1px solid black" }}>
             <TableCell style={{ color: "#ffffff" }}>ID</TableCell>
             <TableCell style={{ color: "#ffffff" }}>ชื่ออุปกรณ์</TableCell>
             <TableCell style={{ color: "#ffffff" }}>ประเภท</TableCell>

@@ -17,6 +17,12 @@ import Swal from "sweetalert2";
 
 dayjs.extend(utc);
 
+const swalStyles = `
+  .swal2-container {
+    z-index: 9999;
+  }
+`;
+
 const CustomEditModal = ({ open, handleClose, loanData, label }) => {
 
   // Initial state setup with default values from loanData
@@ -78,6 +84,9 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
         formattedData
       );
       console.log(response.data);
+      const style = document.createElement('style');
+      style.textContent = swalStyles;
+      document.head.appendChild(style);
        await Swal.fire({
         title: "ดำเนินการสำเร็จ!",
         text: "แก้ไขข้อมูล",
@@ -86,8 +95,12 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
       });
 
       handleClose(); // Close the modal after user clicks OK
+      document.head.removeChild(style);
     } catch (error) {
       console.error("Error updating data:", error);
+      const style = document.createElement('style');
+      style.textContent = swalStyles;
+      document.head.appendChild(style);
       await Swal.fire({
         title: "ดำเนินการไม่สำเร็จ!",
         text:
@@ -96,6 +109,7 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
         icon: "error",
         confirmButtonText: "ตกลง",
       });
+      document.head.removeChild(style);
     }
   };
 
