@@ -10,7 +10,13 @@ import {
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import MultipleSelectCheckmarks from "../dropdown";
 import axios from "axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
+
+const swalStyles = `
+  .swal2-container {
+    z-index: 9999;
+  }
+`;
 
 const style = {
   position: "absolute",
@@ -23,30 +29,10 @@ const style = {
   p: 4,
 };
 
-export default function AddModalCentralize({ open, handleClose, label ,API}) {
-  const nameType = ["อุปกรณ์นันทนาการ", "อุปกรณ์กีฬา"];
+export default function AddModalCentralize({ open, handleClose, label, API }) {
+  const nameType = [label];
   const [type, setType] = useState("");
   const [selectedDateStore, setSelectedDateStore] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      // Fetch data or perform other actions if needed
-      try {
-        // const result = await fetchDataFromAPI();
-        // setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    // Fetch data on mount
-    fetchData();
-
-    // Set up an interval for fetching data
-    const intervalId = setInterval(fetchData, 60000); // Assuming a 1-minute interval
-    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-  }, []);
-
   const [formData, setFormData] = useState({
     field1: "",
     field2: "",
@@ -54,12 +40,27 @@ export default function AddModalCentralize({ open, handleClose, label ,API}) {
     field4: "",
   });
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch data or perform other actions if needed
+        // const result = await fetchDataFromAPI();
+        // setData(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+    const intervalId = setInterval(fetchData, 60000);
+    return () => clearInterval(intervalId);
+  }, []);
+
   const handleChange = (selectedValues) => {
     console.log("Selected values:", selectedValues);
     setType(selectedValues);
   };
 
-  // Handle input change
   const handleChangeinput = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -68,49 +69,63 @@ export default function AddModalCentralize({ open, handleClose, label ,API}) {
     }));
   };
 
-  // Handle form submit
-  const handleSubmit = (e) => {
+  const resetForm = () => {
+    setFormData({
+      field1: "",
+      field2: "",
+      field3: "",
+      field4: "",
+    });
+    setType("");
+    setSelectedDateStore("");
+  };
+
+  const showSwal = async (options) => {
+    const style = document.createElement("style");
+    style.textContent = swalStyles;
+    document.head.appendChild(style);
+    await Swal.fire(options);
+    document.head.removeChild(style);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
       equipment_name: formData.field1,
-      import_date: selectedDateStore,
-      equipment_type: type,
+      equipment_type: nameType[0],
       quantity_in_stock: formData.field3,
       note: formData.field4,
-      last_update: selectedDateStore
     };
-  
-    const apiEndpoint = API;
-    axios
-      .post(apiEndpoint, data)
-      .then((response) => {
-        console.log("Data added successfully:", response.data);
-        Swal.fire({
-          title: 'ดำเนินการสำเร็จ!',
-          text: 'เพิ่มข้อมูล',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            handleClose(); // Close the modal after user clicks OK
-          }
-        });
-      })
-      .catch((error) => {
-        console.error("Error adding data:", error);
-        Swal.fire({
-          title: 'ดำเนินการไม่สำเร็จ!',
-          text: 'เพิ่มข้อมูล ' + (error.response?.data?.message || error.message),
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
+
+    try {
+      const response = await axios.post(API, data);
+      console.log("Data added successfully:", response.data);
+      handleClose();
+      await showSwal({
+        title: "ดำเนินการสำเร็จ!",
+        text: "เพิ่มข้อมูล",
+        icon: "success",
+        confirmButtonText: "OK",
       });
-    console.log(data);
+      resetForm();
+    } catch (error) {
+      console.error("Error adding data:", error);
+      await showSwal({
+        title: "ดำเนินการไม่สำเร็จ!",
+        text: "เพิ่มข้อมูล " + (error.response?.data?.message || error.message),
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
   };
+
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        handleClose();
+        resetForm();
+      }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -128,23 +143,14 @@ export default function AddModalCentralize({ open, handleClose, label ,API}) {
               fullWidth
             />
             <TextField
-              label="วันที่นำเข้า"
-              type="date"
-              name="selectedDateStore"
-              value={selectedDateStore}
-              onChange={(e) => setSelectedDateStore(e.target.value)}
-              style={{ margin: "0.5rem" }}
-              fullWidth
-              InputLabelProps={{
-                shrink: true,
-              }}
-            />
-            <MultipleSelectCheckmarks
+              label={"ประเภท"}
               name={"field2"}
               names={nameType}
-              value={formData.field2}
+              value={nameType}
+              variant="outlined"
               onSelectionChange={handleChange}
-              label={"ประเภท"}
+              style={{ margin: "0.5rem" }}
+              fullWidth
             />
             <TextField
               label="จำนวน"

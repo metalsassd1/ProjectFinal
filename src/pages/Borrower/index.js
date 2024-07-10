@@ -75,7 +75,7 @@ export default function Borrower() {
     const fetchAdminUser = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/user/table"
+          "https://back-end-finals-project-vibo.onrender.com/api/user/table"
         );
         if (response.data && Array.isArray(response.data)) {
           setUser(response.data);
@@ -101,6 +101,15 @@ export default function Borrower() {
     }
   }, [user]);
 
+  
+const translateOptionToThai = (option) => {
+  const optionMap = {
+    "inside": "บุคลากรภายใน",
+    "outside": "บุคคลภายนอก",
+    "student": "นักศึกษา"
+  };
+  return optionMap[option] || option;
+};
 
   const onSubmit = async (data) => {
     const formattedData = {
@@ -119,7 +128,7 @@ export default function Borrower() {
       department: data.department,
       branch: data.branch,
       faculty: data.faculty,
-      options: data.options,
+      options: translateOptionToThai(data.options),
       borrow_date: formatDate(data.duration.start, true),
       return_date: formatDate(data.duration.end, true),
       loan_status: "รออนุมัติ",
@@ -142,7 +151,7 @@ export default function Borrower() {
     console.log(formattedData.borrow_date, formattedData.return_date);
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/Borrowed/borrow",
+        "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/borrow",
         formattedData,
         submitEv
       );
@@ -188,7 +197,7 @@ export default function Borrower() {
     const emailAddresses = userEmails.join(", ");
   
     const templateParams = {
-      formattedData: JSON.stringify(formattedData),
+      formattedData,
       to_email: emailAddresses,
       submitEv,
     };

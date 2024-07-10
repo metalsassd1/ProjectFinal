@@ -19,7 +19,7 @@ const RectangleBox3 = () => {
   const boxStyle = {
     width: "450px",
     height: "100px",
-    backgroundColor: "#556cca", // Alice blue
+    backgroundColor: "#2c3e75", // Alice blue
     borderRadius: "10px",
     padding: "60px",
     textAlign: "center",

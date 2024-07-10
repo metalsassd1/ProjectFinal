@@ -15,6 +15,12 @@ import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import axios from "axios";
 import Swal from 'sweetalert2';
 
+const swalStyles = `
+  .swal2-container {
+    z-index: 9999;
+  }
+`;
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -27,40 +33,15 @@ const style = {
 };
 
 export default function CustomAddModal({ open, handleClose, label, user }) {
- 
-  const getCurrentDate = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-  }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // Fetch data or perform other actions if needed
-      try {
-        // const result = await fetchDataFromAPI();
-        // setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    // Fetch data on mount
-    fetchData();
-
-    // Set up an interval for fetching data
-    const intervalId = setInterval(fetchData, 60000); // Assuming a 1-minute interval
-    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-  }, []);
 
   const [formData, setFormData] = useState({
     field1: "",
     field2: "",
     field3: "",
     field4: "",
-    field5: "User", // Initialize as "User" to match the MenuItem value and avoid uncontrolled component warning
-    field6: null,
+    field5: "User",
+    field6: "",
   });
 
   useEffect(() => {
@@ -70,24 +51,20 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
         field2: user.password || "",
         field3: user.full_name || "",
         field4: user.email || "",
-        // registration_date: getCurrentDate(),
-        field5: user.is_admin || 0,
-        field6: user.cellNum
+        field5: user.is_admin ? "Admin" : "User",
+        field6: user.cellNum || ""
       });
     }
   }, [user]);
 
-
   const handleRoleChange = (event) => {
-    // Assuming value is passed as a string from the dropdown, convert to number
     const isAdminValue = event.target.value;
-    console.log(isAdminValue);
     setFormData((prevState) => ({
       ...prevState,
       field5: isAdminValue,
     }));
   };
-  // Handle input change
+
   const handleChangeinput = (e) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -98,57 +75,59 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
 
   const resetForm = () => {
     setFormData({
-      id: "",
-      username: "",
-      password: "",
-      full_name: "",
-      email: "",
-      registration_date: "",
-      is_admin: "",
-      cellNum: "",
+      field1: "",
+      field2: "",
+      field3: "",
+      field4: "",
+      field5: "User",
+      field6: "",
     });
   };
 
-  // Handle form submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
       username: formData.field1,
       password: formData.field2,
       full_name: formData.field3,
       email: formData.field4,
-      is_admin: formData.field5,
-      cellNum:formData.field6,
-      registration_date:getCurrentDate()
+      is_admin: formData.field5 === "Admin" ? 1 : 0,
+      cellNum: formData.field6,
     };
 
-    axios
-      .post("https://back-end-finals-project-pgow.onrender.com/api/user/add", data)
-      .then((response) => {
-        console.log("Data added successfully:", response.data);
-        Swal.fire({
-          title: 'ดำเนินการสำเร็จ!',
-          text: 'เพิ่มข้อมูล',
-          icon: 'success',
-          confirmButtonText: 'ตกลง'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            handleClose(); // Close the modal after user clicks OK
-            resetForm();
-          }
-        });
-      })
-      .catch((error) => {
-        console.error("Error adding data:", error);
-        Swal.fire({
-          title: 'ดำเนินการไม่สำเร็จ!',
-          text: 'ไม่สามารถเพิ่มข้อมูล ' + (error.response?.data?.message || error.message),
-          icon: 'error',
-          confirmButtonText: 'ตกลง'
-        });
-        resetForm();
+    try {
+      const response = await axios.post("https://back-end-finals-project-vibo.onrender.com/api/user/add", data)
+      .then((result) => {
+      console.log("Data added successfully:", response.data);
+        if (result.isConfirmed) {
+          handleClose();
+          const style = document.createElement('style');
+          style.textContent = swalStyles;
+          document.head.appendChild(style);
+          
+          Swal.fire({
+            title: 'ดำเนินการสำเร็จ!',
+            text: 'เพิ่มข้อมูล',
+            icon: 'success',
+            confirmButtonText: 'ตกลง'
+          })
+          document.head.removeChild(style);
+          resetForm();
+        }
       });
-    console.log(data);
+    } catch (error) {
+      const style = document.createElement('style');
+      style.textContent = swalStyles;
+      document.head.appendChild(style);
+      console.error("Error adding data:", error);
+      Swal.fire({
+        title: 'ดำเนินการไม่สำเร็จ!',
+        text: 'ไม่สามารถเพิ่มข้อมูล ' + (error.response?.data?.message || error.message),
+        icon: 'error',
+        confirmButtonText: 'ตกลง'
+      });
+      document.head.removeChild(style);
+    }
   };
 
   return (
@@ -201,7 +180,7 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
               style={{ margin: "0.5rem" }}
               fullWidth
             />
-             <TextField
+            <TextField
               label="เบอร์โทรศัพท์"
               variant="outlined"
               name="field6"
@@ -213,13 +192,13 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
             <FormControl fullWidth margin="normal">
               <InputLabel>Role</InputLabel>
               <Select
-                name="is_admin"
-                value={formData.is_admin}
+                name="field5"
+                value={formData.field5}
                 label="Role"
                 onChange={handleRoleChange}
               >
-                <MenuItem value={"Admin"}>Admin</MenuItem>
-                <MenuItem value={"User"}>User</MenuItem>
+                <MenuItem value="Admin">Admin</MenuItem>
+                <MenuItem value="User">User</MenuItem>
               </Select>
             </FormControl>
             <Box textAlign="center" my={2}>

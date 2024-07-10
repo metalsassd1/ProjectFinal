@@ -29,7 +29,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         <ListItem
           style={{
             borderBottom: "1px solid #ccc", // Change to solid border
-            background: "#556cca",
+            background: "#2c3e75",
             color: "#fff", // Set text color to white
             fontSize: "large",
             padding: "10px",

@@ -189,9 +189,20 @@ const MyTable = () => {
           </Grid>
           </Box>
       <TableContainer component={Paper}>
+      <h2 style={{ 
+        textAlign: "center", 
+        backgroundColor: "#2c3e75",
+        color: "#fff",
+        margin: 0,
+        padding: "15px",
+        width: "100%",
+        border: "1px solid black"
+      }}>
+        ตารางแสดงรายละเอียดข้อมูลอุปกรณ์กีฬา
+      </h2>
         <Table>
           <TableHead>
-            <TableRow style={{ backgroundColor: "#556cca" , border:"1px solid black" }}>
+            <TableRow style={{ backgroundColor: "#2c3e75" , border:"1px solid black" }}>
               <TableCell style={{ color: "#fff" }}>ID</TableCell>
               <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
               <TableCell style={{ color: "#fff" }}>จำนวน</TableCell>
@@ -223,7 +234,7 @@ const MyTable = () => {
                 <TableCell>
                   <Button
                     variant="contained"
-                    style={{ backgroundColor: "#990099", border:"1px solid black" }}
+                    style={{ backgroundColor: "#2c3e75", border:"1px solid black" }}
                     onClick={() => handleEditOpen(row)}
                   >
                     แก้ไข

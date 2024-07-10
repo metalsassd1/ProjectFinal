@@ -23,26 +23,35 @@ const CustomPieChart = () => {
 
   const statusCounts = {
     'พร้อมใช้งาน': { count: 0, color: '#32CD32' }, // Green
-    'ถูกยืม': { count: 0, color: '#ff7300' }, // Blue
-    'ไม่ได้ถูกใช้งาน': { count: 0, color: '#8884d8' }, // Orange
+    'ถูกยืม': { count: 0, color: '#ff7300' }, // Orange
+    'รออนุมัติ': { count: 0, color: '#FFA500' }, // Yellow
+    'อื่นๆ': { count: 0, color: '#8884d8' }, // Purple for any other status
   };
 
   equipmentData.forEach((item) => {
-    if (item.loan_status === "คืน") {
-      statusCounts['พร้อมใช้งาน'].count += 1;
-    } else if (item.loan_status === "ยืม") {
-      statusCounts['ถูกยืม'].count += 1;
-    } else if (item.loan_status === "รออนุมัติ") {
-      statusCounts['รออนุมัติ'].count += 1;
+    switch (item.loan_status) {
+      case "คืน":
+        statusCounts['พร้อมใช้งาน'].count += 1;
+        break;
+      case "ยืม":
+        statusCounts['ถูกยืม'].count += 1;
+        break;
+      case "รออนุมัติ":
+        statusCounts['รออนุมัติ'].count += 1;
+        break;
+      default:
+        statusCounts['อื่นๆ'].count += 1;
+        break;
     }
   });
 
-  const pieData = Object.entries(statusCounts).map(([name, data]) => ({
-    name,
-    value: data.count,
-    color: data.color
-  }));
-
+  const pieData = Object.entries(statusCounts)
+    .filter(([_, data]) => data.count > 0) // Only include statuses with count > 0
+    .map(([name, data]) => ({
+      name,
+      value: data.count,
+      color: data.color
+    }));
 
   return (
     <PieChart width={500} height={370}>
