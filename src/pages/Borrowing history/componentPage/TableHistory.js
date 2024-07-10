@@ -22,7 +22,7 @@ const MyTable = ({  }) => {
   const [selectedLoD, setSelectedLoD] = useState(null);
   const [modalEditOpen, setModalEditOpen] = useState(false);
   const [searchTerms, setSearchTerms] = useState({
-    borrower_name: "",
+    identifier_number: "",
   });
   const [showResults, setShowResults] = useState(false);
 
@@ -57,21 +57,31 @@ const MyTable = ({  }) => {
       const formattedData = response.data.map(item => ({
         ...item,
         borrow_date: formatDate(item.borrow_date),
-        return_date: formatDate(item.return_date)
+        return_date: formatDate(item.return_date),
+        identifier_number: item.identifier_number ? item.identifier_number.trim() : ''
       }));
       setRows(formattedData);
+      console.log('Fetched data:', formattedData); // เพิ่ม log นี้
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
   const filterData = () => {
-    const filtered = rows.filter(item =>
-      item.borrower_name.toLowerCase().includes(searchTerms.borrower_name.toLowerCase())
-    );
+    const searchTerm = searchTerms.identifier_number.toLowerCase().trim();
+    const filtered = rows.filter(item => {
+      if (!item.identifier_number) return false;
+      const itemValue = item.identifier_number.toLowerCase().trim();
+      return itemValue.includes(searchTerm);
+    });
     setFilteredRows(filtered);
     setShowResults(true);
+    
+    // เพิ่ม log เพื่อตรวจสอบ
+    console.log('Search term:', searchTerm);
+    console.log('Filtered rows:', filtered);
   };
+
   const getStatusColor = (loan_status) => {
     switch (loan_status) {
       case "คืน":
@@ -92,14 +102,14 @@ const MyTable = ({  }) => {
       <Box component="form" className="search-container" noValidate autoComplete="off">
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} sm={6} md={3}>
-            <TextField
-              fullWidth
-              label="ค้นหาด้วยชื่อผู้ยืม"
-              variant="outlined"
-              size="small"
-              value={searchTerms.borrower_name}
-              onChange={(e) => handleSearch("borrower_name", e.target.value)}
-              InputLabelProps={{ shrink: true }}
+          <TextField
+  fullWidth
+  label="ค้นหาด้วยเลขประจำตัว"
+  variant="outlined"
+  size="small"
+  value={searchTerms.identifier_number}
+  onChange={(e) => handleSearch("identifier_number", e.target.value)}
+  InputLabelProps={{ shrink: true }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
@@ -122,6 +132,7 @@ const MyTable = ({  }) => {
                 <TableCell style={{ color: "#fff" }}>จำนวนที่ถูกยืม</TableCell>
                 <TableCell style={{ color: "#fff" }}>ประเภท</TableCell>
                 <TableCell style={{ color: "#fff" }}>ผู้ยืม</TableCell>
+                <TableCell style={{ color: "#fff" }}>เลขประจำตัว</TableCell>
                 <TableCell style={{ color: "#fff" }}>วันที่ยืม</TableCell>
                 <TableCell style={{ color: "#fff" }}>วันที่คืน</TableCell>
                 <TableCell style={{ color: "#fff" }}>สถานะ</TableCell>
@@ -136,6 +147,7 @@ const MyTable = ({  }) => {
                   <TableCell>{row.quantity_data}</TableCell>
                   <TableCell>{row.quantity_borrowed}</TableCell>
                   <TableCell>{row.equipment_type}</TableCell>
+                  <TableCell>{row.identifier_number || 'N/A'}</TableCell>
                   <TableCell>{row.borrower_name}</TableCell>
                   <TableCell>{row.borrow_date}</TableCell>
                   <TableCell>{row.return_date}</TableCell>
