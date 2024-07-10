@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography, Container, CssBaseline, useMediaQuery } from "@mui/material";
+import { AppBar, Toolbar, Typography, Container, CssBaseline, useMediaQuery, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TableMain from "./conponentPage/tableMainPage";
 import SearchFilter from "./conponentPage/SearchFillter";
@@ -72,6 +72,10 @@ const MyPage = () => {
     (filterType === "" || row.equipment_type === filterType)
   );
 
+  const handleHistoryClick = () => {
+    navigate('/history');
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -90,6 +94,9 @@ const MyPage = () => {
             >
               PIM CAN TAKE
             </Typography>
+            <Button color="inherit" onClick={handleHistoryClick}>
+              ประวัติการยืม
+            </Button>
           </Toolbar>
         </AppBar>
         <Container 

@@ -1,38 +1,54 @@
 import React, { useState } from "react";
-import Navbar from "../../components/navbar";
-import Sidebar from "../../components/navigatorbar";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { AppBar, Toolbar, Typography, Container, CssBaseline, useMediaQuery, Box } from "@mui/material";
 import TableManage from "./componentPage/TableHistory";
 
-function History(searchTerms) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#4CAF50',
+    },
+    background: {
+      default: '#ffffff',
+    },
+  },
+});
 
-
+function History() {
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (
-    <>
-      <div className="header" style={{ marginLeft: isSidebarOpen ? 200 : 0, transition: "margin 0.3s" }}>
-      <div
-        className="content-container"
-        style={{
-          marginLeft: isSidebarOpen ? 300 : 100,
-          marginRight: isSidebarOpen ? 70 : 100,
-          transition: "margin 0.3s",
-        }}
-      >
-        </div>
-      </div>
-      <div className="Side-bar">
-        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-      </div>
-      <div className="contrainer-main" style={{ marginLeft: isSidebarOpen ? 300 : 100, marginRight: isSidebarOpen ? 70 : 100, transition: "margin 0.3s" }}>
-        <h1>จัดการข้อมูลการยืม</h1>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
-          
-        
-        <TableManage isOpen={isSidebarOpen} searchTerms={searchTerms} />
-      </div>
-      </div>
-      </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <AppBar position="static" color="primary" elevation={0}>
+          <Toolbar>
+            <Typography 
+              variant={isMobile ? "h6" : "h5"} 
+              component="div" 
+              sx={{ 
+                flexGrow: 1, 
+                textAlign: 'center',
+                fontSize: isMobile ? '1.1rem' : '1.5rem',
+                padding: isMobile ? '10px 0' : '15px 0'
+              }}
+            >
+              ประวัติการยืม
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Container 
+          maxWidth="lg" 
+          sx={{ 
+            flexGrow: 1, 
+            marginTop: '20px', 
+            padding: isMobile ? '0 10px' : '0 24px'
+          }}
+        >
+          <TableManage />
+        </Container>
+      </Box>
+    </ThemeProvider>
   );
 }
 

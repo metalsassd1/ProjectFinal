@@ -10,7 +10,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com";
 import swal from "sweetalert";
-import dayjs from "dayjs";
+import { useLocation } from "react-router-dom";
 
 const theme = createTheme({
   palette: {
@@ -57,6 +57,8 @@ export default function Borrower() {
   const [userEmails, setUserEmails] = useState([]);
   const navigate = useNavigate();
   const [option, setOption] = useState("");
+  const location = useLocation();
+  const selectedItems = location.state?.selectedItems || [];
 
   const form = useForm({
     resolver: zodResolver(schema),
@@ -71,6 +73,7 @@ export default function Borrower() {
   });
   const id = Math.floor(Math.random() * 1000000);
 
+  console.log(selectedItems);
   useEffect(() => {
     const fetchAdminUser = async () => {
       try {

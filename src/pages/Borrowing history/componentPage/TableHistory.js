@@ -9,35 +9,39 @@ import {
   TableRow,
   Paper,
   Button,
-  Grid,
   TextField,
-  Box
+  Box,
+  Typography,
+  useMediaQuery,
+  useTheme
 } from "@mui/material";
-import EditModal from "../../../components/modalComponent/EditPageLoanEdit";
-import Swal from 'sweetalert2';
 
-const MyTable = ({  }) => {
+const TableHistory = () => {
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
-  const [selectedLoD, setSelectedLoD] = useState(null);
-  const [modalEditOpen, setModalEditOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
-    identifier_number: "",
-  });
+  const [searchTerm, setSearchTerm] = useState("");
   const [showResults, setShowResults] = useState(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  const handleEditOpen = (row) => {
-    setSelectedLoD(row);
-    setModalEditOpen(true);
-  };
-
-  const handleEditClose = () => {
-    setModalEditOpen(false);
-    fetchData();
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("https://back-end-finals-project-vibo.onrender.com/api/home/management");
+      const formattedData = response.data.map(item => ({
+        ...item,
+        borrow_date: formatDate(item.borrow_date),
+        return_date: formatDate(item.return_date),
+        identifier_number: item.identifier_number ? item.identifier_number.trim() : ''
+      }));
+      setRows(formattedData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   const formatDate = (dateString) => {
@@ -51,35 +55,12 @@ const MyTable = ({  }) => {
     });
   }
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("https://back-end-finals-project-vibo.onrender.com/api/home/management");
-      const formattedData = response.data.map(item => ({
-        ...item,
-        borrow_date: formatDate(item.borrow_date),
-        return_date: formatDate(item.return_date),
-        identifier_number: item.identifier_number ? item.identifier_number.trim() : ''
-      }));
-      setRows(formattedData);
-      console.log('Fetched data:', formattedData); // เพิ่ม log นี้
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
   const filterData = () => {
-    const searchTerm = searchTerms.identifier_number.toLowerCase().trim();
-    const filtered = rows.filter(item => {
-      if (!item.identifier_number) return false;
-      const itemValue = item.identifier_number.toLowerCase().trim();
-      return itemValue.includes(searchTerm);
-    });
+    const filtered = rows.filter(item => 
+      item.identifier_number && item.identifier_number.toLowerCase().includes(searchTerm.toLowerCase())
+    );
     setFilteredRows(filtered);
     setShowResults(true);
-    
-    // เพิ่ม log เพื่อตรวจสอบ
-    console.log('Search term:', searchTerm);
-    console.log('Filtered rows:', filtered);
   };
 
   const getStatusColor = (loan_status) => {
@@ -93,86 +74,82 @@ const MyTable = ({  }) => {
     }
   };
 
-  const handleSearch = (field, value) => {
-    setSearchTerms(prev => ({ ...prev, [field]: value }));
-  };
-  
+  const renderMobileView = () => (
+    <Box>
+      {filteredRows.map((row) => (
+        <Paper key={row.id} elevation={2} sx={{ mb: 2, p: 2 }}>
+          <Typography variant="subtitle1"><strong>ID:</strong> {row.id}</Typography>
+          <Typography variant="body2"><strong>ชื่ออุปกรณ์:</strong> {row.equipment_name}</Typography>
+          <Typography variant="body2"><strong>ผู้ยืม:</strong> {row.borrower_name}</Typography>
+          <Typography variant="body2"><strong>เลขประจำตัว:</strong> {row.identifier_number || 'N/A'}</Typography>
+          <Typography variant="body2"><strong>วันที่ยืม:</strong> {row.borrow_date}</Typography>
+          <Typography variant="body2"><strong>วันที่คืน:</strong> {row.return_date}</Typography>
+          <Box sx={{ mt: 1, p: 1, ...getStatusColor(row.loan_status) }}>
+            <Typography variant="body2"><strong>สถานะ:</strong> {row.loan_status || ""}</Typography>
+          </Box>
+        </Paper>
+      ))}
+    </Box>
+  );
+
+  const renderDesktopView = () => (
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow style={{backgroundColor: "#4CAF50"}}>
+            <TableCell style={{ color: "#fff" }}>ID</TableCell>
+            <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
+            <TableCell style={{ color: "#fff" }}>ผู้ยืม</TableCell>
+            <TableCell style={{ color: "#fff" }}>เลขประจำตัว</TableCell>
+            <TableCell style={{ color: "#fff" }}>วันที่ยืม</TableCell>
+            <TableCell style={{ color: "#fff" }}>วันที่คืน</TableCell>
+            <TableCell style={{ color: "#fff" }}>สถานะ</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {filteredRows.map((row) => (
+            <TableRow key={row.id}>
+              <TableCell>{row.id}</TableCell>
+              <TableCell>{row.equipment_name}</TableCell>
+              <TableCell>{row.borrower_name}</TableCell>
+              <TableCell>{row.identifier_number || 'N/A'}</TableCell>
+              <TableCell>{row.borrow_date}</TableCell>
+              <TableCell>{row.return_date}</TableCell>
+              <TableCell style={getStatusColor(row.loan_status)}>
+                {row.loan_status || ""}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
+
   return (
-    <>
-      <Box component="form" className="search-container" noValidate autoComplete="off">
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={6} md={3}>
-          <TextField
-  fullWidth
-  label="ค้นหาด้วยเลขประจำตัว"
-  variant="outlined"
-  size="small"
-  value={searchTerms.identifier_number}
-  onChange={(e) => handleSearch("identifier_number", e.target.value)}
-  InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Button variant="contained" color="primary" onClick={filterData}>
-              ค้นหา
-            </Button>
-          </Grid>
-        </Grid>
+    <Box sx={{ mt: 2 }}>
+      <Box component="form" sx={{ mb: 2, display: 'flex', gap: 2, flexDirection: isMobile ? 'column' : 'row' }}>
+        <TextField
+          fullWidth
+          label="ค้นหาด้วยเลขประจำตัว"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputLabelProps={{ shrink: true }}
+        />
+        <Button variant="contained" color="primary" onClick={filterData}>
+          ค้นหา
+        </Button>
       </Box>
       
       {showResults && (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow style={{backgroundColor: "#556cca", border:"1px solid black", width: "100%" }}>
-                <TableCell style={{ color: "#fff" }}>ID</TableCell>
-                <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
-                <TableCell style={{ color: "#fff" }}>คลังคงเหลือ</TableCell>
-                <TableCell style={{ color: "#fff" }}>จำนวนที่ถูกยืมทั้งหมด</TableCell>
-                <TableCell style={{ color: "#fff" }}>จำนวนที่ถูกยืม</TableCell>
-                <TableCell style={{ color: "#fff" }}>ประเภท</TableCell>
-                <TableCell style={{ color: "#fff" }}>ผู้ยืม</TableCell>
-                <TableCell style={{ color: "#fff" }}>เลขประจำตัว</TableCell>
-                <TableCell style={{ color: "#fff" }}>วันที่ยืม</TableCell>
-                <TableCell style={{ color: "#fff" }}>วันที่คืน</TableCell>
-                <TableCell style={{ color: "#fff" }}>สถานะ</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredRows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.equipment_name}</TableCell>
-                  <TableCell>{row.total_stock}</TableCell>
-                  <TableCell>{row.quantity_data}</TableCell>
-                  <TableCell>{row.quantity_borrowed}</TableCell>
-                  <TableCell>{row.equipment_type}</TableCell>
-                  <TableCell>{row.identifier_number || 'N/A'}</TableCell>
-                  <TableCell>{row.borrower_name}</TableCell>
-                  <TableCell>{row.borrow_date}</TableCell>
-                  <TableCell>{row.return_date}</TableCell>
-                  <TableCell
-                    style={getStatusColor(row.loan_status)}
-                  >
-                    {row.loan_status || ""}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <>
+          <Typography variant="h6" sx={{ mb: 2 }}>ผลการค้นหา</Typography>
+          {isMobile ? renderMobileView() : renderDesktopView()}
+        </>
       )}
-      
-      {selectedLoD && (
-        <EditModal
-          open={modalEditOpen}
-          handleClose={handleEditClose}
-          loanData={selectedLoD}
-          label={"ข้อมูลการยืม"}
-        />
-      )}
-    </>
+    </Box>
   );
 };
 
-export default MyTable;
+export default TableHistory;

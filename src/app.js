@@ -21,10 +21,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/borrower/:Ename/:Etype/:desired_quantity"
-          element={<Borrower />}
-        />
+        <Route path="/borrower" element={<Borrower />} />
         <Route path="/SelectMethod" element={<SelectMethod />} />
         <Route path="/1" element={<Manage />} />
         <Route path="/2" element={<EquipmentMan />} />
@@ -38,7 +35,6 @@ const App = () => {
         <Route path="/submit" element={<Submit />} />
         <Route path="/admin-login" element={<AdminUserLogin />} />
         <Route path="/history" element={<History />} />
-
       </Routes>
     </Router>
   );
