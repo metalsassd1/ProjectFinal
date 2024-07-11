@@ -14,7 +14,6 @@ const GenerateQR = () => {
   const [containerClass, setContainerClass] = useState('qr-container');
 
   useEffect(() => {
-    // This will ensure the QR code is rendered before trying to access it
     if (qrRef.current) {
       console.log('QR Code element is rendered:', qrRef.current);
     }
@@ -26,12 +25,11 @@ const GenerateQR = () => {
 
   useEffect(() => {
     if (rows.length > 0) {
-      const matchingRow = rows.find(row => row.id === borrowData.id);
+      const matchingRow = rows.find(row => row.loan_id === borrowData.id);
       if (matchingRow) {
-        const isBorrowStatus = matchingRow.loan_status == "ยืม";
-        setContainerClass(isBorrowStatus ? "qr-container" : "qr-constainer red-theme");
+        const isBorrowStatus = matchingRow.loan_status === "ยืม";
+        setContainerClass(isBorrowStatus ? "qr-container" : "qr-container red-theme");
       }
-      console.log(rows.find(row => row.id == borrowData.id),borrowData)
     }
   }, [rows, borrowData.id]);
 
@@ -74,9 +72,6 @@ const GenerateQR = () => {
         />
       </div>
       <Return data={borrowData} response={rows} />
-      <div className="qr-buttons">
-        {/* Any buttons or additional components can go here */}
-      </div>
     </div>
   );
 };

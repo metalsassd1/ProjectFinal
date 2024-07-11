@@ -94,9 +94,6 @@ const MyPage = () => {
             >
               PIM CAN TAKE
             </Typography>
-            <Button color="inherit" onClick={handleHistoryClick}>
-              ประวัติการยืม
-            </Button>
           </Toolbar>
         </AppBar>
         <Container 
@@ -111,6 +108,7 @@ const MyPage = () => {
             onSearch={handleSearch}
             isMobile={isMobile}
             onFilterType={handleFilterType}
+            handleHistoryClick={handleHistoryClick}
           />
           <TableMain 
             isMobile={isMobile} 

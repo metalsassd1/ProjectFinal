@@ -12,11 +12,13 @@ import {
   Grid,
   TextField,
   Box,
+  Checkbox,
+  TablePagination,
 } from "@mui/material";
 import EditModal from "../../../components/modalComponent/EditPageLoanEdit";
 import Swal from "sweetalert2";
 
-const MyTable = ({}) => {
+const MyTable = () => {
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [selectedLoD, setSelectedLoD] = useState(null);
@@ -26,8 +28,11 @@ const MyTable = ({}) => {
     equipment_name: "",
     equipment_type: "",
     borrower_name: "",
-    borrow_date: "", // เพิ่มตัวแปรสำหรับค้นหาด้วยวันที่ยืม
+    borrow_date: "",
   });
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     fetchData();
@@ -69,38 +74,60 @@ const MyTable = ({}) => {
         return_date: formatDate(item.return_date),
       }));
       setRows(formattedData);
+      setFilteredRows(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
 
   const filterData = () => {
-    const filtered = rows.filter(
-      (item) =>
-        item.id
-          .toString()
-          .toLowerCase()
-          .includes(searchTerms.id.toLowerCase()) &&
-        item.equipment_name
-          .toLowerCase()
-          .includes(searchTerms.equipment_name.toLowerCase()) &&
-        item.equipment_type
-          .toLowerCase()
-          .includes(searchTerms.equipment_type.toLowerCase()) &&
-        item.borrower_name
-          .toLowerCase()
-          .includes(searchTerms.borrower_name.toLowerCase()) &&
-        item.borrow_date
-          .toLowerCase()
-          .includes(searchTerms.borrow_date.toLowerCase()) // เพิ่มเงื่อนไขสำหรับค้นหาด้วยวันที่ยืม
-    );
+    const filtered = rows.filter((item) => {
+      const idMatch =
+        item.id != null
+          ? item.id
+              .toString()
+              .toLowerCase()
+              .includes(searchTerms.id.toLowerCase())
+          : true;
+      const equipmentNameMatch = item.equipment_name
+        ? item.equipment_name
+            .toLowerCase()
+            .includes(searchTerms.equipment_name.toLowerCase())
+        : true;
+      const equipmentTypeMatch = item.equipment_type
+        ? item.equipment_type
+            .toLowerCase()
+            .includes(searchTerms.equipment_type.toLowerCase())
+        : true;
+      const borrowerNameMatch = item.borrower_name
+        ? item.borrower_name
+            .toLowerCase()
+            .includes(searchTerms.borrower_name.toLowerCase())
+        : true;
+      const borrowDateMatch = item.borrow_date
+        ? item.borrow_date
+            .toLowerCase()
+            .includes(searchTerms.borrow_date.toLowerCase())
+        : true;
+
+      return (
+        idMatch &&
+        equipmentNameMatch &&
+        equipmentTypeMatch &&
+        borrowerNameMatch &&
+        borrowDateMatch
+      );
+    });
     setFilteredRows(filtered);
   };
-
-  const handleDelete = async (id) => {
+console.log(rows);
+  const handleDelete = async () => {
+    if (selectedIds.length === 0) {
+      return;
+    }
     const { isConfirmed } = await Swal.fire({
       title: "ต้องการดำเนินการหรือไม่?",
-      text: "ลบข้อมูล",
+      text: `ลบข้อมูล ${selectedIds.length} รายการ`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -110,22 +137,25 @@ const MyTable = ({}) => {
     });
     if (isConfirmed) {
       try {
-        await axios.delete(
-          `https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${id}`
+        await Promise.all(
+          selectedIds.map((id) =>
+            axios.delete(`https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${id}`)
+          )
         );
-        fetchData();
         await Swal.fire({
           title: "ดำเนินการสำเร็จ!",
-          text: "ลบข้อมูล",
+          text: "ลบข้อมูลเรียบร้อย",
           icon: "success",
           confirmButtonText: "ตกลง",
         });
+        setSelectedIds([]);
+        fetchData();
       } catch (error) {
         console.error("Error deleting data:", error);
         await Swal.fire({
           title: "ดำเนินการไม่สำเร็จ!",
           text:
-            "ไม่สามารถลบข้อมูลมูลได้: " +
+            "ไม่สามารถลบข้อมูลได้: " +
             (error.response?.data?.message || error.message),
           icon: "error",
           confirmButtonText: "ตกลง",
@@ -145,19 +175,40 @@ const MyTable = ({}) => {
     }
   };
 
-  const getRowStyle_Stock = (quantityInStock) => {
-    return { backgroundColor: "#D3D3D3" };
+  const handleCheckboxChange = (event, id) => {
+    if (event.target.checked) {
+      setSelectedIds([...selectedIds, id]);
+    } else {
+      setSelectedIds(selectedIds.filter((selectedId) => selectedId !== id));
+    }
   };
 
-  const getRowStyle_borrowed = (quantity_borrowed) => {
-    return quantity_borrowed > 0
-      ? { backgroundColor: "#FFA500" }
-      : { backgroundColor: "#D3D3D3" };
+  const handleSelectAll = (event) => {
+    if (event.target.checked) {
+      setSelectedIds(currentRows.map((row) => row.id));
+    } else {
+      setSelectedIds([]);
+    }
   };
 
   const handleSearch = (field, value) => {
     setSearchTerms((prev) => ({ ...prev, [field]: value }));
   };
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const currentRows = filteredRows.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
   return (
     <>
       <Box
@@ -247,6 +298,20 @@ const MyTable = ({}) => {
                 width: "100%",
               }}
             >
+              <TableCell padding="checkbox">
+                <Checkbox
+                  indeterminate={
+                    selectedIds.length > 0 &&
+                    selectedIds.length < currentRows.length
+                  }
+                  checked={
+                    currentRows.length > 0 &&
+                    selectedIds.length === currentRows.length
+                  }
+                  onChange={handleSelectAll}
+                  style={{ color: "#fff" }}
+                />
+              </TableCell>
               <TableCell style={{ color: "#fff" }}>ID</TableCell>
               <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
               <TableCell style={{ color: "#fff" }}>คลังคงเหลือ</TableCell>
@@ -263,8 +328,14 @@ const MyTable = ({}) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRows.map((row) => (
-              <TableRow key={row.id}>
+            {currentRows.map((row, index) => (
+              <TableRow key={`${row.id}-${index}`}>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectedIds.includes(row.id)}
+                    onChange={(event) => handleCheckboxChange(event, row.id)}
+                  />
+                </TableCell>
                 <TableCell>{row.id}</TableCell>
                 <TableCell>{row.equipment_name}</TableCell>
                 <TableCell>{row.total_stock}</TableCell>
@@ -277,7 +348,6 @@ const MyTable = ({}) => {
                 <TableCell style={getStatusColor(row.loan_status)}>
                   {row.loan_status || ""}
                 </TableCell>
-
                 <TableCell>
                   <Button
                     variant="contained"
@@ -289,31 +359,43 @@ const MyTable = ({}) => {
                   >
                     แก้ไข
                   </Button>
-                  <Button
-                    variant="contained"
-                    style={{
-                      backgroundColor: "#CC0033",
-                      marginLeft: 10,
-                      border: "1px solid black",
-                    }}
-                    onClick={() => handleDelete(row.id)}
-                  >
-                    ลบ
-                  </Button>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        {selectedLoD && (
-          <EditModal
-            open={modalEditOpen}
-            handleClose={handleEditClose}
-            loanData={selectedLoD}
-            label={"ข้อมูลการยืม"}
-          />
-        )}
       </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 50]}
+        component="div"
+        count={filteredRows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+      {selectedIds.length > 0 && (
+        <Button
+          variant="contained"
+          style={{
+            backgroundColor: "#CC0033",
+            color: "#fff",
+            border: "1px solid black",
+            margin: "10px",
+          }}
+          onClick={handleDelete}
+        >
+          ลบข้อมูล ({selectedIds.length})
+        </Button>
+      )}
+      {selectedLoD && (
+        <EditModal
+          open={modalEditOpen}
+          handleClose={handleEditClose}
+          loanData={selectedLoD}
+          label={"ข้อมูลการยืม"}
+        />
+      )}
     </>
   );
 };

@@ -8,6 +8,9 @@ import {
   TableHead,
   TableRow,
   Paper,
+  TablePagination,
+  Checkbox,
+  Button
 } from "@mui/material";
 import Swal from "sweetalert2";
 import "./TableStyles.css"; // Ensure this import is correct
@@ -15,6 +18,9 @@ import "./TableStyles.css"; // Ensure this import is correct
 const MyTable = ({ searchTerms }) => {
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   const formatDate = (dateString) => {
     if (!dateString) return "No date provided";
@@ -25,6 +31,28 @@ const MyTable = ({ searchTerms }) => {
       month: "long",
       day: "numeric",
     });
+  };
+
+  const handleSelectRow = (row) => {
+    const selectedIndex = selectedRows.findIndex((selectedRow) => selectedRow.id === row.id);
+    let newSelectedRows = [];
+
+    if (selectedIndex === -1) {
+      newSelectedRows = [...selectedRows, row];
+    } else {
+      newSelectedRows = selectedRows.filter((selectedRow) => selectedRow.id !== row.id);
+    }
+
+    setSelectedRows(newSelectedRows);
+  };
+
+  const handleSelectAllRows = (event) => {
+    if (event.target.checked) {
+      const newSelectedRows = currentRows.filter(row => row.loan_status === "ยืม");
+      setSelectedRows(newSelectedRows);
+      return;
+    }
+    setSelectedRows([]);
   };
 
   useEffect(() => {
@@ -69,7 +97,7 @@ const MyTable = ({ searchTerms }) => {
           .includes(searchTerms.borrower_name.toLowerCase()) &&
         item.borrow_date
           .toLowerCase()
-          .includes(searchTerms.borrow_date.toLowerCase()) // เพิ่มเงื่อนไขการกรองตาม borrow_date
+          .includes(searchTerms.borrow_date.toLowerCase())
     );
     setFilteredRows(filtered);
   };
@@ -85,10 +113,20 @@ const MyTable = ({ searchTerms }) => {
     }
   };
 
-  const handleReturn = async (data) => {
+  const handleReturn = async () => {
+    if (selectedRows.length === 0) {
+      Swal.fire({
+        title: "ไม่มีรายการที่เลือก",
+        text: "กรุณาเลือกรายการที่ต้องการคืน",
+        icon: "warning",
+        confirmButtonText: "ตกลง",
+      });
+      return;
+    }
+
     const { isConfirmed } = await Swal.fire({
       title: "ต้องการดำเนินการหรือไม่?",
-      text: "คืนอุปกรณ์",
+      text: `คืนอุปกรณ์ ${selectedRows.length} รายการ`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -96,60 +134,94 @@ const MyTable = ({ searchTerms }) => {
       confirmButtonText: "ตกลง",
       cancelButtonText: "ยกเลิก",
     });
-
-    const body = {
-      id: data.id,
-      equipment_name: data.equipment_name,
-      quantity_borrowed: data.quantity_borrowed,
-    };
+  
     if (isConfirmed) {
       try {
+        const returnData = selectedRows.map(row => ({
+          id: row.id,
+          equipment_name: row.equipment_name,
+          quantity_borrowed: row.quantity_borrowed,
+        }));
+  
         const response = await axios.put(
           "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/return",
-          body
+          returnData
         );
+  
         Swal.fire({
           title: "ดำเนินการสำเร็จ!",
-          text: "การคืน",
+          text: "การคืนอุปกรณ์เสร็จสมบูรณ์",
           icon: "success",
-          confirmButtonText: "OK",
+          confirmButtonText: "ตกลง",
         });
-        fetchData(); // Fetch data again after a successful return
+  
+        fetchData();
+        setSelectedRows([]);
       } catch (error) {
         console.error("Error processing return:", error);
         Swal.fire({
           title: "ดำเนินการไม่สำเร็จ!",
           text: "การคืน: " + (error.response?.data?.message || error.message),
           icon: "error",
-          confirmButtonText: "OK",
+          confirmButtonText: "ตกลง",
         });
       }
     }
   };
 
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Get current rows
+  const currentRows = filteredRows.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
   return (
     <TableContainer component={Paper}>
-      <h2 style={{ 
-        textAlign: "center", 
-        backgroundColor: "#2c3e75",
-        color: "#fff",
-        margin: 0,
-        padding: "15px",
-        width: "100%",
-        border: "1px solid black"
-      }}>
+      <h2
+        style={{
+          textAlign: "center",
+          backgroundColor: "#2c3e75",
+          color: "#fff",
+          margin: 0,
+          padding: "15px",
+          width: "100%",
+          border: "1px solid black",
+        }}
+      >
         ตารางแสดงรายละเอียดการยืมอุปกรณ์
       </h2>
       <Table>
         <TableHead>
-          <TableRow style={{ backgroundColor: "#2c3e75" , border : "1px solid black" }}>
+          <TableRow
+            style={{ backgroundColor: "#2c3e75", border: "1px solid black" }}
+          >
+             <TableCell padding="checkbox">
+              <Checkbox
+                indeterminate={selectedRows.length > 0 && selectedRows.length < currentRows.filter(row => row.loan_status === "ยืม").length}
+                checked={currentRows.filter(row => row.loan_status === "ยืม").length > 0 && selectedRows.length === currentRows.filter(row => row.loan_status === "ยืม").length}
+                onChange={handleSelectAllRows}
+                style={{ color: "#ffffff" }}
+              />
+            </TableCell>
             <TableCell style={{ color: "#ffffff" }}>ID</TableCell>
             <TableCell style={{ color: "#ffffff" }}>ชื่ออุปกรณ์</TableCell>
             <TableCell style={{ color: "#ffffff" }}>ประเภท</TableCell>
             <TableCell style={{ color: "#ffffff" }}>คลังทั้งหมด</TableCell>
             <TableCell style={{ color: "#ffffff" }}>จำนวนที่ถูกยืม</TableCell>
             <TableCell style={{ color: "#ffffff" }}>คลังคงเหลือ</TableCell>
-            <TableCell style={{ color: "#ffffff" }}>จำนวนที่ถูกยืมทั้งหมด</TableCell>
+            <TableCell style={{ color: "#ffffff" }}>
+              จำนวนที่ถูกยืมทั้งหมด
+            </TableCell>
             <TableCell style={{ color: "#ffffff" }}>ผู้ยืม</TableCell>
             <TableCell style={{ color: "#ffffff" }}>วันที่ยืม</TableCell>
             <TableCell style={{ color: "#ffffff" }}>วันที่คืน</TableCell>
@@ -158,43 +230,57 @@ const MyTable = ({ searchTerms }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {filteredRows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.equipment_name}</TableCell>
-              <TableCell>{row.equipment_type}</TableCell>
-              <TableCell>{row.total_stock + row.quantity_borrowed}</TableCell> 
-              <TableCell >
-                {row.quantity_borrowed}</TableCell>
-              <TableCell>
-                {row.total_stock}
-              </TableCell>
-              <TableCell>
-                {row.quantity_data}
-              </TableCell>  
-              <TableCell>{row.borrower_name}</TableCell>
-              <TableCell>{row.borrow_date}</TableCell>
-              <TableCell>{row.return_date}</TableCell>
-              <TableCell
-                style={getStatusStyle(row.loan_status)}
-              >
-                {row.loan_status || ""}
-              </TableCell>
-              <TableCell>
-                {row.loan_status === "ยืม" && (
-                  <button
-                    className="return-button"
-                    onClick={() => handleReturn(row)}
-                    style={{border:"1px solid black"}}
-                  >
-                    คืน
-                  </button>
-                )}
-              </TableCell>
-            </TableRow>
-          ))}
+          {currentRows.map((row) => {
+            const isApproved = row.loan_status === "ยืม";
+            const totalStock =
+              row.total_stock + (isApproved ? row.quantity_borrowed : 0);
+
+            return (
+              <TableRow key={row.id}>
+                 <TableCell padding="checkbox">
+                  <Checkbox
+                    checked={selectedRows.some(selectedRow => selectedRow.id === row.id)}
+                    onChange={() => handleSelectRow(row)}
+                    disabled={row.loan_status !== "ยืม"}
+                  />
+                </TableCell>
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{row.equipment_name}</TableCell>
+                <TableCell>{row.equipment_type}</TableCell>
+                <TableCell>{totalStock}</TableCell>
+                <TableCell>{isApproved ? row.quantity_borrowed : 0}</TableCell>
+                <TableCell>{row.total_stock}</TableCell>
+                <TableCell>{row.quantity_data}</TableCell>
+                <TableCell>{row.borrower_name}</TableCell>
+                <TableCell>{row.borrow_date}</TableCell>
+                <TableCell>{row.return_date}</TableCell>
+                <TableCell style={getStatusStyle(row.loan_status)}>
+                  {row.loan_status || ""}
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
+      <TablePagination
+        rowsPerPageOptions={[10]}
+        component="div"
+        count={filteredRows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+      {selectedRows.length > 0 && (
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleReturn}
+          style={{ margin: '10px' }}
+        >
+          คืนอุปกรณ์ที่เลือก ({selectedRows.length})
+        </Button>
+      )}
     </TableContainer>
   );
 };

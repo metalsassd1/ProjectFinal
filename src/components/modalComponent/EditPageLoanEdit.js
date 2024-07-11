@@ -74,10 +74,20 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formattedData = {
-      ...formData,
+      borrower_name: formData.borrower_name,
       borrow_date: formData.borrow_date ? dayjs.utc(formData.borrow_date).format() : null,
       return_date: formData.return_date ? dayjs.utc(formData.return_date).format() : null,
+      loan_status: formData.loan_status,
+      items: [
+        {
+          item_id: loanData.item_id, // ต้องแน่ใจว่า loanData มี item_id
+          equipment_name: formData.equipment_name,
+          equipment_type: formData.equipment_type,
+          quantity_borrowed: parseInt(formData.new_quantity_borrowed, 10) // แปลงเป็นตัวเลข
+        }
+      ]
     };
+
     try {
       const response = await axios.put(
         `https://back-end-finals-project-vibo.onrender.com/api/manage/update/${loanData.id}`,
@@ -87,14 +97,14 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
       const style = document.createElement('style');
       style.textContent = swalStyles;
       document.head.appendChild(style);
-       await Swal.fire({
+      await Swal.fire({
         title: "ดำเนินการสำเร็จ!",
         text: "แก้ไขข้อมูล",
         icon: "success",
         confirmButtonText: "ตกลง",
       });
 
-      handleClose(); // Close the modal after user clicks OK
+      handleClose(); // ปิด modal หลังจากผู้ใช้คลิก OK
       document.head.removeChild(style);
     } catch (error) {
       console.error("Error updating data:", error);
@@ -133,7 +143,7 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
         }}
       >
         <Typography id="modal-modal-title" variant="h4" component="h1">
-          Edit {label}
+          แก้ไข{label}
         </Typography>
         <Paper elevation={3} style={{ margin: "1rem", padding: "1rem" }}>
           <form onSubmit={handleSubmit}>

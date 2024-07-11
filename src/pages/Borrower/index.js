@@ -3,7 +3,17 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MuiInput } from "../../components/MuiInput";
-import { Box, Button, ThemeProvider, createTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  ThemeProvider,
+  createTheme,
+  Typography,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import { FormOptions } from "./components/FormOptions";
 import { MuiDateRangePicker } from "../../components/MuiDateRangePicker";
 import axios from "axios";
@@ -26,7 +36,6 @@ const theme = createTheme({
 
 const schema = z.object({
   borrower_name: z.string().min(1, { message: "โปรดกรอกชื่อผู้ยืม" }),
-  equip_name: z.string().min(1, { message: "โปรดกรอกชื่อผู้ยืม" }),
   options: z.enum(["inside", "outside", "student"]),
   identifier_number: z
     .string()
@@ -50,8 +59,6 @@ const schema = z.object({
 });
 
 export default function Borrower() {
-  const { Ename, Etype, desired_quantity } = useParams();
-  const [quantity_borrowed, setQuantity_borrowed] = useState(desired_quantity);
   const [approvalStatus, setApprovalStatus] = useState(null);
   const [user, setUser] = useState("");
   const [userEmails, setUserEmails] = useState([]);
@@ -59,21 +66,23 @@ export default function Borrower() {
   const [option, setOption] = useState("");
   const location = useLocation();
   const selectedItems = location.state?.selectedItems || [];
+  const isMultipleItems = selectedItems.length > 1;
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       borrower_name: "",
-      equip_name: Ename,
+      equip_name: selectedItems.map(item => item.equipment_name).join(', '),
       identifier_number: "",
       phone: "",
-      quantity_borrowed: desired_quantity,
+      quantity_borrowed: selectedItems.reduce((total, item) => total + item.desired_quantity, 0),
       duration: "",
     },
   });
+  
   const id = Math.floor(Math.random() * 1000000);
 
-  console.log(selectedItems);
+  // console.log(userEmails);
   useEffect(() => {
     const fetchAdminUser = async () => {
       try {
@@ -91,43 +100,59 @@ export default function Borrower() {
         setUser([]);
       }
     };
-  
+
     fetchAdminUser();
   }, []);
 
   useEffect(() => {
     if (Array.isArray(user) && user.length > 0) {
-      const emailArray = user.filter(u => u.email).map(u => u.email);
+      const emailArray = user.filter((u) => u.email).map((u) => u.email);
       setUserEmails(emailArray);
     } else {
       setUserEmails([]);
     }
   }, [user]);
 
-  
-const translateOptionToThai = (option) => {
-  const optionMap = {
-    "inside": "บุคลากรภายใน",
-    "outside": "บุคคลภายนอก",
-    "student": "นักศึกษา"
+  const translateOptionToThai = (option) => {
+    const optionMap = {
+      inside: "บุคลากรภายใน",
+      outside: "บุคคลภายนอก",
+      student: "นักศึกษา",
+    };
+    return optionMap[option] || option;
   };
-  return optionMap[option] || option;
-};
 
   const onSubmit = async (data) => {
+    if (isMultipleItems) {
+      await handleMultipleItemSubmit(data);
+      console.log("handleMultipleItemSubmit");
+    } else {
+      await handleSingleItemSubmit(data);
+      console.log("handleSingleItemSubmit");
+    }
+  };
+
+  function formatDate(date) {
+    const dateObject = date instanceof Date ? date : new Date(date);
+    const year = dateObject.getFullYear();
+    const month = String(dateObject.getMonth() + 1).padStart(2, "0");
+    const day = String(dateObject.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
+  const handleSingleItemSubmit = async (data) => {
     const formattedData = {
       id: id,
       borrower_name: data.borrower_name,
-      equipment_name: data.equip_name,
-      identifier_number: data.identifier_number.length > 10 ? null : data.identifier_number,
-      quantity_borrowed: quantity_borrowed,
+      identifier_number:
+        data.identifier_number.length > 10 ? null : data.identifier_number,
       contact: {
         phone: data.phone,
         email: data.email,
         backup_phone: data.backup_phone,
         backup_email: data.backup_email,
       },
-      equipment_type: Etype,
       department: data.department,
       branch: data.branch,
       faculty: data.faculty,
@@ -135,47 +160,40 @@ const translateOptionToThai = (option) => {
       borrow_date: formatDate(data.duration.start, true),
       return_date: formatDate(data.duration.end, true),
       loan_status: "รออนุมัติ",
-      quantity_data: quantity_borrowed
+      items: [
+        {
+          equipment_name: selectedItems[0].equipment_name,
+          equipment_type: selectedItems[0].equipment_type,
+          quantity_borrowed: selectedItems[0].desired_quantity,
+        }
+      ],
     };
-    
-    function formatDate(date) {
-      const dateObject = date instanceof Date ? date : new Date(date);
-      const year = dateObject.getFullYear();
-      const month = String(dateObject.getMonth() + 1).padStart(2, '0');
-      const day = String(dateObject.getDate()).padStart(2, '0');
-      
-      return `${year}-${month}-${day}`;
-    }
   
+    console.log(formattedData);
     const submitEv = `https://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(
       JSON.stringify(formattedData)
     )}`;
   
-    console.log(formattedData.borrow_date, formattedData.return_date);
     try {
       const response = await axios.post(
         "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/borrow",
-        formattedData,
-        submitEv
+        formattedData
       );
-      console.log("Server response:", response.data);
-      console.log("Formatted Data:", formattedData);
-  
-      handleAdminsubmit(formattedData, submitEv)
-        .then(() => {
-          if (response) {
-            swal({
-              title: "ดำเนินการสำเร็จ",
-              text: "กรุณารอผู้ดูแลอนุมัติ!",
-              icon: "success",
-              button: "OK",
-            }).then(() => {
-              navigate(
-                `/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`
-              );
-            });
-          }
-        });
+
+      handleAdminsubmit(formattedData, submitEv).then(() => {
+        if (response) {
+          swal({
+            title: "ดำเนินการสำเร็จ",
+            text: "กรุณารอผู้ดูแลอนุมัติ!",
+            icon: "success",
+            button: "OK",
+          }).then(() => {
+            navigate(
+              `/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`
+            );
+          });
+        }
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
       swal({
@@ -187,25 +205,125 @@ const translateOptionToThai = (option) => {
     }
   };
 
+  const handleMultipleItemSubmit = async (data) => {
+    const loanId = Math.floor(Math.random() * 1000000);
+    const formattedData = {
+      id: loanId,
+      borrower_name: data.borrower_name,
+      identifier_number: data.identifier_number.length > 10 ? null : data.identifier_number,
+      borrow_date: formatDate(data.duration.start),
+      return_date: formatDate(data.duration.end),
+      loan_status: "รออนุมัติ",
+      contact: {
+        phone: data.phone,
+        email: data.email,
+        backup_phone: data.backup_phone,
+        backup_email: data.backup_email,
+      },
+      department: data.department,
+      branch: data.branch,
+      faculty: data.faculty,
+      options: translateOptionToThai(data.options),
+      items: selectedItems.map((item) => ({
+        equipment_name: item.equipment_name,
+        equipment_type: item.equipment_type,
+        quantity_borrowed: item.desired_quantity,
+      })),
+    };
+  
+    console.log(formattedData);
+  
+    try {
+      const response = await axios.post(
+        "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/borrow-multiple",
+        formattedData
+      );
+  
+      const submitEv = `https://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(
+        JSON.stringify(formattedData)
+      )}`;
+  
+      await handleAdminsubmit(formattedData, submitEv);
+  
+      if (response) {
+        swal({
+          title: "ดำเนินการสำเร็จ",
+          text: "กรุณารอผู้ดูแลอนุมัติ!",
+          icon: "success",
+          button: "OK",
+        }).then(() => {
+          navigate(
+            `/qr?data=${encodeURIComponent(JSON.stringify(formattedData))}`
+          );
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      swal({
+        title: "Error",
+        text: "An error occurred while submitting the form.",
+        icon: "error",
+        button: "OK",
+      });
+    }
+  };
+  
   const handleAdminsubmit = async (formattedData, submitEv) => {
     const service = "service_2kcoyx1";
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_k1dp1dm";
-  
+    
     if (userEmails.length === 0) {
       console.error("No recipient email addresses found");
       throw new Error("No recipient email addresses");
     }
-  
+    
     const emailAddresses = userEmails.join(", ");
+    
+    // แปลงรายการอุปกรณ์เป็นสตริง
+    const itemsList = formattedData.items.map(item => 
+      `${item.equipment_name || 'N/A'} (${item.equipment_type || 'N/A'}): ${item.quantity_borrowed || 0} ชิ้น`
+    ).join(', ');
   
+    // สร้างฟังก์ชันช่วยในการจัดการค่า undefined หรือ null
+    const safeString = (value) => value ? String(value) : '';
+    
+
+    const formatDateThai = (dateString) => {
+      if (!dateString) return "No date provided";
+      const date = new Date(dateString);
+      if (isNaN(date)) return "Invalid date";
+      return date.toLocaleDateString("TH", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    };
+
+    
     const templateParams = {
-      formattedData,
+      id:formattedData.id,
       to_email: emailAddresses,
-      submitEv,
+      submitEv: safeString(submitEv),
+      borrower_name: safeString(formattedData.borrower_name),
+      identifier_number: safeString(formattedData.identifier_number),
+      borrow_date: formatDateThai(formattedData.borrow_date),
+      return_date: formatDateThai(formattedData.return_date),
+      items_list: itemsList,
+      contact_phone: safeString(formattedData.contact?.phone),
+      contact_email: safeString(formattedData.contact?.email),
+      options: safeString(formattedData.options),
     };
   
-    console.log("Template Params:", templateParams);
+    // เพิ่มข้อมูลสำรองเฉพาะเมื่อมีค่า
+    if (formattedData.contact?.backup_phone) {
+      templateParams.backup_phone = safeString(formattedData.contact.backup_phone);
+    }
+    if (formattedData.contact?.backup_email) {
+      templateParams.backup_email = safeString(formattedData.contact.backup_email);
+    }
+  
+    console.log("Template Params:", templateParams);  // เพิ่ม log เพื่อตรวจสอบข้อมูล
   
     try {
       const result = await emailjs.send(
@@ -214,16 +332,15 @@ const translateOptionToThai = (option) => {
         templateParams,
         publicK
       );
-      console.log("EmailJS result:", result);
+      console.log("EmailJS result:", result);  // เพิ่ม log เพื่อตรวจสอบผลลัพธ์
       setApprovalStatus(result.text === "OK" ? "success" : "failure");
       return Promise.resolve();
     } catch (error) {
-      console.log("EmailJS error:", error.text);
+      console.error("EmailJS error:", error);  // เปลี่ยนเป็น console.error
       setApprovalStatus("failure");
       return Promise.reject(error);
     }
   };
-
 
   function renderOrganize() {
     switch (option) {
@@ -340,7 +457,6 @@ const translateOptionToThai = (option) => {
   useEffect(() => {
     if (form.formState.errors) {
       console.log(form.formState.errors);
-      console.log(Ename);
     }
   }, [form.formState.errors]);
   return (
@@ -349,43 +465,43 @@ const translateOptionToThai = (option) => {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="100vh" // Changed height to minHeight for responsiveness
+        minHeight="100vh"
       >
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          style={{ width: "100%", maxWidth: "600px", padding: "0 10px" }} // Adjusted form width and added padding
+          style={{ width: "100%", maxWidth: "600px", padding: "0 10px" }}
         >
           <Box
             display="flex"
             flexDirection="column"
             alignItems="center"
             width="100%"
-            gap="1rem" // Changed sx gap to shorthand
+            gap="1rem"
           >
             <Box
-              display={"flex"}
-              flexDirection={{ xs: "column", sm: "row" }} // Flex direction changes on small screens
-              gap={{ xs: 1, sm: 1 }} // No gap on small screens, 1rem gap on larger screens
-              width={"100%"}
+              width="95%"
+              bgcolor="#f1f5f9"
+              sx={{ padding: 2, borderRadius: 1, marginBottom: 2 }}
             >
-              <MuiInput
-                control={form.control}
-                name={"equip_name"}
-                label={"ชื่ออุปกรณ์"}
-                fullWidth
-                required={true}
-                disabled={true}
-              />
-              <MuiInput
-                control={form.control}
-                name="quantity_borrowed"
-                type="number"
-                label="จำนวน"
-                fullWidth
-                required={true}
-                disabled={true}
-              />
+              <Typography variant="h6" gutterBottom>
+                รายการอุปกรณ์ที่ต้องการยืม
+              </Typography>
+              <Divider sx={{ my: 1 }} />
+              <List disablePadding>
+                {selectedItems.map((item, index) => (
+                  <ListItem key={index} disableGutters>
+                    <ListItemText
+                      primary={item.equipment_name}
+                      secondary={`ประเภท: ${item.equipment_type}`}
+                    />
+                    <ListItemText
+                      secondary={`จำนวน: ${item.desired_quantity}`}
+                    />
+                  </ListItem>
+                ))}
+              </List>
             </Box>
+
             <MuiDateRangePicker
               control={form.control}
               name={"duration"}

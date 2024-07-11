@@ -32,6 +32,16 @@ const Submit = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  const closeOrNavigateBack = () => {
+    if (window.opener && !window.opener.closed) {
+      window.close(); 
+      console.log(window.opener);
+    } else {
+      navigate(-1); 
+      console.log("mobile");
+    }
+  };
+
   const sendEmail = async (templateParams) => {
     try {
       const result = await emailjs.send(
@@ -80,8 +90,10 @@ const Submit = () => {
         icon: "error",
         confirmButtonText: "ตกลง",
       });
+      closeOrNavigateBack();
       return;
     }
+    
     const { isConfirmed } = await Swal.fire({
       title: "ต้องการดำเนินการหรือไม่?",
       text: "อนุมัติการยืม",
@@ -93,27 +105,33 @@ const Submit = () => {
       cancelButtonText: "ยกเลิก",
     });
 
-    const reqBody = {
-      quantity_data: borrowData.borrowData.quantity_data,
-      quantity_borrowed: borrowData.borrowData.quantity_borrowed,
-    };
-
     if (isConfirmed) {
       setLoading(true);
+      
       try {
-        const response = await axios.put(
-          `https://back-end-finals-project-vibo.onrender.com/api/Borrowed/adminsubmit/${borrowData.borrowData.equipment_name}/${borrowData.borrowData.id}`,
-          reqBody
+        // ส่ง request สำหรับทุกรายการที่ยืม
+        const requests = borrowData.borrowData.items.map(item => 
+          axios.put(
+            `https://back-end-finals-project-vibo.onrender.com/api/Borrowed/adminsubmit/${item.equipment_name}/${borrowData.borrowData.id}`,
+            {
+              quantity_data: item.quantity_data,
+              quantity_borrowed: item.quantity_borrowed,
+            }
+          )
         );
-        console.log(response);
+
+        const responses = await Promise.all(requests);
+        console.log(responses);
 
         const dataToEncode = updatedData || borrowData.borrowData;
         const encodedData = encodeURIComponent(JSON.stringify(dataToEncode));
 
-        // Send email
+        // ส่งอีเมลแจ้งอนุมัติ
         await sendEmail({
           to: borrowData.borrowData.contact.email,
-          equipment_name: borrowData.borrowData.equipment_name,
+          equipment_list: borrowData.borrowData.items.map(item => 
+            `${item.equipment_name} (${item.quantity_borrowed} ชิ้น)`
+          ).join(', '),
           status: "อนุมัติ",
           Approve: adminUser,
           useSubmit: `https://pimcantake.netlify.app/qr?data=${encodedData}`,
@@ -126,82 +144,86 @@ const Submit = () => {
           icon: "success",
           confirmButtonText: "ตกลง",
         });
+        closeOrNavigateBack();
       } catch (error) {
-        const dataToEncode = updatedData || borrowData.borrowData;
-        const encodedData = encodeURIComponent(JSON.stringify(dataToEncode));
         console.error("API call failed:", error);
-        handleDelete(borrowData.borrowData.id);
-        // Send email
-        await sendEmail({
-          to: borrowData.borrowData.contact.email,
-          equipment_name: borrowData.borrowData.equipment_name,
-          status: "ไม่ถูกอนุมัติ",
-          Approve: adminUser,
-          useSubmit: `https://pimcantake.netlify.app/qr?data=${encodedData}`,
-          cellNum: borrowData.user.cellNum,
-        });
-        await Swal.fire({
-          title: "ดำเนินการไม่สำเร็จ!",
-          text: "อุปกรณ์ไม่เพียงพอ",
+        
+        const { isConfirmed } = await Swal.fire({
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถอนุมัติการยืมได้ คุณต้องการลบข้อมูลการยืมนี้หรือไม่?",
           icon: "error",
-          confirmButtonText: "ตกลง",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "ลบข้อมูล",
+          cancelButtonText: "เก็บข้อมูลไว้",
         });
+
+        if (isConfirmed) {
+          await handleReject();
+        }
       } finally {
         setLoading(false);
-        closePage();
       }
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleReject = async () => {
+    try {
+      // ลบข้อมูลการยืม
+      await axios.delete(`https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${borrowData.borrowData.id}`);
+
+      const dataToEncode = updatedData || borrowData.borrowData;
+      const encodedData = encodeURIComponent(JSON.stringify(dataToEncode));
+      
+      // ส่งอีเมลแจ้งไม่อนุมัติ
+      await sendEmail({
+        to: borrowData.borrowData.contact.email,
+        equipment_list: borrowData.borrowData.items.map(item => 
+          `${item.equipment_name} (${item.quantity_borrowed} ชิ้น)`
+        ).join(', '),
+        status: "ไม่ถูกอนุมัติ",
+        Approve: adminUser,
+        useSubmit: `https://pimcantake.netlify.app/qr?data=${encodedData}`,
+        cellNum: borrowData.user.cellNum,
+      });
+
+      await Swal.fire({
+        title: "ดำเนินการสำเร็จ!",
+        text: "ไม่อนุมัติการยืมและลบข้อมูลเรียบร้อยแล้ว",
+        icon: "success",
+        confirmButtonText: "ตกลง",
+      });
+      closeOrNavigateBack();
+    } catch (error) {
+      console.error("Error rejecting and deleting loan:", error);
+      await Swal.fire({
+        title: "ดำเนินการไม่สำเร็จ!",
+        text: "เกิดข้อผิดพลาดในการไม่อนุมัติและลบข้อมูล",
+        icon: "error",
+        confirmButtonText: "ตกลง",
+      });
+    }
+  };
+
+  const handleCancel = async () => {
     const { isConfirmed } = await Swal.fire({
-      title: "ต้องการดำเนินการหรือไม่?",
-      text: "ลบข้อมูล",
+      title: "ยืนยันการไม่อนุมัติ",
+      text: "คุณต้องการไม่อนุมัติการยืมและลบข้อมูลใช่หรือไม่?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "ตกลง",
-      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "ใช่, ไม่อนุมัติ",
+      cancelButtonText: "ยกเลิก"
     });
+
     if (isConfirmed) {
-      try {
-        await axios.delete(
-          `https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${id}`
-        );
-        fetchDataUpdateStatus();
-        await Swal.fire({
-          title: "ดำเนินการสำเร็จ!",
-          text: "ลบข้อมูล",
-          icon: "success",
-          confirmButtonText: "ตกลง",
-        });
-      } catch (error) {
-        console.error("Error deleting data:", error);
-        await Swal.fire({
-          title: "ดำเนินการไม่สำเร็จ!",
-          text:
-            "ไม่สามารถลบข้อมูลมูลได้: " +
-            (error.response?.data?.message || error.message),
-          icon: "error",
-          confirmButtonText: "ตกลง",
-        });
-      }
+      setLoading(true);
+      await handleReject();
+      setLoading(false);
+      closeOrNavigateBack();
     }
-  };
-
-  const handleCancel = () => {
-    Swal.fire({
-      title: "ดำเนินการสำเร็จ!",
-      text: "ไม่อนุมัติการยืม",
-      icon: "success",
-      confirmButtonText: "ตกลง",
-    });
-    closePage();
-  };
-
-  const closePage = () => {
-    window.close();
   };
 
   return (
@@ -211,11 +233,17 @@ const Submit = () => {
         <p className="submit-text">
           คุณต้องการยืนยันการอนุมัติการยืมอุปกรณ์หรือไม่
         </p>
-        <p  className="submit-text"> 
-          ผู้ยืม :{borrowData.borrowData.borrower_name} อุปกรณ์ :
-          {borrowData.borrowData.equipment_name} จำนวน :
-          {borrowData.borrowData.quantity_data} หรือไม่?
-        </p>
+        <strong className="submit-text">
+          ผู้ยืม :{borrowData.borrowData.borrower_name}
+        </strong>
+        {borrowData.borrowData.items.map((item, index) => (
+          <div key={index}>
+            <p className="submit-text">
+              <strong>อุปกรณ์ :{item.equipment_name} |</strong>
+              <strong>| จำนวน :{item.quantity_borrowed} หรือไม่?</strong>
+            </p>
+          </div>
+        ))}
         <div className="submit-buttons">
           <Button
             variant="contained"
@@ -231,7 +259,7 @@ const Submit = () => {
             disabled={loading}
             className="submit-btn cancel-btn"
           >
-            ยกเลิก
+            ไม่อนุมัติ
           </Button>
         </div>
       </div>

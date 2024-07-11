@@ -23,7 +23,6 @@ const Return = ({ data, response }) => {
         const isBorrowStatus = matchingRow.loan_status == "ยืม";
         setContainerClass(isBorrowStatus ? "return-container" : "return-container red-theme");
 
-        // Check if status has changed
         if (matchingRow.loan_status !== currentStatus) {
           setCurrentStatus(matchingRow.loan_status);
           Swal.fire({
@@ -35,7 +34,7 @@ const Return = ({ data, response }) => {
       }
     }
   }, [rows, borrowData.id, currentStatus]);
-
+console.log(rows.find(row => row.id == borrowData.id));
   const fetchDataUpdateStatus = async () => {
     try {
       const response = await axios.get(
@@ -66,7 +65,7 @@ const Return = ({ data, response }) => {
   let displayContent;
 
   try {
-    const matchingRow = rows.find(row => row.id == borrowData.id);
+    const matchingRow = rows.find(row => row.loan_id === borrowData.id);
     const borrowDateToDisplay = matchingRow ? matchingRow.borrow_date : formatDate(borrowData.borrow_date);
     const returnDateToDisplay = matchingRow ? matchingRow.return_date : formatDate(borrowData.return_date);
 
@@ -74,13 +73,19 @@ const Return = ({ data, response }) => {
       <div className={containerClass}>
         <h1 className="return-title">ข้อมูลการยืม</h1>
         <p className="return-text"><strong>ID:</strong> {borrowData.id}</p>
-        <p className="return-text"><strong>อุปกรณ์:</strong> {borrowData.equipment_name}</p>
         <p className="return-text"><strong>ชื่อ:</strong> {borrowData.borrower_name}</p>
         <p className="return-text"><strong>รหัสประจำตัว:</strong> {borrowData.identifier_number}</p>
         <p className="return-text"><strong>สถานะ:</strong> {currentStatus}</p>
         <p className="return-text"><strong>วันที่ยืม:</strong> {borrowDateToDisplay}</p>
         <p className="return-text"><strong>วันที่คืน:</strong> {returnDateToDisplay}</p>
-        <p className="return-text"><strong>จำนวน:</strong> {borrowData.quantity_borrowed}</p>
+        <h2 className="return-subtitle">รายการอุปกรณ์ที่ยืม</h2>
+        {borrowData.items.map((item, index) => (
+          <div key={index} className="item-details">
+            <p className="return-text"><strong>อุปกรณ์:</strong> {item.equipment_name}</p>
+            <p className="return-text"><strong>ประเภท:</strong> {item.equipment_type}</p>
+            <p className="return-text"><strong>จำนวน:</strong> {item.quantity_borrowed}</p>
+          </div>
+        ))}
       </div>
     );
   } catch (error) {

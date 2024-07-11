@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const MyTable = ({ rows, isMobile }) => {
+const MyTable = ({ rows, isMobile,onUpdateQuantity }) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const [selectedItems, setSelectedItems] = useState([]);
@@ -30,23 +30,25 @@ const MyTable = ({ rows, isMobile }) => {
     }
   };
 
-  const handleIncrement = (equipmentName) => {
-    setSelectedItems(selectedItems.map(item => {
-      if (item.equipment_name === equipmentName && item.desired_quantity < item.max_quantity_in_stock) {
-        return { ...item, desired_quantity: item.desired_quantity + 1 };
-      }
-      return item;
-    }));
-  };
-  
-  const handleDecrement = (equipmentName) => {
-    setSelectedItems(selectedItems.map(item => {
-      if (item.equipment_name === equipmentName && item.desired_quantity > 0) {
-        return { ...item, desired_quantity: item.desired_quantity - 1 };
-      }
-      return item;
-    }));
-  };
+ const handleIncrement = (equipmentName) => {
+  setSelectedItems(selectedItems.map(item => {
+    if (item.equipment_name === equipmentName && item.desired_quantity < item.max_quantity_in_stock) {
+      onUpdateQuantity(equipmentName, 1);
+      return { ...item, desired_quantity: item.desired_quantity + 1 };
+    }
+    return item;
+  }));
+};
+
+const handleDecrement = (equipmentName) => {
+  setSelectedItems(selectedItems.map(item => {
+    if (item.equipment_name === equipmentName && item.desired_quantity > 0) {
+      onUpdateQuantity(equipmentName, -1);
+      return { ...item, desired_quantity: item.desired_quantity - 1 };
+    }
+    return item;
+  }));
+};
 
   const handleBorrowSelected = () => {
     const itemsToBorrow = selectedItems.filter(item => item.desired_quantity > 0);
