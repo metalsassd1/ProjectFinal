@@ -296,6 +296,7 @@ const MyTable = () => {
             ))}
           </TableBody>
         </Table>
+      </TableContainer>
         <TablePagination
           rowsPerPageOptions={[10, 25, 50]}
           component="div"
@@ -305,7 +306,6 @@ const MyTable = () => {
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      </TableContainer>
       {selectedIds.length > 0 && (
         <Button
           variant="contained"

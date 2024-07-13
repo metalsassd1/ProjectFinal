@@ -14,16 +14,28 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Alert,
+  AlertTitle,
+  Grid,
+  TablePagination,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import SearchIcon from "@mui/icons-material/Search";
+import InfoIcon from "@mui/icons-material/Info";
 
 const TableHistory = () => {
-  const [rows, setRows] = useState([]);
+  const [allRows, setAllRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [error, setError] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -34,17 +46,19 @@ const TableHistory = () => {
       const response = await axios.get(
         "https://back-end-finals-project-vibo.onrender.com/api/home/management"
       );
-      const formattedData = response.data.map((item) => ({
+      const formattedData = response.data.map((item, index) => ({
         ...item,
         borrow_date: formatDate(item.borrow_date),
         return_date: formatDate(item.return_date),
         identifier_number: item.identifier_number
           ? item.identifier_number.trim()
           : "",
+        uniqueId: `${item.id}-${index}`, // Add a unique identifier
       }));
-      setRows(formattedData);
+      setAllRows(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
+      setError("ไม่สามารถดึงข้อมูลได้ กรุณาลองใหม่อีกครั้ง");
     }
   };
 
@@ -60,17 +74,36 @@ const TableHistory = () => {
   };
 
   const filterData = () => {
-    const filtered = rows.filter(
+    setError("");
+    setIsSearching(true);
+
+    if (!searchTerm.trim()) {
+      setError("กรุณากรอกข้อมูลเพื่อค้นหา");
+      setFilteredRows([]);
+      setShowResults(false);
+      setIsSearching(false);
+      return;
+    }
+
+    const searchTermLower = searchTerm.toLowerCase().trim();
+    const filtered = allRows.filter(
       (item) =>
         (item.identifier_number &&
-          item.identifier_number
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())) ||
+          item.identifier_number.toLowerCase().includes(searchTermLower)) ||
         (item.borrower_name &&
-          item.borrower_name.toLowerCase().includes(searchTerm.toLowerCase()))
+          item.borrower_name.toLowerCase().includes(searchTermLower)) ||
+        (item.equipment_name &&
+          item.equipment_name.toLowerCase().includes(searchTermLower))
     );
+
+    if (filtered.length === 0) {
+      setError("ไม่พบข้อมูลที่ตรงกับคำค้นหา");
+    }
+
     setFilteredRows(filtered);
     setShowResults(true);
+    setIsSearching(false);
+    setPage(0); // Reset to first page when filtering
   };
 
   const getStatusColor = (loan_status) => {
@@ -84,69 +117,112 @@ const TableHistory = () => {
     }
   };
 
-  const renderMobileView = () => (
-    <Box>
-      {filteredRows.map((row) => (
-        <Paper key={row.id} elevation={2} sx={{ mb: 2, p: 2 }}>
-          <Typography variant="subtitle1">
-            <strong>ID:</strong> {row.id}
-          </Typography>
-          <Typography variant="body2">
-            <strong>ชื่ออุปกรณ์:</strong> {row.equipment_name}
-          </Typography>
-          <Typography variant="body2">
-            <strong>ผู้ยืม:</strong> {row.borrower_name}
-          </Typography>
-          <Typography variant="body2">
-            <strong>เลขประจำตัว:</strong> {row.identifier_number || "N/A"}
-          </Typography>
-          <Typography variant="body2">
-            <strong>วันที่ยืม:</strong> {row.borrow_date}
-          </Typography>
-          <Typography variant="body2">
-            <strong>วันที่คืน:</strong> {row.return_date}
-          </Typography>
-          <Box sx={{ mt: 1, p: 1, ...getStatusColor(row.loan_status) }}>
-            <Typography variant="body2">
-              <strong>สถานะ:</strong> {row.loan_status || ""}
-            </Typography>
-          </Box>
-        </Paper>
-      ))}
-    </Box>
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  // Get current rows for pagination
+  const currentRows = filteredRows.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  );
+
+  const renderTableHeader = () => (
+    <TableHead>
+      <TableRow style={{ backgroundColor: "#4CAF50" }}>
+        <TableCell style={{ color: "#fff" }}>ID</TableCell>
+        <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
+        <TableCell style={{ color: "#fff" }}>ผู้ยืม</TableCell>
+        <TableCell style={{ color: "#fff" }}>เลขประจำตัว</TableCell>
+        <TableCell style={{ color: "#fff" }}>วันที่ยืม</TableCell>
+        <TableCell style={{ color: "#fff" }}>วันที่คืน</TableCell>
+        <TableCell style={{ color: "#fff" }}>สถานะ</TableCell>
+      </TableRow>
+    </TableHead>
   );
 
   const renderDesktopView = () => (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow style={{ backgroundColor: "#4CAF50" }}>
-            <TableCell style={{ color: "#fff" }}>ID</TableCell>
-            <TableCell style={{ color: "#fff" }}>ชื่ออุปกรณ์</TableCell>
-            <TableCell style={{ color: "#fff" }}>ผู้ยืม</TableCell>
-            <TableCell style={{ color: "#fff" }}>เลขประจำตัว</TableCell>
-            <TableCell style={{ color: "#fff" }}>วันที่ยืม</TableCell>
-            <TableCell style={{ color: "#fff" }}>วันที่คืน</TableCell>
-            <TableCell style={{ color: "#fff" }}>สถานะ</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {filteredRows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.equipment_name}</TableCell>
-              <TableCell>{row.borrower_name}</TableCell>
-              <TableCell>{row.identifier_number || "N/A"}</TableCell>
-              <TableCell>{row.borrow_date}</TableCell>
-              <TableCell>{row.return_date}</TableCell>
-              <TableCell style={getStatusColor(row.loan_status)}>
-                {row.loan_status || ""}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <TableContainer component={Paper}>
+        <Table>
+          {renderTableHeader()}
+          <TableBody>
+            {currentRows.map((row) => (
+              <TableRow key={row.uniqueId}>
+                <TableCell>{row.id}</TableCell>
+                <TableCell>{row.equipment_name}</TableCell>
+                <TableCell>{row.borrower_name}</TableCell>
+                <TableCell>{row.identifier_number || "N/A"}</TableCell>
+                <TableCell>{row.borrow_date}</TableCell>
+                <TableCell>{row.return_date}</TableCell>
+                <TableCell style={getStatusColor(row.loan_status)}>
+                  {row.loan_status || ""}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 50]}
+        component="div"
+        count={filteredRows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </>
+  );
+
+  const renderMobileView = () => (
+    <>
+      <Grid container spacing={2}>
+        {currentRows.map((row) => (
+          <Grid item xs={12} key={row.uniqueId}>
+            <Paper elevation={2} sx={{ p: 2 }}>
+              <Typography variant="subtitle1">
+                <strong>ID:</strong> {row.id}
+              </Typography>
+              <Typography variant="body2">
+                <strong>ชื่ออุปกรณ์:</strong> {row.equipment_name}
+              </Typography>
+              <Typography variant="body2">
+                <strong>ผู้ยืม:</strong> {row.borrower_name}
+              </Typography>
+              <Typography variant="body2">
+                <strong>เลขประจำตัว:</strong> {row.identifier_number || "N/A"}
+              </Typography>
+              <Typography variant="body2">
+                <strong>วันที่ยืม:</strong> {row.borrow_date}
+              </Typography>
+              <Typography variant="body2">
+                <strong>วันที่คืน:</strong> {row.return_date}
+              </Typography>
+              <Box sx={{ mt: 1, p: 1, ...getStatusColor(row.loan_status) }}>
+                <Typography variant="body2">
+                  <strong>สถานะ:</strong> {row.loan_status || ""}
+                </Typography>
+              </Box>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+      <TablePagination
+        rowsPerPageOptions={[10, 25, 50]}
+        component="div"
+        count={filteredRows.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </>
   );
 
   return (
@@ -156,31 +232,61 @@ const TableHistory = () => {
         sx={{
           mb: 2,
           display: "flex",
-          gap: 2,
           flexDirection: isMobile ? "column" : "row",
+          gap: 2,
+          alignItems: "center",
         }}
       >
         <TextField
           fullWidth
-          label="ค้นหาด้วยเลขประจำตัวหรือชื่อผู้ยืม"
+          label="ค้นหาด้วยเลขประจำตัว, ชื่อผู้ยืม หรือชื่ออุปกรณ์"
           variant="outlined"
           size="small"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           InputLabelProps={{ shrink: true }}
+          InputProps={{
+            endAdornment: <SearchIcon color="action" />,
+          }}
         />
-        <Button variant="contained" color="primary" onClick={filterData}>
-          ค้นหา
-        </Button>
+        <Box
+          sx={{ display: "flex", gap: 2, width: isMobile ? "100%" : "auto" }}
+        >
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => navigate("/Mainpage")}
+            fullWidth={isMobile}
+          >
+            กลับไปยังหน้าหลัก
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={filterData}
+            fullWidth={isMobile}
+            disabled={!searchTerm.trim() || isSearching}
+            startIcon={<SearchIcon />}
+          >
+            {isSearching ? "กำลังค้นหา..." : "ค้นหา"}
+          </Button>
+        </Box>
       </Box>
 
-      {showResults && (
-        <>
+      {error && (
+        <Alert severity="info" sx={{ mb: 2 }} icon={<InfoIcon />}>
+          <AlertTitle>ผลการค้นหา</AlertTitle>
+          {error}
+        </Alert>
+      )}
+
+      {showResults && filteredRows.length > 0 && (
+        <Box sx={{ mb: 2 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>
             ผลการค้นหา
           </Typography>
           {isMobile ? renderMobileView() : renderDesktopView()}
-        </>
+        </Box>
       )}
     </Box>
   );

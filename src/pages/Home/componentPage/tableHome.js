@@ -13,7 +13,7 @@ import {
   Button
 } from "@mui/material";
 import Swal from "sweetalert2";
-import "./TableStyles.css"; // Ensure this import is correct
+import "./TableStyles.css";
 
 const MyTable = ({ searchTerms }) => {
   const [rows, setRows] = useState([]);
@@ -60,6 +60,7 @@ const MyTable = ({ searchTerms }) => {
   }, []);
 
   useEffect(() => {
+    console.log("searchTerms changed:", searchTerms);
     filterData();
   }, [rows, searchTerms]);
 
@@ -68,11 +69,13 @@ const MyTable = ({ searchTerms }) => {
       const response = await axios.get(
         "https://back-end-finals-project-vibo.onrender.com/api/home/management"
       );
-      const formattedData = response.data.map((item) => ({
+      const formattedData = response.data.map((item, index) => ({
         ...item,
         borrow_date: formatDate(item.borrow_date),
         return_date: formatDate(item.return_date),
+        uniqueId: item.id ? item.id : `generated-${index}`
       }));
+      console.log("Fetched data:", formattedData);
       setRows(formattedData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -80,25 +83,16 @@ const MyTable = ({ searchTerms }) => {
   };
 
   const filterData = () => {
+    console.log("Filtering data with searchTerms:", searchTerms);
     const filtered = rows.filter(
       (item) =>
-        item.id
-          .toString()
-          .toLowerCase()
-          .includes(searchTerms.id.toLowerCase()) &&
-        item.equipment_name
-          .toLowerCase()
-          .includes(searchTerms.equipment_name.toLowerCase()) &&
-        item.equipment_type
-          .toLowerCase()
-          .includes(searchTerms.equipment_type.toLowerCase()) &&
-        (item.borrower_name || "")
-          .toLowerCase()
-          .includes(searchTerms.borrower_name.toLowerCase()) &&
-        item.borrow_date
-          .toLowerCase()
-          .includes(searchTerms.borrow_date.toLowerCase())
+        item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
+        item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
+        item.equipment_type.toLowerCase().includes(searchTerms.equipment_type.toLowerCase()) &&
+        (item.borrower_name || "").toLowerCase().includes(searchTerms.borrower_name.toLowerCase()) &&
+        item.borrow_date.toLowerCase().includes(searchTerms.borrow_date.toLowerCase())
     );
+    console.log("Filtered rows:", filtered);
     setFilteredRows(filtered);
   };
 
@@ -169,23 +163,27 @@ const MyTable = ({ searchTerms }) => {
     }
   };
 
-
   const handleChangePage = (event, newPage) => {
+    console.log("Page changed to:", newPage);
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    console.log("Rows per page changed to:", newRowsPerPage);
+    setRowsPerPage(newRowsPerPage);
     setPage(0);
   };
 
-  // Get current rows
+  // Get current rows for pagination
   const currentRows = filteredRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
+  console.log("Current rows:", currentRows);
 
   return (
+    <>
     <TableContainer component={Paper}>
       <h2
         style={{
@@ -226,17 +224,18 @@ const MyTable = ({ searchTerms }) => {
             <TableCell style={{ color: "#ffffff" }}>วันที่ยืม</TableCell>
             <TableCell style={{ color: "#ffffff" }}>วันที่คืน</TableCell>
             <TableCell style={{ color: "#ffffff" }}>สถานะ</TableCell>
-            <TableCell></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {currentRows.map((row) => {
+          {currentRows.map((row, index) => {
             const isApproved = row.loan_status === "ยืม";
             const totalStock =
               row.total_stock + (isApproved ? row.quantity_borrowed : 0);
 
+            const uniqueKey = `${row.uniqueId}-${index}`;
+
             return (
-              <TableRow key={row.id}>
+              <TableRow key={uniqueKey}>
                  <TableCell padding="checkbox">
                   <Checkbox
                     checked={selectedRows.some(selectedRow => selectedRow.id === row.id)}
@@ -262,8 +261,9 @@ const MyTable = ({ searchTerms }) => {
           })}
         </TableBody>
       </Table>
+    </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10]}
+        rowsPerPageOptions={[10, 25, 50]}
         component="div"
         count={filteredRows.length}
         rowsPerPage={rowsPerPage}
@@ -281,7 +281,7 @@ const MyTable = ({ searchTerms }) => {
           คืนอุปกรณ์ที่เลือก ({selectedRows.length})
         </Button>
       )}
-    </TableContainer>
+    </>
   );
 };
 
