@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import emailjs from "emailjs-com";
-import { TextField, Button, Box, Container, Grid } from "@mui/material";
+import { TextField, Button, Box, Container, Grid, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import Swal from "sweetalert2";
 import "./Css.css";
 import axios from "axios";
@@ -89,10 +89,8 @@ const ContactForm = () => {
           confirmButtonText: "ตกลง",
           confirmButtonColor: "#4CAF50",
         }).then(() => {
-          // Navigate to the previous page after the user clicks "ตกลง"
           navigate(-1); 
         });
-        // Reset form fields after successful submission
         setName("");
         setSenderID("");
         setStatus("");
@@ -145,15 +143,20 @@ const ContactForm = () => {
               margin="normal"
               required
             />
-            <TextField
-              label="สถานะ"
-              name="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              fullWidth
-              margin="normal"
-              required
-            />
+            <FormControl fullWidth margin="normal" required>
+              <InputLabel id="status-label">สถานะ</InputLabel>
+              <Select
+                labelId="status-label"
+                id="status"
+                value={status}
+                label="สถานะ"
+                onChange={(e) => setStatus(e.target.value)}
+              >
+                <MenuItem value="นักศึกษา">นักศึกษา</MenuItem>
+                <MenuItem value="บุคลากรภายใน">บุคลากรภายใน</MenuItem>
+                <MenuItem value="บุคลากรภายนอก">บุคลากรภายนอก</MenuItem>
+              </Select>
+            </FormControl>
             <TextField
               label="ข้อความ"
               name="message"
