@@ -44,14 +44,39 @@ const Submit = () => {
 
   const sendEmail = async (templateParams) => {
     try {
+      const formattedParams = {
+        to: templateParams.to,
+        status: templateParams.status,
+        Approve: templateParams.Approve,
+        equipment_list: templateParams.equipment_list,
+        cellNum: templateParams.cellNum,
+        approval_message: '',
+        check_status_link: '',
+        check_status_text: ''
+      };
+  
+      if (templateParams.status == "อนุมัติ") {
+        formattedParams.approval_message = "สามารถรับอุปกรณ์ได้ที่ห้องสำนักกิจการนักศึกษา";
+        formattedParams.check_status_link = templateParams.useSubmit;
+        formattedParams.check_status_text = "ตรวจสอบสถานะ";
+      } else {
+        formattedParams.approval_message = "คำขอของคุณไม่ได้รับการอนุมัติ";
+        formattedParams.check_status_link = "#";
+        formattedParams.check_status_text = "";
+      }
+  
+      console.log("Sending email with params:", formattedParams);
+  
       const result = await emailjs.send(
         "service_ql4evuj",
         "template_7vnhc6g",
-        templateParams
+        formattedParams
       );
       console.log("Email sent successfully:", result.text);
+      return result;
     } catch (error) {
       console.error("Failed to send email:", error);
+      throw error;
     }
   };
 
@@ -144,7 +169,7 @@ const Submit = () => {
           icon: "success",
           confirmButtonText: "ตกลง",
         });
-        closeOrNavigateBack();
+        // closeOrNavigateBack();
       } catch (error) {
         console.error("API call failed:", error);
         
@@ -172,9 +197,6 @@ const Submit = () => {
     try {
       // ลบข้อมูลการยืม
       await axios.delete(`https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${borrowData.borrowData.id}`);
-
-      const dataToEncode = updatedData || borrowData.borrowData;
-      const encodedData = encodeURIComponent(JSON.stringify(dataToEncode));
       
       // ส่งอีเมลแจ้งไม่อนุมัติ
       await sendEmail({
@@ -182,9 +204,8 @@ const Submit = () => {
         equipment_list: borrowData.borrowData.items.map(item => 
           `${item.equipment_name} (${item.quantity_borrowed} ชิ้น)`
         ).join(', '),
-        status: "ไม่ถูกอนุมัติ",
+        status: "ไม่อนุมัติ",
         Approve: adminUser,
-        useSubmit: `https://pimcantake.netlify.app/qr?data=${encodedData}`,
         cellNum: borrowData.user.cellNum,
       });
 
