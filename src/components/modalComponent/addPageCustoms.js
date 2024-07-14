@@ -147,8 +147,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
             <TextField
               label="ชื่อ-นามสกุล"
               variant="outlined"
-              name="field1"
-              value={formData.field1}
+              name="field3"
+              value={formData.field3}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
@@ -156,8 +156,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
             <TextField
               label="ชื่อผู้ใช้"
               variant="outlined"
-              name="field2"
-              value={formData.field2}
+              name="field1"
+              value={formData.field1}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
@@ -165,8 +165,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
             <TextField
               label="รหัสผ่าน"
               variant="outlined"
-              name="field3"
-              value={formData.field3}
+              name="field2"
+              value={formData.field2}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
