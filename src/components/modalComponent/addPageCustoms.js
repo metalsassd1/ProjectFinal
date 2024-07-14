@@ -96,31 +96,29 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
     };
 
     try {
-      const response = await axios.post("https://back-end-finals-project-vibo.onrender.com/api/user/add", data)
-      .then((result) => {
+      const response = await axios.post("https://back-end-finals-project-vibo.onrender.com/api/user/add", data);
       console.log("Data added successfully:", response.data);
-        if (result.isConfirmed) {
-          handleClose();
-          const style = document.createElement('style');
-          style.textContent = swalStyles;
-          document.head.appendChild(style);
-          
-          Swal.fire({
-            title: 'ดำเนินการสำเร็จ!',
-            text: 'เพิ่มข้อมูล',
-            icon: 'success',
-            confirmButtonText: 'ตกลง'
-          })
-          document.head.removeChild(style);
-          resetForm();
-        }
+      
+      handleClose();
+      const style = document.createElement('style');
+      style.textContent = swalStyles;
+      document.head.appendChild(style);
+      
+      await Swal.fire({
+        title: 'ดำเนินการสำเร็จ!',
+        text: 'เพิ่มข้อมูล',
+        icon: 'success',
+        confirmButtonText: 'ตกลง'
       });
+      
+      document.head.removeChild(style);
+      resetForm();
     } catch (error) {
       const style = document.createElement('style');
       style.textContent = swalStyles;
       document.head.appendChild(style);
       console.error("Error adding data:", error);
-      Swal.fire({
+      await Swal.fire({
         title: 'ดำเนินการไม่สำเร็จ!',
         text: 'ไม่สามารถเพิ่มข้อมูล ' + (error.response?.data?.message || error.message),
         icon: 'error',
@@ -129,6 +127,7 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
       document.head.removeChild(style);
     }
   };
+
 
   return (
     <Modal
