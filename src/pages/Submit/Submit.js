@@ -169,7 +169,7 @@ const Submit = () => {
           icon: "success",
           confirmButtonText: "ตกลง",
         });
-        // closeOrNavigateBack();
+        closeOrNavigateBack();
       } catch (error) {
         console.error("API call failed:", error);
         
