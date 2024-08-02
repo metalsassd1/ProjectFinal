@@ -81,16 +81,9 @@ const EditModalCentralize = ({ open, handleClose, storeData, label, API }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const quantityField =
-      label === "อุปกรณ์นันทนาการ"
-        ? "Eq_quantity_in_stock"
-        : label === "อุปกรณ์กีฬา"
-        ? "Sp_quantity_in_stock"
-        : "quantity_in_stock";
-
     const DataItem = {
       equipment_name: formData.field1,
-      [quantityField]: formData.field2,
+      quantity_in_stock: formData.field2,
       equipment_type: nameType[0],
       note: formData.field4,
       last_update: formData.field6,
