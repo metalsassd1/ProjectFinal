@@ -39,11 +39,13 @@ const Return = () => {
       const matchingRow = rows.find(row => row.id == qrData.id);
       if (matchingRow && matchingRow.loan_status !== currentStatus) {
         setCurrentStatus(matchingRow.loan_status);
-        Swal.fire({
-          title: 'สถานะถูกอนุมัติ',
-          icon: 'success',
-          confirmButtonText: 'ตกลง'
-        });
+        if (matchingRow.loan_status === "ยืม") {
+          Swal.fire({
+            title: 'สถานะถูกอนุมัติ',
+            icon: 'success',
+            confirmButtonText: 'ตกลง'
+          });
+        }
       }
     }
   }, [rows, qrData, currentStatus, setCurrentStatus]);
