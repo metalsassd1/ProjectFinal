@@ -104,18 +104,10 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
     e.preventDefault();
 
     try {
-      let hashedPassword = formData.password;
-      const salt = await bcrypt.genSalt(10);
-      hashedPassword = await bcrypt.hash(formData.password, salt);
-
-      const updatedData = {
-        ...formData,
-        password: hashedPassword,
-      };
 
       const response = await axios.put(
         `https://back-end-finals-project-vibo.onrender.com/api/user/update/${user.id}`,
-        updatedData,
+        formData,
         {
           headers: {
             "Content-Type": "application/json",

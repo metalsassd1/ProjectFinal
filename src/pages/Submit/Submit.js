@@ -262,7 +262,7 @@ const Submit = () => {
   return (
     <div className="submit-container">
       <div className="submit-card">
-        <h2 className="submit-title">ยืนยันการคืนอุปกรณ์</h2>
+        <h2 className="submit-title">ยืนยันการยืมอุปกรณ์</h2>
         <p className="submit-text">
           คุณต้องการยืนยันการอนุมัติการยืมอุปกรณ์หรือไม่
         </p>
