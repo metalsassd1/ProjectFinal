@@ -15,11 +15,13 @@ import {
   useTheme
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { selectedItemsState, rowsState } from "../../../Recoils/UserRecoil/MainPageRecoil";
 
 const MyTable = ({ rows, isMobile,onUpdateQuantity }) => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useRecoilState(selectedItemsState);
 
   const handleRowClick = (row) => {
     const index = selectedItems.findIndex(item => item.equipment_name === row.equipment_name);

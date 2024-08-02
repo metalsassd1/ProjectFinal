@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -24,28 +24,28 @@ const swalStyles = `
 `;
 
 const CustomEditModal = ({ open, handleClose, loanData, label }) => {
-
-  // Initial state setup with default values from loanData
   const [formData, setFormData] = useState({
-    id:  "",
-    equipment_name:  "",
-    equipment_type:  "",
-    new_quantity_borrowed:  "",
-    borrower_name:  "",
-    borrow_date:  "",
-    return_date:  "",
-    loan_status:  "",
+    id: "",
+    equipment_name: "",
+    equipment_type: "",
+    new_quantity_borrowed: "",
+    borrower_name: "",
+    borrow_date: "",
+    return_date: "",
+    loan_status: "",
   });
 
   const handleDateChange = (newValue, field) => {
     setFormData((prevState) => ({
       ...prevState,
-      [field]: newValue ? dayjs(newValue).format('YYYY-MM-DD') : '',
+      [field]: newValue ? dayjs(newValue).format("DD/MM/YYYY") : "",
     }));
   };
 
   const formatDateValue = (dateValue) => {
-    return dateValue && dayjs(dateValue, 'YYYY-MM-DD').isValid() ? dayjs(dateValue) : null;
+    return dateValue && dayjs(dateValue, "DD/MM/YYYY").isValid()
+      ? dayjs(dateValue, "DD/MM/YYYY")
+      : null;
   };
 
   const handleChangeinput = (e) => {
@@ -55,18 +55,22 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
       [name]: value,
     }));
   };
-  
+
   useEffect(() => {
     if (loanData) {
       setFormData({
-        id: loanData.id || '',
-        equipment_name: loanData.equipment_name || '',
-        equipment_type: loanData.equipment_type || '',
-        new_quantity_borrowed: loanData.quantity_borrowed || '',
-        borrower_name: loanData.borrower_name || '',
-        borrow_date: loanData.borrow_date || '',
-        return_date: loanData.return_date || '',
-        loan_status: loanData.loan_status || '',
+        id: loanData.id || "",
+        equipment_name: loanData.equipment_name || "",
+        equipment_type: loanData.equipment_type || "",
+        new_quantity_borrowed: loanData.quantity_borrowed || "",
+        borrower_name: loanData.borrower_name || "",
+        borrow_date: loanData.borrow_date
+          ? dayjs(loanData.borrow_date).format("DD/MM/YYYY")
+          : "",
+        return_date: loanData.return_date
+          ? dayjs(loanData.return_date).format("DD/MM/YYYY")
+          : "",
+        loan_status: loanData.loan_status || "",
       });
     }
   }, [loanData]);
@@ -75,17 +79,21 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
     e.preventDefault();
     const formattedData = {
       borrower_name: formData.borrower_name,
-      borrow_date: formData.borrow_date ? dayjs.utc(formData.borrow_date).format() : null,
-      return_date: formData.return_date ? dayjs.utc(formData.return_date).format() : null,
+      borrow_date: formData.borrow_date
+        ? dayjs(formData.borrow_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+        : null,
+      return_date: formData.return_date
+        ? dayjs(formData.return_date, "DD/MM/YYYY").format("YYYY-MM-DD")
+        : null,
       loan_status: formData.loan_status,
       items: [
         {
-          item_id: loanData.item_id, // ต้องแน่ใจว่า loanData มี item_id
+          item_id: loanData.item_id,
           equipment_name: formData.equipment_name,
           equipment_type: formData.equipment_type,
-          quantity_borrowed: parseInt(formData.new_quantity_borrowed, 10) // แปลงเป็นตัวเลข
-        }
-      ]
+          quantity_borrowed: parseInt(formData.new_quantity_borrowed, 10),
+        },
+      ],
     };
 
     try {
@@ -94,7 +102,7 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
         formattedData
       );
       console.log(response.data);
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.textContent = swalStyles;
       document.head.appendChild(style);
       await Swal.fire({
@@ -104,11 +112,11 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
         confirmButtonText: "ตกลง",
       });
 
-      handleClose(); // ปิด modal หลังจากผู้ใช้คลิก OK
+      handleClose();
       document.head.removeChild(style);
     } catch (error) {
       console.error("Error updating data:", error);
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.textContent = swalStyles;
       document.head.appendChild(style);
       await Swal.fire({
@@ -173,7 +181,6 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
               value={formData.new_quantity_borrowed}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
-              
             />
             <TextField
               label="ผู้ยืม"
@@ -186,17 +193,19 @@ const CustomEditModal = ({ open, handleClose, loanData, label }) => {
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                label="Borrow Date"
+                label="วันที่ยืม"
                 value={formatDateValue(formData.borrow_date)}
-                onChange={(date) => handleDateChange(date, 'borrow_date')}
+                onChange={(date) => handleDateChange(date, "borrow_date")}
                 renderInput={(params) => <TextField {...params} />}
+                format="DD/MM/YYYY"
                 fullWidth
               />
               <DatePicker
-                label="Return Date"
+                label="วันที่คืน"
                 value={formatDateValue(formData.return_date)}
-                onChange={(date) => handleDateChange(date, 'return_date')}
+                onChange={(date) => handleDateChange(date, "return_date")}
                 renderInput={(params) => <TextField {...params} />}
+                format="DD/MM/YYYY"
                 fullWidth
               />
             </LocalizationProvider>

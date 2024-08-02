@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LabelList } from 'recharts';
+import { useRecoilState } from "recoil";
+import {barChartState} from "../../../Recoils/AdminRecoil/ReportRecoil"
 
 const CustomBarChart = () => {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useRecoilState(barChartState);
 
   useEffect(() => {
     const fetchData = async () => {

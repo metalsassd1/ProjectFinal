@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { MdSportsSoccer } from 'react-icons/md'; // Importing a sports icon
-
+import { MdSportsSoccer } from 'react-icons/md'; 
+import { useRecoilState } from "recoil";
+import {equipmentCountState} from "../../../../Recoils/AdminRecoil/AdminHomeRecoil"
 const RectangleBox3 = () => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useRecoilState(equipmentCountState);
 
   useEffect(() => {
     axios

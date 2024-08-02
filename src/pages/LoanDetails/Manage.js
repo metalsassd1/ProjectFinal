@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
-import TextField from "@mui/material/TextField";
 import TableManage from "./componentPage/tableManage";
-import { Grid } from "@mui/material";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { isSidebarOpenState } from "../../Recoils/AdminRecoil/AdminHomeRecoil";
 
-function Manage(searchTerms) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
+function Manage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useRecoilState(isSidebarOpenState);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
-
-  
 
   return (
     <div
@@ -40,13 +37,18 @@ function Manage(searchTerms) {
             transition: "margin 0.3s",
           }}
         >
-        <h1>จัดการข้อมูลการยืม</h1>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 16 }}>
-          
+          <h1>จัดการข้อมูลการยืม</h1>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 10,
+              marginBottom: 16,
+            }}
+          ></div>
+
+          <TableManage isOpen={isSidebarOpen} />
         </div>
-        
-        <TableManage isOpen={isSidebarOpen} searchTerms={searchTerms} />
-      </div>
       </div>
     </div>
   );

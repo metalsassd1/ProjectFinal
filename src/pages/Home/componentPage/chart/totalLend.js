@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { MdOutlineEditCalendar } from "react-icons/md";
+import { useRecoilState } from "recoil";
+import {totalLendState} from "../../../../Recoils/AdminRecoil/AdminHomeRecoil"
 
 const RectangleBox1 = () => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useRecoilState(totalLendState);
   useEffect(() => {
     axios
       .get("https://back-end-finals-project-vibo.onrender.com/api/home/totalLend")

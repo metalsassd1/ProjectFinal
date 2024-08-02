@@ -34,10 +34,10 @@ const Submit = () => {
 
   const closeOrNavigateBack = () => {
     if (window.opener && !window.opener.closed) {
-      window.close(); 
+      window.close();
       console.log(window.opener);
     } else {
-      navigate(-1); 
+      navigate(-1);
       console.log("mobile");
     }
   };
@@ -50,13 +50,14 @@ const Submit = () => {
         Approve: templateParams.Approve,
         equipment_list: templateParams.equipment_list,
         cellNum: templateParams.cellNum,
-        approval_message: '',
-        check_status_link: '',
-        check_status_text: ''
+        approval_message: "",
+        check_status_link: "",
+        check_status_text: "",
       };
-  
+
       if (templateParams.status == "อนุมัติ") {
-        formattedParams.approval_message = "สามารถรับอุปกรณ์ได้ที่ห้องสำนักกิจการนักศึกษา";
+        formattedParams.approval_message =
+          "สามารถรับอุปกรณ์ได้ที่ห้องสำนักกิจการนักศึกษา";
         formattedParams.check_status_link = templateParams.useSubmit;
         formattedParams.check_status_text = "ตรวจสอบสถานะ";
       } else {
@@ -64,9 +65,9 @@ const Submit = () => {
         formattedParams.check_status_link = "#";
         formattedParams.check_status_text = "";
       }
-  
+
       console.log("Sending email with params:", formattedParams);
-  
+
       const result = await emailjs.send(
         "service_ql4evuj",
         "template_7vnhc6g",
@@ -91,8 +92,10 @@ const Submit = () => {
         return_date: formatDate(response.data.return_date),
       };
       setUpdatedData(formattedData);
+      return formattedData;
     } catch (error) {
       console.error("Error fetching data:", error);
+      return null;
     }
   };
 
@@ -108,34 +111,36 @@ const Submit = () => {
   };
 
   const handleConfirm = async () => {
-    if (updatedData && updatedData.loan_status === "ยืม") {
-      await Swal.fire({
-        title: "ไม่สามารถอนุมัติได้",
-        text: "ไม่สามารถอนุมัติการยืมได้ เนื่องจากมีการอนุมัติไปแล้ว",
-        icon: "error",
-        confirmButtonText: "ตกลง",
-      });
-      closeOrNavigateBack();
-      return;
-    }
-    
-    const { isConfirmed } = await Swal.fire({
-      title: "ต้องการดำเนินการหรือไม่?",
-      text: "อนุมัติการยืม",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "ตกลง",
-      cancelButtonText: "ยกเลิก",
-    });
+    setLoading(true);
+    try {
+      // ตรวจสอบสถานะล่าสุดก่อนดำเนินการ
+      await fetchDataUpdateStatus();
 
-    if (isConfirmed) {
-      setLoading(true);
-      
-      try {
+      if (updatedData && updatedData.loan_status === "ยืม") {
+        await Swal.fire({
+          title: "ไม่สามารถอนุมัติได้",
+          text: "ไม่สามารถอนุมัติการยืมได้ เนื่องจากมีการอนุมัติไปแล้ว",
+          icon: "error",
+          confirmButtonText: "ตกลง",
+        });
+        closeOrNavigateBack();
+        return;
+      }
+
+      const { isConfirmed } = await Swal.fire({
+        title: "ต้องการดำเนินการหรือไม่?",
+        text: "อนุมัติการยืม",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "ตกลง",
+        cancelButtonText: "ยกเลิก",
+      });
+
+      if (isConfirmed) {
         // ส่ง request สำหรับทุกรายการที่ยืม
-        const requests = borrowData.borrowData.items.map(item => 
+        const requests = borrowData.borrowData.items.map((item) =>
           axios.put(
             `https://back-end-finals-project-vibo.onrender.com/api/Borrowed/adminsubmit/${item.equipment_name}/${borrowData.borrowData.id}`,
             {
@@ -154,9 +159,12 @@ const Submit = () => {
         // ส่งอีเมลแจ้งอนุมัติ
         await sendEmail({
           to: borrowData.borrowData.contact.email,
-          equipment_list: borrowData.borrowData.items.map(item => 
-            `${item.equipment_name} (${item.quantity_borrowed} ชิ้น)`
-          ).join(', '),
+          equipment_list: borrowData.borrowData.items
+            .map(
+              (item) =>
+                `${item.equipment_name} (${item.quantity_borrowed} ชิ้น)`
+            )
+            .join(", "),
           status: "อนุมัติ",
           Approve: adminUser,
           useSubmit: `https://pimcantake.netlify.app/qr?data=${encodedData}`,
@@ -170,40 +178,44 @@ const Submit = () => {
           confirmButtonText: "ตกลง",
         });
         closeOrNavigateBack();
-      } catch (error) {
-        console.error("API call failed:", error);
-        
-        const { isConfirmed } = await Swal.fire({
-          title: "เกิดข้อผิดพลาด",
-          text: "ไม่สามารถอนุมัติการยืมได้ คุณต้องการลบข้อมูลการยืมนี้หรือไม่?",
-          icon: "error",
-          showCancelButton: true,
-          confirmButtonColor: "#d33",
-          cancelButtonColor: "#3085d6",
-          confirmButtonText: "ลบข้อมูล",
-          cancelButtonText: "เก็บข้อมูลไว้",
-        });
-
-        if (isConfirmed) {
-          await handleReject();
-        }
-      } finally {
-        setLoading(false);
       }
+    } catch (error) {
+      console.error("API call failed:", error);
+
+      const { isConfirmed } = await Swal.fire({
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถอนุมัติการยืมได้ คุณต้องการลบข้อมูลการยืมนี้หรือไม่?",
+        icon: "error",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "ลบข้อมูล",
+        cancelButtonText: "เก็บข้อมูลไว้",
+      });
+
+      if (isConfirmed) {
+        await handleReject();
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleReject = async () => {
     try {
       // ลบข้อมูลการยืม
-      await axios.delete(`https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${borrowData.borrowData.id}`);
-      
+      await axios.delete(
+        `https://back-end-finals-project-vibo.onrender.com/api/manage/delete/${borrowData.borrowData.id}`
+      );
+
       // ส่งอีเมลแจ้งไม่อนุมัติ
       await sendEmail({
         to: borrowData.borrowData.contact.email,
-        equipment_list: borrowData.borrowData.items.map(item => 
-          `${item.equipment_name} (${item.quantity_borrowed} ชิ้น)`
-        ).join(', '),
+        equipment_list: borrowData.borrowData.items
+          .map(
+            (item) => `${item.equipment_name} (${item.quantity_borrowed} ชิ้น)`
+          )
+          .join(", "),
         status: "ไม่อนุมัติ",
         Approve: adminUser,
         cellNum: borrowData.user.cellNum,
@@ -236,7 +248,7 @@ const Submit = () => {
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
       confirmButtonText: "ใช่, ไม่อนุมัติ",
-      cancelButtonText: "ยกเลิก"
+      cancelButtonText: "ยกเลิก",
     });
 
     if (isConfirmed) {

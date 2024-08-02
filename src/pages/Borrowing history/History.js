@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { AppBar, Toolbar, Typography, Container, CssBaseline, useMediaQuery, Box } from "@mui/material";
 import TableManage from "./componentPage/TableHistory";
-
+import {useResetHistoryStates} from "../../Recoils/UserRecoil/HistoryStateReset"
+ 
 const theme = createTheme({
   palette: {
     primary: {
@@ -15,6 +16,15 @@ const theme = createTheme({
 });
 
 function History() {
+
+  const resetHistoryStates = useResetHistoryStates();
+
+  useEffect(() => {
+    // รีเซ็ต state เมื่อออกจากหน้า
+    return () => {
+      resetHistoryStates();
+    };
+  }, []);
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   return (

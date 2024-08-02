@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaCalendarCheck } from "react-icons/fa";
+import { useRecoilState } from "recoil";
+import {returnedCountState} from "../../../../Recoils/AdminRecoil/AdminHomeRecoil"
 
 const RectangleBox1 = () => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useRecoilState(returnedCountState);
   useEffect(() => {
     axios
       .get("https://back-end-finals-project-vibo.onrender.com/api/home/returnedCount")

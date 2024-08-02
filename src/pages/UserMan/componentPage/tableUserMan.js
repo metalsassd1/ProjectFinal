@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import {
   Table,
@@ -13,35 +13,56 @@ import {
   Box,
   Checkbox,
   TablePagination,
+  IconButton,
 } from "@mui/material";
 import ModalAddPage from "../../../components/modalComponent/addPageCustoms";
 import EditModal from "../../../components/modalComponent/EditPageCustom";
 import Grid from "@mui/material/Grid";
 import Swal from "sweetalert2";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import {
+  userPageState,
+  userRowsPerPageState,
+  userRowsState,
+  filteredUserRowsState,
+  searchUserTermsState,
+  selectedUserIdsState,
+  selectedUserState,
+} from "../../../Recoils/AdminRecoil/UserRecoil";
+import { useResetUserStates } from "../../../Recoils/AdminRecoil/UserStateReset";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const MyTable = () => {
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
   const [modalEditOpen, setModalEditOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
-    id: "",
-    username: "",
-    email: "",
-    is_admin: "",
-  });
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rows, setRows] = useRecoilState(userRowsState);
+  const [filteredRows, setFilteredRows] = useRecoilState(filteredUserRowsState);
+  const [page, setPage] = useRecoilState(userPageState);
+  const [rowsPerPage, setRowsPerPage] = useRecoilState(userRowsPerPageState);
+  const [selectedUser, setSelectedUser] = useRecoilState(selectedUserState);
+  const [searchTerms, setSearchTerms] = useRecoilState(searchUserTermsState);
+  const [selectedIds, setSelectedIds] = useRecoilState(selectedUserIdsState);
+  const resetSearchTerms = useResetRecoilState(searchUserTermsState);
+  const ResetUserStates = useResetUserStates();
+  const [showPassword, setShowPassword] = useState({});
+  const [originalPasswords, setOriginalPasswords] = useState({});
 
   const handleOpen = () => setModalOpen(true);
-  const handleClose = () => setModalOpen(false);
+  const handleClose = () => {
+    setModalOpen(false);
+    fetchData();
+  };
 
   const handleEditOpen = (user) => {
     setSelectedUser(user);
     setModalEditOpen(true);
   };
+
+  useEffect(() => {
+    ResetUserStates();
+    return () => ResetUserStates();
+  }, []);
 
   const formatDate = (dateString) => {
     if (!dateString) return "No date provided";
@@ -54,7 +75,7 @@ const MyTable = () => {
     });
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
         "https://back-end-finals-project-vibo.onrender.com/api/user/table"
@@ -66,37 +87,53 @@ const MyTable = () => {
       }));
       setRows(formattedData);
       setFilteredRows(formattedData);
+
+      // Store the original passwords
+      const passwordMap = {};
+      formattedData.forEach((item) => {
+        passwordMap[item.id] = item.password;
+      });
+      setOriginalPasswords(passwordMap);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, [setRows, setFilteredRows]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+    resetSearchTerms();
+  }, [fetchData]);
 
   useEffect(() => {
     filterData();
   }, [rows, searchTerms]);
 
   const filterData = () => {
-    const filtered = rows.filter(
-      (item) =>
-        item.id
-          ?.toString()
-          .toLowerCase()
-          .includes(searchTerms.id.toLowerCase() || "") &&
-        item.username
-          ?.toLowerCase()
-          .includes(searchTerms.username.toLowerCase() || "") &&
-        item.email
-          ?.toLowerCase()
-          .includes(searchTerms.email.toLowerCase() || "") &&
-        getRoleLabel(item.is_admin)
-          ?.toLowerCase()
-          .includes(searchTerms.is_admin.toLowerCase() || "")
-    );
+    const safeString = (value) => (value?.toString() || "").toLowerCase();
+    const safeIncludes = (itemValue, searchValue) =>
+      safeString(itemValue).includes(safeString(searchValue));
+
+    const filtered = rows.filter((item) => {
+      return (
+        safeIncludes(item.id, searchTerms.id) &&
+        safeIncludes(item.username, searchTerms.username) &&
+        safeIncludes(item.email, searchTerms.email) &&
+        safeIncludes(getRoleLabel(item.is_admin), searchTerms.is_admin)
+      );
+    });
+
     setFilteredRows(filtered);
+  };
+
+  const togglePasswordVisibility = (id) => {
+    setShowPassword((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const displayPassword = (row) => {
+    if (showPassword[row.id]) {
+      return originalPasswords[row.id] || "********";
+    }
+    return "********";
   };
 
   const handleEditClose = () => {
@@ -331,7 +368,16 @@ const MyTable = () => {
                 <TableCell>{row.full_name}</TableCell>
                 <TableCell>{row.cellNum}</TableCell>
                 <TableCell>{row.username}</TableCell>
-                <TableCell>{row.password}</TableCell>
+                <TableCell>
+                  {displayPassword(row)}
+                  <IconButton onClick={() => togglePasswordVisibility(row.id)}>
+                    {showPassword[row.id] ? (
+                      <VisibilityOffIcon />
+                    ) : (
+                      <VisibilityIcon />
+                    )}
+                  </IconButton>
+                </TableCell>
                 <TableCell>{row.registration_date}</TableCell>
                 <TableCell>{row.last_update}</TableCell>
                 <TableCell>{getRoleLabel(row.is_admin)}</TableCell>

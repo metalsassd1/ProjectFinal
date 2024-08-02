@@ -2,16 +2,20 @@ import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import TableEnter from "./componentPage/recreationalTable";
+import { useRecoilState } from "recoil";
+import {
+  isSidebarOpenState,
+  searchTermsState,
+} from "../../Recoils/AdminRecoil/AdminHomeRecoil";
 
 function Manage(searchTerms ) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useRecoilState(isSidebarOpenState);
   
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
   
-
   return (
     <div className="app-container" style={{ 
       display: 'flex', 

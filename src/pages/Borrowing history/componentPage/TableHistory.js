@@ -22,16 +22,27 @@ import {
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import InfoIcon from "@mui/icons-material/Info";
+import { useRecoilState } from "recoil";
+import {
+  allRowsState,
+  HistoryfilteredRowsState,
+  HistorypageState,
+  showResultsState,
+  errorState,
+  isSearchingState,
+  HistoryrowsPerPageState,
+  HistorysearchTermState
+} from "../../../Recoils/UserRecoil/HistoryRecoil";
 
 const TableHistory = () => {
-  const [allRows, setAllRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showResults, setShowResults] = useState(false);
-  const [error, setError] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [allRows, setAllRows] = useRecoilState(allRowsState);
+  const [filteredRows, setFilteredRows] = useRecoilState(HistoryfilteredRowsState);
+  const [searchTerm, setSearchTerm] = useRecoilState(HistorysearchTermState);
+  const [showResults, setShowResults] = useRecoilState(showResultsState);
+  const [error, setError] = useRecoilState(errorState);
+  const [isSearching, setIsSearching] = useRecoilState(isSearchingState);
+  const [page, setPage] = useRecoilState(HistorypageState);
+  const [rowsPerPage, setRowsPerPage] = useRecoilState(HistoryrowsPerPageState);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));

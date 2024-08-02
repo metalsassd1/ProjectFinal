@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import axios from "axios";
 import {
   Table,
@@ -19,29 +19,53 @@ import { useNavigate } from "react-router-dom";
 import ModalAddPage from "../../../components/modalComponent/addPage";
 import EditModal from "../../../components/modalComponent/EditPage";
 import Swal from 'sweetalert2';
+import { useRecoilState,useResetRecoilState } from "recoil";
+import {
+  recreRowsState,
+  searchRecreTermsState,
+  filteredRecreRowsState,
+  selectedRecreState,
+  selectedRecreIdsState,
+  recrePageState,
+  recreRowsPerPageState
+} from "../../../Recoils/AdminRecoil/RecreationalRecoil";
+
+import {useResetRecreationalStates} from "../../../Recoils/AdminRecoil/RecreationalStateReset"
+
 
 const MyTable = () => {
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalEditOpen, setModalEditOpen] = useState(false);
-  const [selectedRec, setSelectedRec] = useState(null);
-  const [searchTerms, setSearchTerms] = useState({
-    id: "",
-    equipment_name: "",
-    import_date: "",
-    last_update: ""
-  });
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rows, setRows] = useRecoilState(recreRowsState);
+  const [filteredRows, setFilteredRows] = useRecoilState(filteredRecreRowsState);
+  const [page, setPage] = useRecoilState(recrePageState);
+  const [rowsPerPage, setRowsPerPage] = useRecoilState(recreRowsPerPageState);
+  const [selectedRec, setSelectedRec] = useRecoilState(selectedRecreState);
+  const [searchTerms, setSearchTerms] = useRecoilState(searchRecreTermsState);
+  const [selectedIds, setSelectedIds] = useRecoilState(selectedRecreIdsState);
+
 
   const handleOpen = () => setModalOpen(true);
-  const handleClose = () => setModalOpen(false);
+  const handleClose=(() => {
+    setModalOpen(false);
+    fetchData();
+  })
   const navigate = useNavigate();
+
+  const resetRecreationalStates = useResetRecreationalStates();
 
   const addAPI = "https://back-end-finals-project-vibo.onrender.com/api/recreational/add";
   const editAPI = "https://back-end-finals-project-vibo.onrender.com/api/recreational/update";
+
+  useEffect(() => {
+    // รีเซ็ต state เมื่อเข้าสู่หน้า
+    resetRecreationalStates();
+
+    // รีเซ็ต state เมื่อออกจากหน้า
+    return () => {
+      resetRecreationalStates();
+    };
+  }, []);
 
   const formatDate = (dateString) => {
     if (!dateString) return "No date provided";
@@ -54,7 +78,7 @@ const MyTable = () => {
     });
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
         "https://back-end-finals-project-vibo.onrender.com/api/recreational/table"
@@ -69,23 +93,30 @@ const MyTable = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  },[setRows, setFilteredRows]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     filterData();
   }, [rows, searchTerms]);
 
   const filterData = () => {
-    const filtered = rows.filter(item =>
-      item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
-      item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
-      item.import_date.toLowerCase().includes(searchTerms.import_date.toLowerCase()) &&
-      item.last_update.toLowerCase().includes(searchTerms.last_update.toLowerCase())
-    );
+    const filtered = rows.filter((item) => {
+      const lowerCaseSearch = (field) => 
+        (searchTerms[field] || '').toLowerCase();
+      const lowerCaseItem = (field) => 
+        (item[field]?.toString() || '').toLowerCase();
+  
+      return (
+        lowerCaseItem('id').includes(lowerCaseSearch('id')) &&
+        lowerCaseItem('equipment_name').includes(lowerCaseSearch('equipment_name')) &&
+        lowerCaseItem('import_date').includes(lowerCaseSearch('import_date')) &&
+        lowerCaseItem('last_update').includes(lowerCaseSearch('last_update'))
+      );
+    });
     setFilteredRows(filtered);
   };
 

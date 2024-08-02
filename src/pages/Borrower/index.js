@@ -21,6 +21,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import emailjs from "emailjs-com";
 import swal from "sweetalert";
 import { useLocation } from "react-router-dom";
+import { useRecoilState, useSetRecoilState, useRecoilValue } from "recoil";
+import {
+  approvalStatusState,
+  userState,
+  userEmailsState,
+  optionState,
+  selectedItemsState,
+  formDataState,
+} from "../../Recoils/UserRecoil/BorrowRecoil";
 
 const theme = createTheme({
   palette: {
@@ -59,27 +68,36 @@ const schema = z.object({
 });
 
 export default function Borrower() {
-  const [approvalStatus, setApprovalStatus] = useState(null);
-  const [user, setUser] = useState("");
-  const [userEmails, setUserEmails] = useState([]);
-  const navigate = useNavigate();
-  const [option, setOption] = useState("");
   const location = useLocation();
-  const selectedItems = location.state?.selectedItems || [];
+  const [approvalStatus, setApprovalStatus] = useRecoilState(approvalStatusState);
+  const [user, setUser] = useRecoilState(userState);
+  const userEmails = useRecoilValue(userEmailsState);
+  const setUserEmails = useSetRecoilState(userEmailsState);
+  const option = useRecoilValue(optionState);
+  const setOption = useSetRecoilState(optionState);
+  const selectedItems = useRecoilValue(selectedItemsState);
+  const setSelectedItems = useSetRecoilState(selectedItemsState);
+  const setFormData = useSetRecoilState(formDataState);
+  
+  const navigate = useNavigate();
   const isMultipleItems = selectedItems.length > 1;
+  setSelectedItems(location.state?.selectedItems || []);
 
   const form = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       borrower_name: "",
-      equip_name: selectedItems.map(item => item.equipment_name).join(', '),
+      equip_name: selectedItems.map((item) => item.equipment_name).join(", "),
       identifier_number: "",
       phone: "",
-      quantity_borrowed: selectedItems.reduce((total, item) => total + item.desired_quantity, 0),
+      quantity_borrowed: selectedItems.reduce(
+        (total, item) => total + item.desired_quantity,
+        0
+      ),
       duration: "",
     },
   });
-  
+
   const id = Math.floor(Math.random() * 1000000);
 
   // console.log(userEmails);
@@ -102,7 +120,7 @@ export default function Borrower() {
     };
 
     fetchAdminUser();
-  }, []);
+  }, [setUser]);
 
   useEffect(() => {
     if (Array.isArray(user) && user.length > 0) {
@@ -111,7 +129,8 @@ export default function Borrower() {
     } else {
       setUserEmails([]);
     }
-  }, [user]);
+  }, [user, setUserEmails]);
+
 
   const translateOptionToThai = (option) => {
     const optionMap = {
@@ -165,15 +184,15 @@ export default function Borrower() {
           equipment_name: selectedItems[0].equipment_name,
           equipment_type: selectedItems[0].equipment_type,
           quantity_borrowed: selectedItems[0].desired_quantity,
-        }
+        },
       ],
     };
-  
+
     console.log(formattedData);
     const submitEv = `https://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(
       JSON.stringify(formattedData)
     )}`;
-  
+
     try {
       const response = await axios.post(
         "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/borrow",
@@ -210,7 +229,8 @@ export default function Borrower() {
     const formattedData = {
       id: loanId,
       borrower_name: data.borrower_name,
-      identifier_number: data.identifier_number.length > 10 ? null : data.identifier_number,
+      identifier_number:
+        data.identifier_number.length > 10 ? null : data.identifier_number,
       borrow_date: formatDate(data.duration.start),
       return_date: formatDate(data.duration.end),
       loan_status: "รออนุมัติ",
@@ -230,21 +250,21 @@ export default function Borrower() {
         quantity_borrowed: item.desired_quantity,
       })),
     };
-  
+
     console.log(formattedData);
-  
+
     try {
       const response = await axios.post(
         "https://back-end-finals-project-vibo.onrender.com/api/Borrowed/borrow-multiple",
         formattedData
       );
-  
+
       const submitEv = `https://pimcantake.netlify.app/admin-login/?data=${encodeURIComponent(
         JSON.stringify(formattedData)
       )}`;
-  
+
       await handleAdminsubmit(formattedData, submitEv);
-  
+
       if (response) {
         swal({
           title: "ดำเนินการสำเร็จ",
@@ -267,27 +287,31 @@ export default function Borrower() {
       });
     }
   };
-  
+
   const handleAdminsubmit = async (formattedData, submitEv) => {
     const service = "service_2kcoyx1";
     const publicK = "_6kKCdpsY-m47jeg-";
     const template = "template_k1dp1dm";
-    
+
     if (userEmails.length === 0) {
       console.error("No recipient email addresses found");
       throw new Error("No recipient email addresses");
     }
-    
+
     const emailAddresses = userEmails.join(", ");
-    
+
     // แปลงรายการอุปกรณ์เป็นสตริง
-    const itemsList = formattedData.items.map(item => 
-      `${item.equipment_name || 'N/A'} (${item.equipment_type || 'N/A'}): ${item.quantity_borrowed || 0} ชิ้น`
-    ).join(', ');
-  
+    const itemsList = formattedData.items
+      .map(
+        (item) =>
+          `${item.equipment_name || "N/A"} (${item.equipment_type || "N/A"}): ${
+            item.quantity_borrowed || 0
+          } ชิ้น`
+      )
+      .join(", ");
+
     // สร้างฟังก์ชันช่วยในการจัดการค่า undefined หรือ null
-    const safeString = (value) => value ? String(value) : '';
-    
+    const safeString = (value) => (value ? String(value) : "");
 
     const formatDateThai = (dateString) => {
       if (!dateString) return "No date provided";
@@ -300,9 +324,8 @@ export default function Borrower() {
       });
     };
 
-    
     const templateParams = {
-      id:formattedData.id,
+      id: formattedData.id,
       to_email: emailAddresses,
       submitEv: safeString(submitEv),
       borrower_name: safeString(formattedData.borrower_name),
@@ -314,17 +337,21 @@ export default function Borrower() {
       contact_email: safeString(formattedData.contact?.email),
       options: safeString(formattedData.options),
     };
-  
+
     // เพิ่มข้อมูลสำรองเฉพาะเมื่อมีค่า
     if (formattedData.contact?.backup_phone) {
-      templateParams.backup_phone = safeString(formattedData.contact.backup_phone);
+      templateParams.backup_phone = safeString(
+        formattedData.contact.backup_phone
+      );
     }
     if (formattedData.contact?.backup_email) {
-      templateParams.backup_email = safeString(formattedData.contact.backup_email);
+      templateParams.backup_email = safeString(
+        formattedData.contact.backup_email
+      );
     }
-  
-    console.log("Template Params:", templateParams);  // เพิ่ม log เพื่อตรวจสอบข้อมูล
-  
+
+    console.log("Template Params:", templateParams); // เพิ่ม log เพื่อตรวจสอบข้อมูล
+
     try {
       const result = await emailjs.send(
         service,
@@ -332,11 +359,11 @@ export default function Borrower() {
         templateParams,
         publicK
       );
-      console.log("EmailJS result:", result);  // เพิ่ม log เพื่อตรวจสอบผลลัพธ์
+      console.log("EmailJS result:", result); // เพิ่ม log เพื่อตรวจสอบผลลัพธ์
       setApprovalStatus(result.text === "OK" ? "success" : "failure");
       return Promise.resolve();
     } catch (error) {
-      console.error("EmailJS error:", error);  // เปลี่ยนเป็น console.error
+      console.error("EmailJS error:", error); // เปลี่ยนเป็น console.error
       setApprovalStatus("failure");
       return Promise.reject(error);
     }

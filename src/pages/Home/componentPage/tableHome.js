@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import axios from "axios";
 import {
   Table,
@@ -14,14 +14,37 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import "./TableStyles.css";
+import { useRecoilState } from "recoil";
+import {
+  searchHomeTermsState,
+  homeRowsState,
+  homeFilteredRowsState,
+  homeSelectedRowsState,
+  homePageState,
+  homeRowsPerPageState,
+} from "../../../Recoils/AdminRecoil/AdminHomeRecoil";
+
+import {useResetHomeStates} from "../../../Recoils/AdminRecoil/AdminHomeStateReset"
 
 const MyTable = ({ searchTerms }) => {
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selectedRows, setSelectedRows] = useState([]);
+  const [rows, setRows] = useRecoilState(homeRowsState);
+  const [filteredRows, setFilteredRows] = useRecoilState(homeFilteredRowsState);
+  const [page, setPage] = useRecoilState(homePageState);
+  const [rowsPerPage, setRowsPerPage] = useRecoilState(homeRowsPerPageState);
+  const [selectedRows, setSelectedRows] = useRecoilState(homeSelectedRowsState);
 
+  const resetHomeStates = useResetHomeStates();
+
+  useEffect(() => {
+    // รีเซ็ต state เมื่อเข้าสู่หน้า
+    resetHomeStates();
+
+    // รีเซ็ต state เมื่อออกจากหน้า
+    return () => {
+      resetHomeStates();
+    };
+  }, []);
+  
   const formatDate = (dateString) => {
     if (!dateString) return "No date provided";
     const date = new Date(dateString);
@@ -54,17 +77,8 @@ const MyTable = ({ searchTerms }) => {
     }
     setSelectedRows([]);
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    console.log("searchTerms changed:", searchTerms);
-    filterData();
-  }, [rows, searchTerms]);
-
-  const fetchData = async () => {
+  
+  const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
         "https://back-end-finals-project-vibo.onrender.com/api/home/management"
@@ -80,18 +94,35 @@ const MyTable = ({ searchTerms }) => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  },[setRows, setFilteredRows]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    console.log("searchTerms changed:", searchTerms);
+    filterData();
+  }, [rows, searchTerms]);
+
 
   const filterData = () => {
     console.log("Filtering data with searchTerms:", searchTerms);
-    const filtered = rows.filter(
-      (item) =>
-        item.id.toString().toLowerCase().includes(searchTerms.id.toLowerCase()) &&
-        item.equipment_name.toLowerCase().includes(searchTerms.equipment_name.toLowerCase()) &&
-        item.equipment_type.toLowerCase().includes(searchTerms.equipment_type.toLowerCase()) &&
-        (item.borrower_name || "").toLowerCase().includes(searchTerms.borrower_name.toLowerCase()) &&
-        item.borrow_date.toLowerCase().includes(searchTerms.borrow_date.toLowerCase())
-    );
+  
+    const safeString = (value) => (value || "").toString().toLowerCase();
+    const safeIncludes = (itemValue, searchValue) =>
+      safeString(itemValue).includes(safeString(searchValue));
+  
+    const filtered = rows.filter((item) => {
+      return (
+        safeIncludes(item.id, searchTerms.id) &&
+        safeIncludes(item.equipment_name, searchTerms.equipment_name) &&
+        safeIncludes(item.equipment_type, searchTerms.equipment_type) &&
+        safeIncludes(item.borrower_name, searchTerms.borrower_name) &&
+        safeIncludes(item.borrow_date, searchTerms.borrow_date)
+      );
+    });
+  
     console.log("Filtered rows:", filtered);
     setFilteredRows(filtered);
   };

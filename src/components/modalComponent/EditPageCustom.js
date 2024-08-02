@@ -13,15 +13,15 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { format, parse, addYears } from 'date-fns';
-import { th } from 'date-fns/locale'; // Import Thai locale
+import { format, parse, addYears } from "date-fns";
+import { th } from "date-fns/locale"; // Import Thai locale
+import bcrypt from "bcryptjs";
 
 const swalStyles = `
   .swal2-container {
     z-index: 9999;
   }
 `;
-
 
 const CustomEditModal = ({ open, handleClose, user, label }) => {
   const [formData, setFormData] = useState({
@@ -42,16 +42,18 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
       // Parse the Thai date string and adjust the year
       try {
         const thaiDateString = user.registration_date;
-        const parsedDate = parse(thaiDateString, 'd MMMM yyyy', new Date(), { locale: th });
-        
+        const parsedDate = parse(thaiDateString, "d MMMM yyyy", new Date(), {
+          locale: th,
+        });
+
         // Adjust for Thai Buddhist year
         const gregorianDate = addYears(parsedDate, -543);
-        
+
         if (isNaN(gregorianDate)) {
           throw new Error("Invalid date");
         }
-        
-        formattedDate = format(gregorianDate, 'yyyy-MM-dd');
+
+        formattedDate = format(gregorianDate, "yyyy-MM-dd");
       } catch (error) {
         console.error("Invalid date format:", user.registration_date);
       }
@@ -98,45 +100,54 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
     }));
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      let hashedPassword = formData.password;
+      const salt = await bcrypt.genSalt(10);
+      hashedPassword = await bcrypt.hash(formData.password, salt);
+
+      const updatedData = {
+        ...formData,
+        password: hashedPassword,
+      };
+
       const response = await axios.put(
         `https://back-end-finals-project-vibo.onrender.com/api/user/update/${user.id}`,
-        formData,
+        updatedData,
         {
           headers: {
-            'Content-Type': 'application/json'
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
-  
+
       handleClose();
-      
+
       // Add custom styles to Swal
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.textContent = swalStyles;
       document.head.appendChild(style);
-  
+
       await Swal.fire({
         title: "ดำเนินการสำเร็จ!",
         text: "แก้ไขข้อมูล",
         icon: "success",
         confirmButtonText: "ตกลง",
       });
-  
+
       // Remove the custom styles after Swal is closed
       document.head.removeChild(style);
-  
+
       resetForm();
     } catch (error) {
       console.error("Error updating data:", error);
       // console.log("Data updated successfully:", formData);
-      const style = document.createElement('style');
+      const style = document.createElement("style");
       style.textContent = swalStyles;
       document.head.appendChild(style);
-  
+
       await Swal.fire({
         title: "ดำเนินการไม่สำเร็จ!",
         text:
@@ -145,12 +156,12 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
         icon: "error",
         confirmButtonText: "ตกลง",
       });
-  
+
       // Remove the custom styles after Swal is closed
       document.head.removeChild(style);
     }
   };
-  
+
   return (
     <Modal
       open={open}
@@ -233,7 +244,7 @@ const CustomEditModal = ({ open, handleClose, user, label }) => {
               <Select
                 labelId="is-admin-label"
                 id="is-admin-select"
-                value={formData.is_admin.toString()}
+                value={formData.is_admin}
                 label="Role"
                 onChange={handleRoleChange}
               >

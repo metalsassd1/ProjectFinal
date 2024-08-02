@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import axios from "axios";
 import {
   Table,
@@ -17,22 +17,39 @@ import {
 } from "@mui/material";
 import EditModal from "../../../components/modalComponent/EditPageLoanEdit";
 import Swal from "sweetalert2";
+import { useRecoilState,useResetRecoilState } from "recoil";
+import {
+  loanFilteredRowsState,
+  loanPageState,
+  loanRowsPerPageState,
+  loanRowsState,
+  loanSelectedIdsState,
+  searchLoanTermsState,
+  selectedLoDState,
+} from "../../../Recoils/AdminRecoil/LoanDetailRecoil";
+import {useResetLoanDetailStates} from "../../../Recoils/AdminRecoil/LoanDetailStareReset"
 
 const MyTable = () => {
-  const [rows, setRows] = useState([]);
-  const [filteredRows, setFilteredRows] = useState([]);
-  const [selectedLoD, setSelectedLoD] = useState(null);
   const [modalEditOpen, setModalEditOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
-    id: "",
-    equipment_name: "",
-    equipment_type: "",
-    borrower_name: "",
-    borrow_date: "",
-  });
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rows, setRows] = useRecoilState(loanRowsState);
+  const [filteredRows, setFilteredRows] = useRecoilState(loanFilteredRowsState);
+  const [page, setPage] = useRecoilState(loanPageState);
+  const [rowsPerPage, setRowsPerPage] = useRecoilState(loanRowsPerPageState);
+  const [selectedLoD, setSelectedLoD] = useRecoilState(selectedLoDState);
+  const [searchTerms, setSearchTerms] = useRecoilState(searchLoanTermsState);
+  const [selectedIds, setSelectedIds] = useRecoilState(loanSelectedIdsState);
+
+  const resetLoanDetailStates = useResetLoanDetailStates();
+
+  useEffect(() => {
+    // รีเซ็ต state เมื่อเข้าสู่หน้า
+    resetLoanDetailStates();
+
+    // รีเซ็ต state เมื่อออกจากหน้า
+    return () => {
+      resetLoanDetailStates();
+    };
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -63,7 +80,7 @@ const MyTable = () => {
     });
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(
         "https://back-end-finals-project-vibo.onrender.com/api/home/management"
@@ -78,7 +95,7 @@ const MyTable = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, [setRows, setFilteredRows]);
 
   const filterData = () => {
     const filtered = rows.filter((item) => {
@@ -120,7 +137,7 @@ const MyTable = () => {
     });
     setFilteredRows(filtered);
   };
-console.log(rows);
+
   const handleDelete = async () => {
     if (selectedIds.length === 0) {
       return;

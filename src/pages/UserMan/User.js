@@ -2,22 +2,14 @@ import React, { useState } from "react";
 import Navbar from "../../components/navbar";
 import Sidebar from "../../components/navigatorbar";
 import TableUser from "./componentPage/tableUserMan";
+import { useRecoilState } from "recoil";
+import { isSidebarOpenState } from "../../Recoils/AdminRecoil/AdminHomeRecoil";
 
 function Manage(params) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
-    id: "",
-    username: "",
-    email: "",
-    is_admin: "",
-  });
+  const [isSidebarOpen, setIsSidebarOpen] = useRecoilState(isSidebarOpenState);
 
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  const handleSearch = (field, value) => {
-    setSearchTerms((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -46,7 +38,7 @@ function Manage(params) {
           }}
         >
           <h1>จัดการข้อมูลผู้ใช้</h1>
-          <TableUser isOpen={isSidebarOpen} searchTerms={searchTerms} />
+          <TableUser isOpen={isSidebarOpen} />
         </div>
       </div>
     </div>

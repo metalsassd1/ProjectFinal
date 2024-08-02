@@ -7,10 +7,10 @@ import {
   TextField,
   Paper,
 } from "@mui/material";
-import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
-import MultipleSelectCheckmarks from "../dropdown";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { useRecoilState, useResetRecoilState } from "recoil";
+import { modalOpenState, formDataState } from "../../Recoils/AdminRecoil/ModalRecoil";
 
 const swalStyles = `
   .swal2-container {
@@ -31,14 +31,8 @@ const style = {
 
 export default function AddModalCentralize({ open, handleClose, label, API }) {
   const nameType = [label];
-  const [type, setType] = useState("");
-  const [selectedDateStore, setSelectedDateStore] = useState("");
-  const [formData, setFormData] = useState({
-    field1: "",
-    field2: "",
-    field3: "",
-    field4: "",
-  });
+  const [formData, setFormData] = useRecoilState(formDataState);
+  const resetFormData = useResetRecoilState(formDataState);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,7 +52,6 @@ export default function AddModalCentralize({ open, handleClose, label, API }) {
 
   const handleChange = (selectedValues) => {
     console.log("Selected values:", selectedValues);
-    setType(selectedValues);
   };
 
   const handleChangeinput = (e) => {
@@ -70,14 +63,7 @@ export default function AddModalCentralize({ open, handleClose, label, API }) {
   };
 
   const resetForm = () => {
-    setFormData({
-      field1: "",
-      field2: "",
-      field3: "",
-      field4: "",
-    });
-    setType("");
-    setSelectedDateStore("");
+    resetFormData();
   };
 
   const showSwal = async (options) => {

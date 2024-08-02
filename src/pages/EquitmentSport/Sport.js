@@ -4,24 +4,17 @@ import Sidebar from "../../components/navigatorbar";
 import SearchBar from "../../components/SeachBar";
 import TableEquip from "./componentPage/tableSport";
 import { TextField, Box } from "@mui/material"; // เพิ่ม Box ตรงนี้
-
-function Manage(params) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [searchTerms, setSearchTerms] = useState({
-    id: "",
-    equipment_name: "",
-    import_date: "",
-    last_update: "",
-  });
-
+import { useRecoilState } from "recoil";
+import {
+  isSidebarOpenState,
+} from "../../Recoils/AdminRecoil/AdminHomeRecoil";
+ 
+function Manage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useRecoilState(isSidebarOpenState);
   const handleToggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleSearch = (term) => {
-    setSearchTerms(term); // Update the search term state
-    console.log("Search term in Manage component:", term);
-  };
 
   return (
     <div
@@ -50,7 +43,7 @@ function Manage(params) {
         >
           <h1>จัดการข้อมูลอุปกรณ์กีฬา</h1>
           <Box display="flex" flexWrap="wrap" gap={2} mb={2}></Box>
-          <TableEquip searchTerms={searchTerms} isOpen={isSidebarOpen} />
+          <TableEquip isOpen={isSidebarOpen} />
         </div>
       </div>
     </div>

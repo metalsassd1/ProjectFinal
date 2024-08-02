@@ -14,6 +14,7 @@ import {
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import axios from "axios";
 import Swal from 'sweetalert2';
+import bcrypt from 'bcryptjs';
 
 const swalStyles = `
   .swal2-container {
@@ -33,8 +34,6 @@ const style = {
 };
 
 export default function CustomAddModal({ open, handleClose, label, user }) {
-
-
   const [formData, setFormData] = useState({
     field1: "",
     field2: "",
@@ -43,6 +42,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
     field5: "User",
     field6: "",
   });
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (user) {
@@ -71,6 +72,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
       ...prevState,
       [name]: value,
     }));
+    // Clear error when user starts typing
+    setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const resetForm = () => {
@@ -82,10 +85,28 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
       field5: "User",
       field6: "",
     });
+    setErrors({});
+  };
+
+  const validateForm = () => {
+    let tempErrors = {};
+    if (!formData.field1) tempErrors.field1 = "ชื่อผู้ใช้ห้ามเว้นว่าง";
+    if (formData.field1.length < 4) tempErrors.field1 = "ชื่อผู้ใช้ต้องมีความยาวอย่างน้อย 4 ตัวอักษร";
+    if (!formData.field2) tempErrors.field2 = "รหัสผ่านห้ามเว้นว่าง";
+    if (formData.field2.length < 6) tempErrors.field2 = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร";
+    if (!formData.field3) tempErrors.field3 = "ชื่อ-นามสกุลห้ามเว้นว่าง";
+    if (!formData.field4) tempErrors.field4 = "อีเมลห้ามเว้นว่าง";
+    if (!/\S+@\S+\.\S+/.test(formData.field4)) tempErrors.field4 = "รูปแบบอีเมลไม่ถูกต้อง";
+    if (!formData.field6) tempErrors.field6 = "เบอร์โทรศัพท์ห้ามเว้นว่าง";
+    if (!/^[0-9]{10}$/.test(formData.field6)) tempErrors.field6 = "เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก";
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     const data = {
       username: formData.field1,
       password: formData.field2,
@@ -128,7 +149,6 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
     }
   };
 
-
   return (
     <Modal
       open={open}
@@ -151,6 +171,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
+              error={!!errors.field3}
+              helperText={errors.field3}
             />
             <TextField
               label="ชื่อผู้ใช้"
@@ -160,15 +182,20 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
+              error={!!errors.field1}
+              helperText={errors.field1}
             />
             <TextField
               label="รหัสผ่าน"
               variant="outlined"
               name="field2"
+              type="password"
               value={formData.field2}
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
+              error={!!errors.field2}
+              helperText={errors.field2}
             />
             <TextField
               label="Email"
@@ -178,6 +205,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
+              error={!!errors.field4}
+              helperText={errors.field4}
             />
             <TextField
               label="เบอร์โทรศัพท์"
@@ -187,6 +216,8 @@ export default function CustomAddModal({ open, handleClose, label, user }) {
               onChange={handleChangeinput}
               style={{ margin: "0.5rem" }}
               fullWidth
+              error={!!errors.field6}
+              helperText={errors.field6}
             />
             <FormControl fullWidth margin="normal">
               <InputLabel>Role</InputLabel>

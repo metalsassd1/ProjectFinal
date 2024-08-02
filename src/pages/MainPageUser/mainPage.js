@@ -1,17 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import { AppBar, Toolbar, Typography, Container, CssBaseline, useMediaQuery, Button } from "@mui/material";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TableMain from "./conponentPage/tableMainPage";
 import SearchFilter from "./conponentPage/SearchFillter";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useRecoilState } from "recoil";
+import { searchMainTermState, filterTypeState, rowsMainState } from "../../Recoils/UserRecoil/MainPageRecoil";
+import {useResetMainPageStates} from "../../Recoils/UserRecoil/MainPageStateReset"
+ 
 const MyPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState("");
-  const [rows, setRows] = useState([]);
+  const [searchTerm, setSearchTerm] = useRecoilState(searchMainTermState);
+  const [filterType, setFilterType] = useRecoilState(filterTypeState);
+  const [rows, setRows] = useRecoilState(rowsMainState);
   const navigate = useNavigate();
 
+  const resetMainPageStates = useResetMainPageStates();
+
+  useEffect(() => {
+    // รีเซ็ต state เมื่อเข้าสู่หน้า
+    resetMainPageStates();
+
+    // รีเซ็ต state เมื่อออกจากหน้า
+    return () => {
+      resetMainPageStates();
+    };
+  }, []);
+  
   const theme = createTheme({
     palette: {
       primary: {
@@ -24,12 +39,8 @@ const MyPage = () => {
   });
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  
+  const fetchData = useCallback(async () => {
     try {
       const response = await axios.get("https://back-end-finals-project-vibo.onrender.com/api/home/eqloan");
       const updatedData = response.data.map(item => ({
@@ -40,7 +51,12 @@ const MyPage = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
+  }, [setRows]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
 
   const handleSearch = (term) => {
     setSearchTerm(term);
@@ -71,6 +87,7 @@ const MyPage = () => {
     row.equipment_name.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (filterType === "" || row.equipment_type === filterType)
   );
+
 
   const handleHistoryClick = () => {
     navigate('/history');

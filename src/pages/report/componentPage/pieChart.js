@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { PieChart, Pie, Tooltip, Legend, Cell } from "recharts";
 import axios from "axios";
+import { useRecoilState } from "recoil";
+import {pieChartState} from "../../../Recoils/AdminRecoil/ReportRecoil"
 
 const CustomPieChart = () => {
-  const [equipmentData, setEquipmentData] = useState([]);
+  const [equipmentData, setEquipmentData] = useRecoilState(pieChartState);
 
   useEffect(() => {
     const fetchData = async () => {
